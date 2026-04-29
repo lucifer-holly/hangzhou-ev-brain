@@ -24,7 +24,7 @@ interface NavItem {
 const NAV_ITEMS: NavItem[] = [
   { to: '/city', label: 'Overview · 总览', icon: Activity, end: true },
   { to: '/city/heatmap', label: 'Heatmap · 热力图', icon: MapPinned },
-  { to: '/city/site-selection', label: 'Site Selection · 选址 ⭐', icon: BarChart3 },
+  { to: '/city/site-selection', label: 'Site Selection · 选址', icon: BarChart3 },
   { to: '/city/grid', label: 'Grid Coordination · 电网协同', icon: Zap },
   { to: '/city/compliance', label: 'Compliance · 合规审计', icon: ShieldCheck },
   { to: '/city/emergency', label: 'Emergency · 应急响应', icon: AlertTriangle },
