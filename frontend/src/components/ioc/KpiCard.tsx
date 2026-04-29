@@ -48,7 +48,7 @@ export function KpiCard({
   return (
     <div
       className={cn(
-        'relative overflow-hidden rounded-md border border-ioc-border bg-ioc-panel px-5 py-4',
+        'hover-lift hover-glow relative overflow-hidden rounded-md border border-ioc-border bg-ioc-panel px-5 py-4',
         'before:absolute before:inset-y-0 before:left-0 before:w-[3px]',
         tone === 'cyan' && 'before:bg-ioc-cyan',
         tone === 'warning' && 'before:bg-ioc-warning',
