@@ -36,6 +36,16 @@ export function AMapMap({
     if (!env.amapKey || !containerRef.current) return
     let cancelled = false
 
+    // AMap JS API 2.0 (post-2021 keys) requires a security config to be set
+    // on `window` BEFORE the loader runs. For demo/portfolio use we inline
+    // the security key in the bundle; production deployments should proxy
+    // AMap requests server-side and avoid shipping the secret.
+    if (env.amapSecurity) {
+      ;(
+        window as unknown as { _AMapSecurityConfig?: { securityJsCode: string } }
+      )._AMapSecurityConfig = { securityJsCode: env.amapSecurity }
+    }
+
     AMapLoader.load({
       key: env.amapKey,
       version: '2.0',

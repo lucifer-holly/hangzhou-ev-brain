@@ -39,14 +39,22 @@ services:
     restart: unless-stopped
 
   frontend:
-    build: ./frontend
+    # NOTE: Vite is a static bundler. VITE_* env vars must be passed at *build
+    # time* via build.args (docker-compose auto-reads ../.env from repo root).
+    # Setting them under `environment:` would have no effect on the compiled
+    # JS bundle.
+    build:
+      context: ./frontend
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+        VITE_WS_URL: ${VITE_WS_URL:-ws://localhost:8000/ws}
+        VITE_MAP_PROVIDER: ${VITE_MAP_PROVIDER:-osm}
+        VITE_AMAP_KEY: ${VITE_AMAP_KEY:-}
+        VITE_AMAP_SECURITY_KEY: ${VITE_AMAP_SECURITY_KEY:-}
+        VITE_GITHUB_URL: ${VITE_GITHUB_URL:-https://github.com/your-username/hz-ev-brain}
     container_name: hz-ev-brain-frontend
     ports:
       - "5173:80"
-    environment:
-      VITE_API_BASE_URL: http://backend:8000
-      VITE_WS_URL: ws://backend:8000/ws
-      VITE_MAP_PROVIDER: osm
     depends_on:
       - backend
     restart: unless-stopped

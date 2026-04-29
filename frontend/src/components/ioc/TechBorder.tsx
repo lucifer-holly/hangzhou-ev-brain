@@ -33,8 +33,14 @@ export const TechBorder = React.forwardRef<HTMLDivElement, TechBorderProps>(
         )}
         {...props}
       >
-        <div className="clip-tech bg-ioc-panel-solid/80 backdrop-blur-md p-px">
-          <div className="clip-tech bg-ioc-deep/80">{children}</div>
+        {/* h-full + flex on the nested wrappers propagates parent grid/flex height
+            down to user content. Without this, nested clip-tech divs size to
+            content and any inner `h-full` collapses to 0 (e.g. LiveEventStream's
+            scroll area becomes invisible). */}
+        <div className="clip-tech bg-ioc-panel-solid/80 backdrop-blur-md p-px h-full flex flex-col">
+          <div className="clip-tech bg-ioc-deep/80 flex-1 min-h-0 flex flex-col">
+            {children}
+          </div>
         </div>
       </div>
     )
