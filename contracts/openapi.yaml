@@ -427,6 +427,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/ai/features-for-location:
+    post:
+      tags:
+      - AI
+      summary: Synthesize the 12-D site feature vector from a (lat, lng) click
+      operationId: features_for_location_api_ai_features_for_location_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeaturesForLocationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteFeatures'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/ai/anomaly/{pile_id}:
     get:
       tags:
@@ -855,6 +880,23 @@ components:
       - total
       - buckets
       title: FaultTypesResponse
+    FeaturesForLocationRequest:
+      properties:
+        lat:
+          type: number
+          title: Lat
+        lng:
+          type: number
+          title: Lng
+        operator:
+          type: string
+          default: state_grid
+          title: Operator
+      type: object
+      required:
+      - lat
+      - lng
+      title: FeaturesForLocationRequest
     GridStressRequest:
       properties:
         target_curtailment_mw:

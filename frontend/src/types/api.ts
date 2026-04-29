@@ -261,6 +261,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/ai/features-for-location": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Synthesize the 12-D site feature vector from a (lat, lng) click */
+        post: operations["features_for_location_api_ai_features_for_location_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/ai/anomaly/{pile_id}": {
         parameters: {
             query?: never;
@@ -511,6 +528,18 @@ export interface components {
             total: number;
             /** Buckets */
             buckets: components["schemas"]["FaultTypeBucket"][];
+        };
+        /** FeaturesForLocationRequest */
+        FeaturesForLocationRequest: {
+            /** Lat */
+            lat: number;
+            /** Lng */
+            lng: number;
+            /**
+             * Operator
+             * @default state_grid
+             */
+            operator: string;
         };
         /** GridStressRequest */
         GridStressRequest: {
@@ -1362,6 +1391,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SiteResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    features_for_location_api_ai_features_for_location_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeaturesForLocationRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteFeatures"];
                 };
             };
             /** @description Validation Error */

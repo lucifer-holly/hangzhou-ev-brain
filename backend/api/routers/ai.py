@@ -26,7 +26,13 @@ from ai.lstm_demand.inference import (
     ModelNotTrainedError as LstmModelMissing,
     predict_pile as lstm_predict_pile,
 )
-from ai.site_selection.feature_engineering import SiteFeatures
+from ai.site_selection.feature_engineering import (
+    SiteFeatures,
+    _haversine_km,
+    _pop_density_1km,
+    _poi_counts,
+    _road_grade,
+)
 from ai.site_selection.inference import (
     ModelNotTrainedError as XgbModelMissing,
     predict_site as xgb_predict_site,
@@ -114,6 +120,67 @@ async def predict_demand(req: DemandRequest) -> DemandResponse:
         std=out.std,
         ci_low=out.ci_low,
         ci_high=out.ci_high,
+    )
+
+
+class FeaturesForLocationRequest(BaseModel):
+    lat: float = Field(..., description="Latitude (杭州 ~30.x).")
+    lng: float = Field(..., description="Longitude (杭州 ~120.x).")
+    operator: str = Field(default="state_grid")
+
+
+@router.post(
+    "/features-for-location",
+    response_model=SiteFeatures,
+    summary="Synthesize the 12-D site feature vector from a (lat, lng) click",
+)
+async def features_for_location(req: FeaturesForLocationRequest) -> SiteFeatures:
+    """Compute the deterministic feature prior for any location in 杭州.
+
+    Saves the frontend from re-implementing the haversine/POI prior
+    logic; the heavy lifting lives in
+    ``ai.site_selection.feature_engineering``.
+    """
+    from sqlalchemy import select  # noqa: PLC0415  (kept local)
+
+    from api import models
+    from api.database import async_session
+
+    # Pick the closer of the two seeded regions for the POI prior.
+    ftc_d = _haversine_km(req.lat, req.lng, 30.275, 120.030)
+    qta_d = _haversine_km(req.lat, req.lng, 30.300, 120.350)
+    region_id = "future_tech_city" if ftc_d <= qta_d else "qiantang_new_area"
+
+    pop = _pop_density_1km(req.lat, req.lng)
+    mall, office, res = _poi_counts(req.lat, req.lng, region_id)
+    grade = _road_grade(req.lat, req.lng)
+
+    # Existing pile count + avg util in 1 km — query DB.
+    async with async_session() as session:
+        rows = (
+            await session.execute(
+                select(models.Pile.lat, models.Pile.lng, models.Pile.current_occupancy)
+            )
+        ).all()
+    nearby_count = 0
+    nearby_occ: list[float] = []
+    for lat, lng, occ in rows:
+        if _haversine_km(req.lat, req.lng, float(lat), float(lng)) <= 1.0:
+            nearby_count += 1
+            nearby_occ.append(float(occ))
+    avg_util = float(sum(nearby_occ) / len(nearby_occ)) if nearby_occ else 0.0
+
+    return SiteFeatures(
+        lat=req.lat,
+        lng=req.lng,
+        pop_density_1km=round(pop, 1),
+        poi_mall_count=mall,
+        poi_office_count=office,
+        poi_residential_count=res,
+        existing_pile_count_1km=nearby_count,
+        avg_utilization_1km=round(avg_util, 4),
+        road_grade=grade,
+        operator=req.operator,
     )
 
 

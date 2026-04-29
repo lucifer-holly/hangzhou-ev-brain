@@ -30,3 +30,43 @@ export async function predictAllPiles(hours_ahead = 1): Promise<PredictedUtiliza
   )
   return data
 }
+
+export type SiteFeatures = components['schemas']['SiteFeatures']
+export type SiteResponse = components['schemas']['SiteResponse']
+export type ShapContribution = components['schemas']['ShapContributionOut']
+
+export async function featuresForLocation(
+  lat: number,
+  lng: number,
+  operator = 'state_grid',
+): Promise<SiteFeatures> {
+  const { data } = await apiClient.post<SiteFeatures>('/api/ai/features-for-location', {
+    lat,
+    lng,
+    operator,
+  })
+  return data
+}
+
+export async function predictSite(features: SiteFeatures): Promise<SiteResponse> {
+  const { data } = await apiClient.post<SiteResponse>('/api/ai/predict/site', features)
+  return data
+}
+
+export type AnomalyResponse = components['schemas']['AnomalyResponse']
+
+export async function checkAnomaly(pile_id: string): Promise<AnomalyResponse> {
+  const { data } = await apiClient.get<AnomalyResponse>(`/api/ai/anomaly/${pile_id}`)
+  return data
+}
+
+export type YoloResponse = components['schemas']['YoloResponse']
+
+export async function detectYolo(file: File): Promise<YoloResponse> {
+  const fd = new FormData()
+  fd.append('image', file)
+  const { data } = await apiClient.post<YoloResponse>('/api/ai/yolo/detect', fd, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+  return data
+}
