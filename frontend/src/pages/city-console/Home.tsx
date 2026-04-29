@@ -59,11 +59,11 @@ export function Home() {
       return
     }
     if (wasConnected.current && !isConnected) {
-      toast.warning('WebSocket disconnected', {
-        description: 'Realtime stream lost · attempting reconnect…',
+      toast.warning('实时连接断开', {
+        description: '正在重新连接… · Realtime stream lost',
       })
     } else if (!wasConnected.current && isConnected) {
-      toast.success('WebSocket reconnected', {
+      toast.success('实时连接已恢复', {
         description: 'Realtime stream restored.',
         duration: 2500,
       })
