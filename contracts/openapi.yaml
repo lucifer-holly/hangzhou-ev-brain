@@ -514,6 +514,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/stats/snapshot:
+    get:
+      tags:
+      - stats
+      summary: Pile-state snapshot at a given timestamp (historical replay)
+      operationId: pile_snapshot_api_stats_snapshot_get
+      parameters:
+      - name: at
+        in: query
+        required: true
+        schema:
+          type: string
+          format: date-time
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PileSnapshotResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/stats/operator-compliance:
     get:
       tags:
@@ -1113,6 +1139,62 @@ components:
       - current_occupancy
       - last_seen_at
       title: PileOut
+    PileSnapshot:
+      properties:
+        pile_id:
+          type: string
+          title: Pile Id
+        voltage:
+          type: number
+          title: Voltage
+        current:
+          type: number
+          title: Current
+        power:
+          type: number
+          title: Power
+        occupancy_rate:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          title: Occupancy Rate
+        status:
+          type: string
+          title: Status
+      type: object
+      required:
+      - pile_id
+      - voltage
+      - current
+      - power
+      - occupancy_rate
+      - status
+      title: PileSnapshot
+    PileSnapshotResponse:
+      properties:
+        requested_at:
+          type: string
+          format: date-time
+          title: Requested At
+        matched_at:
+          type: string
+          format: date-time
+          title: Matched At
+        pile_count:
+          type: integer
+          title: Pile Count
+        snapshots:
+          type: array
+          items:
+            $ref: '#/components/schemas/PileSnapshot'
+          title: Snapshots
+      type: object
+      required:
+      - requested_at
+      - matched_at
+      - pile_count
+      - snapshots
+      title: PileSnapshotResponse
     PilePrediction:
       properties:
         pile_id:

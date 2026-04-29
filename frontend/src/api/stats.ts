@@ -45,3 +45,14 @@ export async function getSubsidyAnalysis(
   )
   return data
 }
+
+export type PileSnapshot = components['schemas']['PileSnapshot']
+export type PileSnapshotResponse = components['schemas']['PileSnapshotResponse']
+
+export async function getPileSnapshot(at: string | Date): Promise<PileSnapshotResponse> {
+  const ts = at instanceof Date ? at.toISOString().slice(0, 19) : at
+  const { data } = await apiClient.get<PileSnapshotResponse>('/api/stats/snapshot', {
+    params: { at: ts },
+  })
+  return data
+}

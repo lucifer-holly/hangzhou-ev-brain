@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import {
   getFaultTypes,
   getOperatorCompliance,
+  getPileSnapshot,
   getSubsidyAnalysis,
   getUtilization24h,
   type ComplianceWindow,
@@ -39,5 +40,14 @@ export function useSubsidyAnalysis(preDays = 23, postDays = 7) {
     queryKey: ['stats', 'subsidy-analysis', preDays, postDays],
     queryFn: () => getSubsidyAnalysis(preDays, postDays),
     staleTime: 5 * 60_000,
+  })
+}
+
+export function usePileSnapshot(at: string | null) {
+  return useQuery({
+    queryKey: ['stats', 'snapshot', at],
+    queryFn: () => getPileSnapshot(at as string),
+    enabled: Boolean(at),
+    staleTime: 60_000,
   })
 }

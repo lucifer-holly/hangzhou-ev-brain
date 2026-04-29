@@ -577,3 +577,89 @@ async def subsidy_analysis(
         avg_treatment_subsidy=_mean(treatment_subsidies),
         rows=rows,
     )
+
+
+# ---------------------------- pile snapshot at timestamp ----------------------------
+
+
+class PileSnapshot(BaseModel):
+    pile_id: str
+    voltage: float
+    current: float
+    power: float
+    occupancy_rate: float = Field(..., ge=0, le=1)
+    status: str
+
+
+class PileSnapshotResponse(BaseModel):
+    requested_at: datetime
+    matched_at: datetime
+    pile_count: int
+    snapshots: list[PileSnapshot]
+
+
+@router.get(
+    "/snapshot",
+    response_model=PileSnapshotResponse,
+    summary="Pile-state snapshot at a given timestamp (historical replay)",
+)
+async def pile_snapshot(
+    session: Annotated[AsyncSession, Depends(get_session)],
+    at: datetime = Query(..., description="UTC timestamp to retrieve a snapshot for."),
+) -> PileSnapshotResponse:
+    """Return the historical state of every pile at the closest hourly bucket.
+
+    The seed populates ~720 hourly rows per pile over 30 days; we round
+    the request to the nearest hour and return one telemetry row per
+    pile from that bucket (or the nearest available row, by joining on
+    the closest-on-or-before timestamp per pile).
+    """
+    from sqlalchemy import and_  # noqa: PLC0415  (kept local)
+
+    target = at.replace(tzinfo=None) if at.tzinfo else at
+    # Round to the hour because seeded telemetry is hourly.
+    target = target.replace(minute=0, second=0, microsecond=0)
+    window_start = target - timedelta(hours=2)
+    window_end = target + timedelta(minutes=30)
+
+    # Per-pile latest row before target, within a 2h window (handles gaps).
+    sub = (
+        select(
+            models.Telemetry.pile_id.label("pid"),
+            func.max(models.Telemetry.ts).label("max_ts"),
+        )
+        .where(
+            and_(
+                models.Telemetry.ts >= window_start,
+                models.Telemetry.ts <= window_end,
+            )
+        )
+        .group_by(models.Telemetry.pile_id)
+        .subquery()
+    )
+    stmt = select(models.Telemetry).join(
+        sub,
+        and_(
+            models.Telemetry.pile_id == sub.c.pid,
+            models.Telemetry.ts == sub.c.max_ts,
+        ),
+    )
+    rows = (await session.execute(stmt)).scalars().all()
+    snapshots = [
+        PileSnapshot(
+            pile_id=r.pile_id,
+            voltage=r.voltage,
+            current=r.current,
+            power=r.power,
+            occupancy_rate=r.occupancy_rate,
+            status=r.status,
+        )
+        for r in rows
+    ]
+    matched_at = max((r.ts for r in rows), default=target)
+    return PileSnapshotResponse(
+        requested_at=at,
+        matched_at=matched_at,
+        pile_count=len(snapshots),
+        snapshots=snapshots,
+    )

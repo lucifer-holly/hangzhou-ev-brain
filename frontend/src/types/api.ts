@@ -312,6 +312,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/stats/snapshot": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Pile-state snapshot at a given timestamp (historical replay) */
+        get: operations["pile_snapshot_api_stats_snapshot_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/stats/operator-compliance": {
         parameters: {
             query?: never;
@@ -647,6 +664,38 @@ export interface components {
              * Format: date-time
              */
             last_seen_at: string;
+        };
+        /** PileSnapshot */
+        PileSnapshot: {
+            /** Pile Id */
+            pile_id: string;
+            /** Voltage */
+            voltage: number;
+            /** Current */
+            current: number;
+            /** Power */
+            power: number;
+            /** Occupancy Rate */
+            occupancy_rate: number;
+            /** Status */
+            status: string;
+        };
+        /** PileSnapshotResponse */
+        PileSnapshotResponse: {
+            /**
+             * Requested At
+             * Format: date-time
+             */
+            requested_at: string;
+            /**
+             * Matched At
+             * Format: date-time
+             */
+            matched_at: string;
+            /** Pile Count */
+            pile_count: number;
+            /** Snapshots */
+            snapshots: components["schemas"]["PileSnapshot"][];
         };
         /** PilePrediction */
         PilePrediction: {
@@ -1341,6 +1390,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DIDAnalysisResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    pile_snapshot_api_stats_snapshot_get: {
+        parameters: {
+            query: {
+                at: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PileSnapshotResponse"];
                 };
             };
             /** @description Validation Error */
