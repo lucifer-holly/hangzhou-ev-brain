@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Activity, AlertOctagon, Plug, Trophy, Zap } from 'lucide-react'
+import { Activity, AlertOctagon, Github, Plug, Trophy, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useEvents } from '@/hooks/useEvents'
@@ -8,9 +8,11 @@ import { useOperators } from '@/hooks/useOperators'
 import { useOperatorCompliance } from '@/hooks/useStats'
 import { usePiles } from '@/hooks/usePiles'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import { Footer } from '@/components/Footer'
 import { LiveClock } from '@/components/ioc/LiveClock'
 import { PulseDot } from '@/components/ioc/PulseDot'
 import { RoleSwitcher } from '@/components/ioc/RoleSwitcher'
+import { env } from '@/lib/env'
 import { MapProvider, type MapMarker } from '@/components/map/MapProvider'
 import { BenchmarkRadar } from '@/components/operator/BenchmarkRadar'
 import { OperatorEventStream } from '@/components/operator/OperatorEventStream'
@@ -189,6 +191,16 @@ export function OperatorDashboard() {
           />
           <LiveClock tz="Asia/Shanghai" />
           <RoleSwitcher current="operator" />
+          <a
+            href={env.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View on GitHub"
+            aria-label="GitHub repository"
+            className="btn-press hover-glow flex h-8 w-8 items-center justify-center rounded-sm border border-ioc-border/50 bg-ioc-deep/60 text-ioc-text-secondary transition-colors hover:text-ioc-cyan"
+          >
+            <Github className="h-4 w-4" />
+          </a>
         </div>
       </header>
 
@@ -353,6 +365,8 @@ export function OperatorDashboard() {
           </p>
         </div>
       </main>
+
+      <Footer theme="light" />
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Bookmark, Car, List, Map as MapIcon, Search } from 'lucide-react'
+import { Bookmark, Car, Github, List, Map as MapIcon, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
 import type { Operator } from '@/api/operators'
@@ -13,6 +13,7 @@ import { PulseDot } from '@/components/ioc/PulseDot'
 import { RoleSwitcher } from '@/components/ioc/RoleSwitcher'
 import { MapProvider, type MapMarker } from '@/components/map/MapProvider'
 import { PileCard } from '@/components/driver/PileCard'
+import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
 
 /**
@@ -177,6 +178,16 @@ export function DriverApp() {
             <PulseDot tone={isConnected ? 'success' : 'danger'} size="sm" />
             <LiveClock tz="Asia/Shanghai" />
             <RoleSwitcher current="driver" />
+            <a
+              href={env.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="GitHub"
+              aria-label="GitHub repository"
+              className="btn-press flex h-6 w-6 items-center justify-center rounded-sm text-ioc-text-secondary transition-colors hover:text-ioc-cyan"
+            >
+              <Github className="h-3.5 w-3.5" />
+            </a>
           </div>
         </header>
 

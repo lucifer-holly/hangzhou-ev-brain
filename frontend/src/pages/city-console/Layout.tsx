@@ -1,11 +1,13 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Activity, AlertTriangle, BarChart3, Coins, MapPinned, ShieldCheck, Zap } from 'lucide-react'
+import { Activity, AlertTriangle, BarChart3, Coins, Github, MapPinned, ShieldCheck, Zap } from 'lucide-react'
 
+import { Footer } from '@/components/Footer'
 import { LiveClock } from '@/components/ioc/LiveClock'
 import { PulseDot } from '@/components/ioc/PulseDot'
 import { RoleSwitcher } from '@/components/ioc/RoleSwitcher'
 import { WeatherBadge } from '@/components/ioc/WeatherBadge'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import { env } from '@/lib/env'
 import { cn } from '@/lib/utils'
 
 interface NavItem {
@@ -60,6 +62,16 @@ export function CityConsoleLayout() {
           <WeatherBadge />
           <LiveClock tz="Asia/Shanghai" />
           <RoleSwitcher current="city" />
+          <a
+            href={env.githubUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            title="View on GitHub"
+            aria-label="GitHub repository"
+            className="btn-press hover-glow flex h-8 w-8 items-center justify-center rounded-sm border border-ioc-border/50 bg-ioc-deep/60 text-ioc-text-secondary transition-colors hover:text-ioc-cyan"
+          >
+            <Github className="h-4 w-4" />
+          </a>
         </div>
       </header>
 
@@ -91,6 +103,8 @@ export function CityConsoleLayout() {
           <Outlet />
         </main>
       </div>
+
+      <Footer theme="dark" />
     </div>
   )
 }

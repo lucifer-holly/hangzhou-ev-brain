@@ -12,6 +12,7 @@ export interface AppEnv {
   wsUrl: string
   mapProvider: 'amap' | 'osm'
   amapKey: string
+  githubUrl: string
 }
 
 function readMapProvider(value: string | undefined): 'amap' | 'osm' {
@@ -24,4 +25,7 @@ export const env: AppEnv = {
   wsUrl: import.meta.env.VITE_WS_URL ?? 'ws://localhost:8000/ws',
   mapProvider: readMapProvider(import.meta.env.VITE_MAP_PROVIDER),
   amapKey: import.meta.env.VITE_AMAP_KEY ?? '',
+  githubUrl:
+    import.meta.env.VITE_GITHUB_URL ??
+    'https://github.com/your-username/hz-ev-brain',
 }
