@@ -10,25 +10,42 @@ interface ModeSwitchProps {
   className?: string
 }
 
-const ITEMS: { mode: ConsoleMode; label: string; cn: string; Icon: typeof Activity }[] = [
-  { mode: 'realtime', label: '实时 · Realtime', cn: 'cyan', Icon: Activity },
-  { mode: 'history', label: '历史 · History', cn: 'muted', Icon: History },
-  { mode: 'predict', label: '预测 · Forecast', cn: 'blue', Icon: Sparkles },
-]
-
-const activeStyle: Record<string, string> = {
-  cyan: 'bg-ioc-cyan/20 text-ioc-cyan shadow-ioc-glow border-ioc-cyan/60',
-  muted: 'bg-ioc-text-muted/10 text-ioc-text-secondary border-ioc-text-muted/40',
-  blue: 'bg-ioc-blue/20 text-ioc-blue shadow-[0_0_16px_rgba(74,158,255,0.45)] border-ioc-blue/60',
+interface Item {
+  mode: ConsoleMode
+  label_zh: string
+  label_en: string
+  hint: string
+  Icon: typeof Activity
+  tone: 'cyan' | 'muted' | 'blue'
 }
 
+const ITEMS: readonly Item[] = [
+  { mode: 'realtime', label_zh: '实时', label_en: 'Live', hint: 'WebSocket 1Hz', Icon: Activity, tone: 'cyan' },
+  { mode: 'history', label_zh: '历史', label_en: 'History', hint: '24h ago', Icon: History, tone: 'muted' },
+  { mode: 'predict', label_zh: '预测', label_en: 'Forecast', hint: 'LSTM +1h', Icon: Sparkles, tone: 'blue' },
+] as const
+
+const ACTIVE: Record<Item['tone'], string> = {
+  cyan: 'bg-ioc-cyan/20 text-ioc-cyan border-ioc-cyan/60 shadow-ioc-glow',
+  muted: 'bg-ioc-text-muted/15 text-ioc-text-secondary border-ioc-text-muted/40',
+  blue: 'bg-ioc-blue/20 text-ioc-blue border-ioc-blue/60 shadow-[0_0_18px_rgba(74,158,255,0.45)]',
+}
+
+/**
+ * Console mode switcher — Spawn 9.6/C upgraded version.
+ *
+ * Compared to the original (small uppercase pills), each tab now exposes
+ * a clear stacked layout: icon + 中文 + English label + parenthetical
+ * hint of the data semantics. Bigger hit-target (py-2 px-4), explicit
+ * borders, and tone-tinted active state make it impossible to miss.
+ */
 export function ModeSwitch({ mode, onChange, className }: ModeSwitchProps) {
   return (
     <div
       role="tablist"
       aria-label="Console mode"
       className={cn(
-        'inline-flex items-center gap-1 rounded-md border border-ioc-border/50 bg-ioc-deep/70 p-0.5 backdrop-blur',
+        'inline-flex items-stretch gap-1 rounded-md border border-ioc-border/50 bg-ioc-deep/70 p-1 backdrop-blur',
         className,
       )}
     >
@@ -41,14 +58,24 @@ export function ModeSwitch({ mode, onChange, className }: ModeSwitchProps) {
             aria-selected={isActive}
             onClick={() => onChange(it.mode)}
             className={cn(
-              'flex items-center gap-1.5 rounded-sm border px-2.5 py-1 text-[11px] uppercase tracking-[0.18em] transition-all',
+              'btn-press flex min-w-[120px] items-center gap-2 rounded-sm border px-3 py-2 transition-all',
               isActive
-                ? activeStyle[it.cn]
+                ? ACTIVE[it.tone]
                 : 'border-transparent text-ioc-text-muted hover:bg-ioc-panel/60 hover:text-ioc-text-secondary',
             )}
           >
-            <it.Icon className="h-3 w-3" />
-            <span>{it.label}</span>
+            <it.Icon className={cn('h-4 w-4 shrink-0', isActive && 'animate-pulse')} />
+            <div className="flex flex-col items-start leading-tight text-left">
+              <div className="flex items-baseline gap-1.5">
+                <span className="text-sm font-semibold">{it.label_zh}</span>
+                <span className="font-mono text-[10px] uppercase tracking-wider opacity-80">
+                  {it.label_en}
+                </span>
+              </div>
+              <span className="font-mono text-[9px] uppercase tracking-wider opacity-65">
+                {it.hint}
+              </span>
+            </div>
           </button>
         )
       })}
