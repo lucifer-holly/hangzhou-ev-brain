@@ -38,6 +38,19 @@ services:
       - mosquitto_log:/mosquitto/log
     restart: unless-stopped
 
+  frontend:
+    build: ./frontend
+    container_name: hz-ev-brain-frontend
+    ports:
+      - "5173:80"
+    environment:
+      VITE_API_BASE_URL: http://backend:8000
+      VITE_WS_URL: ws://backend:8000/ws
+      VITE_MAP_PROVIDER: osm
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 volumes:
   hzev_db:
   mosquitto_data:

@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply font-body bg-ioc-deep text-ioc-text-primary;
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: rgba(0, 212, 255, 0.35);
+    color: #fff;
+  }
+
+  /* Slim scrollbars for IOC dark surfaces. */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.25);
+    border-radius: 4px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 212, 255, 0.5);
+  }
+}
+
+@layer components {
+  /* IOC clipped tech border — chamfered top-left + bottom-right corners.
+     Use with a backdrop and an accent border via box-shadow inset. */
+  .clip-tech {
+    clip-path: polygon(
+      14px 0,
+      100% 0,
+      100% calc(100% - 14px),
+      calc(100% - 14px) 100%,
+      0 100%,
+      0 14px
+    );
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 8px rgba(0, 212, 255, 0.6), 0 0 16px rgba(0, 212, 255, 0.3);
+  }
+  .text-glow-success {
+    text-shadow: 0 0 8px rgba(0, 255, 148, 0.55);
+  }
+  .text-glow-warning {
+    text-shadow: 0 0 8px rgba(255, 184, 0, 0.55);
+  }
+  .text-glow-danger {
+    text-shadow: 0 0 8px rgba(255, 107, 53, 0.55);
+  }
+}
