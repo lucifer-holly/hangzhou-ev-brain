@@ -478,6 +478,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/stats/operator-compliance:
+    get:
+      tags:
+      - stats
+      summary: 4-operator compliance scorecard with composite rating
+      operationId: operator_compliance_api_stats_operator_compliance_get
+      parameters:
+      - name: window
+        in: query
+        required: false
+        schema:
+          $ref: '#/components/schemas/ComplianceWindow'
+          default: 24h
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OperatorComplianceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     AnomalyResponse:
@@ -518,6 +544,13 @@ components:
       required:
       - image
       title: Body_yolo_detect_api_ai_yolo_detect_post
+    ComplianceWindow:
+      type: string
+      enum:
+      - 24h
+      - 7d
+      - 30d
+      title: ComplianceWindow
     DemandRequest:
       properties:
         pile_id:
@@ -697,6 +730,82 @@ components:
       - avg_occupancy
       - sample_count
       title: HourlyOccupancy
+    OperatorComplianceResponse:
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        window:
+          $ref: '#/components/schemas/ComplianceWindow'
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperatorComplianceRow'
+          title: Rows
+      type: object
+      required:
+      - generated_at
+      - window
+      - rows
+      title: OperatorComplianceResponse
+    OperatorComplianceRow:
+      properties:
+        operator_id:
+          type: string
+          title: Operator Id
+        operator_name:
+          type: string
+          title: Operator Name
+        color:
+          type: string
+          title: Color
+        pile_count:
+          type: integer
+          title: Pile Count
+        availability_rate:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Availability Rate
+        mttr_minutes:
+          type: number
+          minimum: 0.0
+          title: Mttr Minutes
+        price_anomaly_count:
+          type: integer
+          minimum: 0
+          title: Price Anomaly Count
+        complaint_count:
+          type: integer
+          minimum: 0
+          title: Complaint Count
+        composite_score:
+          type: number
+          maximum: 100.0
+          minimum: 0.0
+          title: Composite Score
+        rating:
+          type: string
+          enum:
+          - A
+          - B
+          - C
+          - D
+          title: Rating
+      type: object
+      required:
+      - operator_id
+      - operator_name
+      - color
+      - pile_count
+      - availability_rate
+      - mttr_minutes
+      - price_anomaly_count
+      - complaint_count
+      - composite_score
+      - rating
+      title: OperatorComplianceRow
     OperatorOut:
       properties:
         id:

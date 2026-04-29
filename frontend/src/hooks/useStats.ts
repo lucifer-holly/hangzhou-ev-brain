@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { getFaultTypes, getUtilization24h } from '@/api/stats'
+import {
+  getFaultTypes,
+  getOperatorCompliance,
+  getUtilization24h,
+  type ComplianceWindow,
+} from '@/api/stats'
 
 export function useUtilization24h() {
   return useQuery({
@@ -17,5 +22,13 @@ export function useFaultTypes(hours = 24) {
     queryFn: () => getFaultTypes(hours),
     staleTime: 30_000,
     refetchInterval: 60_000,
+  })
+}
+
+export function useOperatorCompliance(window: ComplianceWindow = '24h') {
+  return useQuery({
+    queryKey: ['stats', 'operator-compliance', window],
+    queryFn: () => getOperatorCompliance(window),
+    staleTime: 60_000,
   })
 }

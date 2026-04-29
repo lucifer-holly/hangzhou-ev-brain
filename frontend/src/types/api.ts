@@ -295,6 +295,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/stats/operator-compliance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** 4-operator compliance scorecard with composite rating */
+        get: operations["operator_compliance_api_stats_operator_compliance_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -321,6 +338,11 @@ export interface components {
              */
             image: string;
         };
+        /**
+         * ComplianceWindow
+         * @enum {string}
+         */
+        ComplianceWindow: "24h" | "7d" | "30d";
         /** DemandRequest */
         DemandRequest: {
             /**
@@ -419,6 +441,43 @@ export interface components {
             avg_occupancy: number;
             /** Sample Count */
             sample_count: number;
+        };
+        /** OperatorComplianceResponse */
+        OperatorComplianceResponse: {
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            window: components["schemas"]["ComplianceWindow"];
+            /** Rows */
+            rows: components["schemas"]["OperatorComplianceRow"][];
+        };
+        /** OperatorComplianceRow */
+        OperatorComplianceRow: {
+            /** Operator Id */
+            operator_id: string;
+            /** Operator Name */
+            operator_name: string;
+            /** Color */
+            color: string;
+            /** Pile Count */
+            pile_count: number;
+            /** Availability Rate */
+            availability_rate: number;
+            /** Mttr Minutes */
+            mttr_minutes: number;
+            /** Price Anomaly Count */
+            price_anomaly_count: number;
+            /** Complaint Count */
+            complaint_count: number;
+            /** Composite Score */
+            composite_score: number;
+            /**
+             * Rating
+             * @enum {string}
+             */
+            rating: "A" | "B" | "C" | "D";
         };
         /** OperatorOut */
         OperatorOut: {
@@ -1173,6 +1232,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["YoloResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    operator_compliance_api_stats_operator_compliance_get: {
+        parameters: {
+            query?: {
+                window?: components["schemas"]["ComplianceWindow"];
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OperatorComplianceResponse"];
                 };
             };
             /** @description Validation Error */

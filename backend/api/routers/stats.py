@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import hashlib
 import logging
 from datetime import datetime, timedelta, timezone
-from typing import Annotated
+from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
@@ -17,6 +18,9 @@ from api.deps import get_session
 log = logging.getLogger("api.routers.stats")
 
 router = APIRouter(prefix="/api/stats", tags=["stats"])
+
+ComplianceWindow = Literal["24h", "7d", "30d"]
+_WINDOW_HOURS: dict[str, int] = {"24h": 24, "7d": 168, "30d": 720}
 
 
 class HourlyOccupancy(BaseModel):
@@ -200,4 +204,168 @@ async def predicted_utilization(hours_ahead: int = Query(default=1, ge=1, le=6))
             )
             for p in preds
         ],
+    )
+
+
+# ---------------------------- operator compliance ----------------------------
+
+
+class OperatorComplianceRow(BaseModel):
+    operator_id: str
+    operator_name: str
+    color: str
+    pile_count: int
+    availability_rate: float = Field(..., ge=0, le=1)
+    mttr_minutes: float = Field(..., ge=0)
+    price_anomaly_count: int = Field(..., ge=0)
+    complaint_count: int = Field(..., ge=0)
+    composite_score: float = Field(..., ge=0, le=100)
+    rating: Literal["A", "B", "C", "D"]
+
+
+class OperatorComplianceResponse(BaseModel):
+    generated_at: datetime
+    window: ComplianceWindow
+    rows: list[OperatorComplianceRow]
+
+
+def _rating(score: float) -> Literal["A", "B", "C", "D"]:
+    if score >= 90:
+        return "A"
+    if score >= 80:
+        return "B"
+    if score >= 70:
+        return "C"
+    return "D"
+
+
+def _stable_complaint_count(operator_id: str, window: str) -> int:
+    """Synthesise complaint count deterministically from operator + window.
+
+    Real product would pull from a CRM/ticketing system; we just need a
+    plausible number that varies per operator and window for the demo.
+    """
+    seed = int(hashlib.md5(f"{operator_id}:{window}".encode()).hexdigest()[:8], 16)
+    base = {"24h": 5, "7d": 28, "30d": 110}.get(window, 5)
+    return base + (seed % max(1, base // 2))
+
+
+@router.get(
+    "/operator-compliance",
+    response_model=OperatorComplianceResponse,
+    summary="4-operator compliance scorecard with composite rating",
+)
+async def operator_compliance(
+    session: Annotated[AsyncSession, Depends(get_session)],
+    window: ComplianceWindow = Query(default="24h", description="Window: 24h / 7d / 30d."),
+) -> OperatorComplianceResponse:
+    """Return compliance metrics for every operator over the chosen window.
+
+    Metrics:
+      * availability_rate: 1 − Σ(fault_minutes) / (pile_count · window_minutes)
+      * mttr_minutes: mean duration of resolved fault events
+      * price_anomaly_count: voltage_anomaly events as a price-deviation proxy
+      * complaint_count: deterministic per-operator synthetic count
+      * composite_score: weighted 0-100 score → A/B/C/D rating
+    """
+    hours = _WINDOW_HOURS[window]
+    since = datetime.now(timezone.utc) - timedelta(hours=hours)
+    since_naive = since.replace(tzinfo=None)
+    window_minutes = hours * 60
+
+    # Pile counts per operator + colour metadata.
+    op_rows = (
+        await session.execute(select(models.Operator).order_by(models.Operator.id))
+    ).scalars().all()
+    pile_count_rows = (
+        await session.execute(
+            select(models.Pile.operator_id, func.count(models.Pile.id)).group_by(
+                models.Pile.operator_id
+            )
+        )
+    ).all()
+    pile_counts = {op_id: int(n) for op_id, n in pile_count_rows}
+
+    # Sum fault-event durations + count per operator within window.
+    fault_types_set = {
+        "voltage_anomaly",
+        "thermal_fault",
+        "vibration_event",
+        "cable_fault",
+        "communication_loss",
+    }
+    fault_stmt = (
+        select(
+            models.Pile.operator_id,
+            func.sum(models.Event.duration_minutes).label("dur_sum"),
+            func.avg(models.Event.duration_minutes).label("dur_avg"),
+            func.count(models.Event.id).label("n"),
+        )
+        .join(models.Event, models.Event.pile_id == models.Pile.id)
+        .where(
+            models.Event.ts >= since_naive,
+            models.Event.type.in_(fault_types_set),
+        )
+        .group_by(models.Pile.operator_id)
+    )
+    fault_rows = (await session.execute(fault_stmt)).all()
+    fault_by_op = {
+        r.operator_id: (float(r.dur_sum or 0.0), float(r.dur_avg or 0.0), int(r.n or 0))
+        for r in fault_rows
+    }
+
+    # Voltage-anomaly count per operator (price-deviation proxy).
+    price_stmt = (
+        select(models.Pile.operator_id, func.count(models.Event.id))
+        .join(models.Event, models.Event.pile_id == models.Pile.id)
+        .where(
+            models.Event.ts >= since_naive,
+            models.Event.type == "voltage_anomaly",
+        )
+        .group_by(models.Pile.operator_id)
+    )
+    price_rows = (await session.execute(price_stmt)).all()
+    price_by_op = {op_id: int(n) for op_id, n in price_rows}
+
+    rows: list[OperatorComplianceRow] = []
+    for op in op_rows:
+        n_piles = pile_counts.get(op.id, 0)
+        dur_sum, dur_avg, _ = fault_by_op.get(op.id, (0.0, 0.0, 0))
+        price_n = price_by_op.get(op.id, 0)
+        complaints = _stable_complaint_count(op.id, window)
+
+        denom = max(1.0, n_piles * window_minutes)
+        availability = max(0.0, min(1.0, 1.0 - dur_sum / denom))
+        mttr = float(dur_avg)
+        # Per-pile-normalised "bad" fractions clamped to [0, 1].
+        price_frac = min(1.0, price_n / max(1, n_piles))
+        complaint_frac = min(1.0, complaints / max(1, n_piles * 5))
+        mttr_score = max(0.0, min(1.0, 1.0 - mttr / 90.0))  # 0 min → 1, 90 min → 0
+        composite = (
+            0.45 * availability
+            + 0.20 * mttr_score
+            + 0.20 * (1.0 - price_frac)
+            + 0.15 * (1.0 - complaint_frac)
+        ) * 100.0
+        composite = round(composite, 1)
+
+        rows.append(
+            OperatorComplianceRow(
+                operator_id=op.id,
+                operator_name=op.name_zh,
+                color=op.color,
+                pile_count=n_piles,
+                availability_rate=round(availability, 4),
+                mttr_minutes=round(mttr, 1),
+                price_anomaly_count=price_n,
+                complaint_count=complaints,
+                composite_score=composite,
+                rating=_rating(composite),
+            )
+        )
+
+    return OperatorComplianceResponse(
+        generated_at=datetime.now(timezone.utc),
+        window=window,
+        rows=rows,
     )
