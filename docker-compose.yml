@@ -1,0 +1,44 @@
+services:
+  backend:
+    build: ./backend
+    container_name: hz-ev-brain-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - hzev_db:/app/data
+    environment:
+      DATABASE_URL: sqlite+aiosqlite:////app/data/hzev.db
+      SYNC_DATABASE_URL: sqlite:////app/data/hzev.db
+      MQTT_BROKER: mosquitto
+      MQTT_PORT: 1883
+      PILE_COUNT: 100
+      HISTORY_DAYS: 30
+      REALTIME_TICK_SECONDS: 1.0
+      RNG_SEED: 42
+    depends_on:
+      mosquitto:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    container_name: hz-ev-brain-mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - ./infra/mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - mosquitto_data:/mosquitto/data
+      - mosquitto_log:/mosquitto/log
+    restart: unless-stopped
+
+volumes:
+  hzev_db:
+  mosquitto_data:
+  mosquitto_log:

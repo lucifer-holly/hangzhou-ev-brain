@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+dist/
+build/
+
+# Node
+node_modules/
+.npm
+.yarn/
+dist/
+build/
+.next/
+.turbo/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Env / secrets
+.env
+.env.local
+.env.*.local
+
+# Data / models / artifacts
+*.db
+*.sqlite
+*.sqlite3
+backend/ai/*/saved/
+backend/synth/data/
+*.pt
+*.pth
+*.onnx
+*.tflite
+!backend/ai/**/sample_*.tflite
+
+# Logs
+*.log
+logs/
+
+# Docker volumes
+mosquitto_data/
+mosquitto_log/
+
+# OS
+Thumbs.db
