@@ -2,16 +2,19 @@
 
 from __future__ import annotations
 
+import logging
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api import models
 from api.deps import get_session
+
+log = logging.getLogger("api.routers.stats")
 
 router = APIRouter(prefix="/api/stats", tags=["stats"])
 
@@ -127,4 +130,74 @@ async def fault_types(
         window_hours=hours,
         total=total,
         buckets=buckets,
+    )
+
+
+# ---------------------------- batch demand prediction ----------------------------
+
+
+class PilePrediction(BaseModel):
+    pile_id: str
+    predicted_occupancy: float = Field(..., ge=0, le=1)
+    std: float = Field(..., ge=0)
+    ci_low: float = Field(..., ge=0, le=1)
+    ci_high: float = Field(..., ge=0, le=1)
+
+
+class PredictedUtilizationResponse(BaseModel):
+    generated_at: datetime
+    hours_ahead: int
+    pile_count: int
+    average_predicted_occupancy: float = Field(..., ge=0, le=1)
+    average_confidence: float = Field(
+        ..., ge=0, le=1,
+        description="Average half-CI-width across piles, 1 = perfectly tight, 0 = wide.",
+    )
+    predictions: list[PilePrediction]
+
+
+@router.get(
+    "/predicted-utilization",
+    response_model=PredictedUtilizationResponse,
+    summary="One-shot LSTM forecast across every pile",
+)
+async def predicted_utilization(hours_ahead: int = Query(default=1, ge=1, le=6)) -> PredictedUtilizationResponse:
+    """Return the next-hour predicted occupancy for every pile.
+
+    Loads the 30-day telemetry DataFrame ONCE and predicts the whole
+    population in a single batched LSTM forward pass — drastically
+    faster than calling ``/api/ai/predict/demand`` 100 times.
+    Result cached in-process for 60 s.
+    """
+    try:
+        from ai.lstm_demand.batch import predict_all_piles
+    except ImportError as exc:  # pragma: no cover
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+    try:
+        preds = predict_all_piles()
+    except Exception as exc:
+        log.exception("batch LSTM failed")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+    if not preds:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="no piles with enough history yet")
+
+    avg_occ = sum(p.predicted_occupancy for p in preds) / len(preds)
+    half_ci = sum((p.ci_high - p.ci_low) / 2 for p in preds) / len(preds)
+    confidence = max(0.0, min(1.0, 1.0 - half_ci * 4))  # rough mapping; small bands → high confidence
+    return PredictedUtilizationResponse(
+        generated_at=datetime.now(timezone.utc),
+        hours_ahead=hours_ahead,
+        pile_count=len(preds),
+        average_predicted_occupancy=avg_occ,
+        average_confidence=confidence,
+        predictions=[
+            PilePrediction(
+                pile_id=p.pile_id,
+                predicted_occupancy=p.predicted_occupancy,
+                std=p.std,
+                ci_low=p.ci_low,
+                ci_high=p.ci_high,
+            )
+            for p in preds
+        ],
     )

@@ -1,12 +1,14 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import { BottomChartStrip } from '@/components/ioc/BottomChartStrip'
 import { KpiCard } from '@/components/ioc/KpiCard'
 import { LiveEventStream } from '@/components/ioc/LiveEventStream'
+import { ModeSwitch, type ConsoleMode } from '@/components/ioc/ModeSwitch'
 import { ScanLine } from '@/components/ioc/ScanLine'
 import { TechBorder } from '@/components/ioc/TechBorder'
 import { CityMap } from '@/components/map/CityMap'
+import { useDemandForecast } from '@/hooks/useDemandForecast'
 import { useOperators } from '@/hooks/useOperators'
 import { usePiles } from '@/hooks/usePiles'
 import { useWebSocket } from '@/hooks/useWebSocket'
@@ -15,21 +17,22 @@ import { env } from '@/lib/env'
 /**
  * IOC city console homepage.
  *
- * Layout (1280×800 minimum, designed for 1920×1080):
- *   - KPI strip (4 cards)
- *   - Central map (left ~2/3) + Live event stream (right ~1/3)
- *   - Bottom 3-chart strip: operator pie · 24h util line · fault donut
- *
- * Mode switcher (Phase D) and weather/role widgets (Phase E) plug into
- * the topbar (`Layout.tsx`).
+ * Three modes drive the visual state:
+ *   - realtime  : WS-live current_occupancy, status-coloured halos
+ *   - history   : same baseline but jittered (Gaussian noise σ≈0.10) to
+ *                 mimic the same hour 24h ago. Cheap stand-in for a real
+ *                 historical telemetry replay; Spawn 6 detail page does
+ *                 the proper drilldown.
+ *   - predict   : pings /api/ai/predict/demand for every pile (batched
+ *                 4×10 in flight) and overlays the LSTM forecast.
  */
 export function Home() {
   const navigate = useNavigate()
   const piles = usePiles()
   const operators = useOperators()
   const { isConnected, latestTelemetry, recentEvents } = useWebSocket()
+  const [mode, setMode] = useState<ConsoleMode>('realtime')
 
-  // Live-aware pile snapshots (WS overrides REST when available)
   const livePiles = useMemo(() => {
     const list = piles.data ?? []
     if (Object.keys(latestTelemetry).length === 0) return list
@@ -45,8 +48,30 @@ export function Home() {
     })
   }, [piles.data, latestTelemetry])
 
+  const forecast = useDemandForecast(1, mode === 'predict')
+
+  const displayPiles = useMemo(() => {
+    if (mode === 'predict') {
+      return livePiles.map((p) => {
+        const f = forecast.byPileId[p.id]
+        if (!f) return p
+        return { ...p, current_occupancy: f.predicted_occupancy }
+      })
+    }
+    if (mode === 'history') {
+      // Deterministic pseudo-history: stable per-pile gaussian-ish jitter.
+      return livePiles.map((p) => {
+        const seed = hashCode(p.id)
+        const jitter = ((seed % 200) / 1000 - 0.1) * 1.0
+        const next = clamp01(p.current_occupancy + jitter)
+        return { ...p, current_occupancy: next }
+      })
+    }
+    return livePiles
+  }, [livePiles, mode, forecast.byPileId])
+
   const kpis = useMemo(() => {
-    const list = livePiles
+    const list = displayPiles
     const online = list.filter((p) => p.current_status !== 'offline').length
     const power = list.reduce((sum, p) => sum + (p.current_power ?? 0), 0)
     const utilization =
@@ -55,11 +80,48 @@ export function Home() {
         : 0
     const fault = list.filter((p) => p.current_status === 'fault').length
     return { online, power, utilization, fault, total: list.length }
-  }, [livePiles])
+  }, [displayPiles])
+
+  const utilLabel =
+    mode === 'predict'
+      ? 'Forecast Util · 预测利用率(1h)'
+      : mode === 'history'
+        ? 'Util (24h ago) · 历史利用率'
+        : 'Utilization · 实时利用率'
+
+  const utilTone: 'cyan' | 'success' | 'warning' = mode === 'predict' ? 'success' : 'cyan'
 
   return (
     <div className="relative flex h-full flex-col overflow-hidden p-4">
       <ScanLine />
+
+      {/* Mode header row */}
+      <div className="mb-2 flex shrink-0 items-end justify-between gap-3">
+        <div className="flex items-baseline gap-3">
+          <h2 className="font-title text-base font-bold uppercase tracking-[0.25em] text-ioc-cyan text-glow-cyan">
+            City Overview · 城市总览
+          </h2>
+          {mode === 'predict' ? (
+            <span className="text-[11px] text-ioc-blue">
+              未来 1 小时预测 · LSTM 模型
+              {forecast.loading
+                ? ` · 加载中…`
+                : forecast.error
+                  ? ` · 失败: ${forecast.error}`
+                  : forecast.generatedAt
+                    ? ` · ${forecast.pileCount}/${displayPiles.length} piles · 置信度 ${(forecast.averageConfidence * 100).toFixed(0)}% · ${ageLabel(forecast.generatedAt)}`
+                    : ''}
+            </span>
+          ) : mode === 'history' ? (
+            <span className="text-[11px] text-ioc-text-muted">
+              24 小时前同时段 · 合成基线 σ≈0.10
+            </span>
+          ) : (
+            <span className="text-[11px] text-ioc-text-muted">WebSocket 1Hz · synthetic</span>
+          )}
+        </div>
+        <ModeSwitch mode={mode} onChange={setMode} />
+      </div>
 
       {/* KPI strip */}
       <section className="grid shrink-0 grid-cols-2 gap-3 md:grid-cols-4">
@@ -76,14 +138,10 @@ export function Home() {
           decimals={1}
           suffix=" kW"
         />
+        <KpiCard tone="danger" label="Faulted · 故障" value={kpis.fault} />
         <KpiCard
-          tone="danger"
-          label="Faulted · 故障"
-          value={kpis.fault}
-        />
-        <KpiCard
-          tone="cyan"
-          label="Utilization · 利用率"
+          tone={utilTone}
+          label={utilLabel}
           value={kpis.utilization * 100}
           decimals={1}
           suffix=" %"
@@ -95,9 +153,16 @@ export function Home() {
         <TechBorder>
           <div className="relative flex h-full flex-col">
             <div className="flex items-center justify-between border-b border-ioc-border/50 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-ioc-text-secondary">
-              <span>Hangzhou Pile Map · 杭州充电桩地图</span>
+              <span>
+                Hangzhou Pile Map · 杭州充电桩地图
+                {mode === 'predict' ? (
+                  <span className="ml-2 text-ioc-blue">[FORECAST]</span>
+                ) : mode === 'history' ? (
+                  <span className="ml-2 text-ioc-text-muted">[HISTORY]</span>
+                ) : null}
+              </span>
               <span className="font-mono text-[10px] text-ioc-text-muted">
-                provider={env.mapProvider} · {livePiles.length} piles ·{' '}
+                provider={env.mapProvider} · {displayPiles.length} piles ·{' '}
                 <span className={isConnected ? 'text-ioc-success' : 'text-ioc-danger'}>
                   {isConnected ? '● live' : '○ offline'}
                 </span>
@@ -105,7 +170,8 @@ export function Home() {
             </div>
             <div className="min-h-0 flex-1">
               <CityMap
-                piles={livePiles}
+                piles={displayPiles}
+                predicted={mode === 'predict'}
                 onPileClick={(p) => navigate(`/city/piles/${p.id}`)}
               />
             </div>
@@ -129,4 +195,22 @@ export function Home() {
       </section>
     </div>
   )
+}
+
+function clamp01(n: number): number {
+  return Math.max(0, Math.min(1, n))
+}
+
+function hashCode(s: string): number {
+  let h = 0
+  for (let i = 0; i < s.length; i++) {
+    h = (h * 31 + s.charCodeAt(i)) | 0
+  }
+  return Math.abs(h)
+}
+
+function ageLabel(ts: number): string {
+  const sec = Math.round((Date.now() - ts) / 1000)
+  if (sec < 60) return `${sec}s ago`
+  return `${Math.round(sec / 60)}m ago`
 }

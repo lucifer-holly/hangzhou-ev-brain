@@ -202,6 +202,31 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/stats/predicted-utilization": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * One-shot LSTM forecast across every pile
+         * @description Return the next-hour predicted occupancy for every pile.
+         *
+         *     Loads the 30-day telemetry DataFrame ONCE and predicts the whole
+         *     population in a single batched LSTM forward pass — drastically
+         *     faster than calling ``/api/ai/predict/demand`` 100 times.
+         *     Result cached in-process for 60 s.
+         */
+        get: operations["predicted_utilization_api_stats_predicted_utilization_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/ai/predict/demand": {
         parameters: {
             query?: never;
@@ -511,6 +536,19 @@ export interface components {
              */
             last_seen_at: string;
         };
+        /** PilePrediction */
+        PilePrediction: {
+            /** Pile Id */
+            pile_id: string;
+            /** Predicted Occupancy */
+            predicted_occupancy: number;
+            /** Std */
+            std: number;
+            /** Ci Low */
+            ci_low: number;
+            /** Ci High */
+            ci_high: number;
+        };
         /** PileSummary24h */
         PileSummary24h: {
             /** Avg Occupancy */
@@ -523,6 +561,27 @@ export interface components {
             fault_count: number;
             /** Sample Count */
             sample_count: number;
+        };
+        /** PredictedUtilizationResponse */
+        PredictedUtilizationResponse: {
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Hours Ahead */
+            hours_ahead: number;
+            /** Pile Count */
+            pile_count: number;
+            /** Average Predicted Occupancy */
+            average_predicted_occupancy: number;
+            /**
+             * Average Confidence
+             * @description Average half-CI-width across piles, 1 = perfectly tight, 0 = wide.
+             */
+            average_confidence: number;
+            /** Predictions */
+            predictions: components["schemas"]["PilePrediction"][];
         };
         /** RegionOut */
         RegionOut: {
@@ -953,6 +1012,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["FaultTypesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    predicted_utilization_api_stats_predicted_utilization_get: {
+        parameters: {
+            query?: {
+                hours_ahead?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PredictedUtilizationResponse"];
                 };
             };
             /** @description Validation Error */

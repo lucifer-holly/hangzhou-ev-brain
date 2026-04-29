@@ -338,6 +338,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/stats/predicted-utilization:
+    get:
+      tags:
+      - stats
+      summary: One-shot LSTM forecast across every pile
+      description: 'Return the next-hour predicted occupancy for every pile.
+
+
+        Loads the 30-day telemetry DataFrame ONCE and predicts the whole
+
+        population in a single batched LSTM forward pass — drastically
+
+        faster than calling ``/api/ai/predict/demand`` 100 times.
+
+        Result cached in-process for 60 s.'
+      operationId: predicted_utilization_api_stats_predicted_utilization_get
+      parameters:
+      - name: hours_ahead
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 6
+          minimum: 1
+          default: 1
+          title: Hours Ahead
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictedUtilizationResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/ai/predict/demand:
     post:
       tags:
@@ -859,6 +898,38 @@ components:
       - current_occupancy
       - last_seen_at
       title: PileOut
+    PilePrediction:
+      properties:
+        pile_id:
+          type: string
+          title: Pile Id
+        predicted_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Predicted Occupancy
+        std:
+          type: number
+          minimum: 0.0
+          title: Std
+        ci_low:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Ci Low
+        ci_high:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Ci High
+      type: object
+      required:
+      - pile_id
+      - predicted_occupancy
+      - std
+      - ci_low
+      - ci_high
+      title: PilePrediction
     PileSummary24h:
       properties:
         avg_occupancy:
@@ -888,6 +959,43 @@ components:
       - fault_count
       - sample_count
       title: PileSummary24h
+    PredictedUtilizationResponse:
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        hours_ahead:
+          type: integer
+          title: Hours Ahead
+        pile_count:
+          type: integer
+          title: Pile Count
+        average_predicted_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Average Predicted Occupancy
+        average_confidence:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Average Confidence
+          description: Average half-CI-width across piles, 1 = perfectly tight, 0 = wide.
+        predictions:
+          items:
+            $ref: '#/components/schemas/PilePrediction'
+          type: array
+          title: Predictions
+      type: object
+      required:
+      - generated_at
+      - hours_ahead
+      - pile_count
+      - average_predicted_occupancy
+      - average_confidence
+      - predictions
+      title: PredictedUtilizationResponse
     RegionOut:
       properties:
         id:
