@@ -312,6 +312,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/grid/simulate-stress": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Run LP curtailment plan for a given target MW reduction */
+        post: operations["simulate_stress_api_grid_simulate_stress_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/stats/snapshot": {
         parameters: {
             query?: never;
@@ -495,6 +512,40 @@ export interface components {
             /** Buckets */
             buckets: components["schemas"]["FaultTypeBucket"][];
         };
+        /** GridStressRequest */
+        GridStressRequest: {
+            /** Target Curtailment Mw */
+            target_curtailment_mw: number;
+            /**
+             * Max Per Operator Pct
+             * @default 0.3
+             */
+            max_per_operator_pct: number;
+        };
+        /** GridStressResponse */
+        GridStressResponse: {
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Current Load Mw */
+            current_load_mw: number;
+            /** Target Curtailment Mw */
+            target_curtailment_mw: number;
+            /** Achieved Curtailment Mw */
+            achieved_curtailment_mw: number;
+            /** Achieved Pct Of Target */
+            achieved_pct_of_target: number;
+            /** New Load Mw */
+            new_load_mw: number;
+            /** Pricing Discount Pct */
+            pricing_discount_pct: number;
+            /** Expected Response Rate */
+            expected_response_rate: number;
+            /** Operator Allocations */
+            operator_allocations: components["schemas"]["OperatorAllocation"][];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -511,6 +562,23 @@ export interface components {
             avg_occupancy: number;
             /** Sample Count */
             sample_count: number;
+        };
+        /** OperatorAllocation */
+        OperatorAllocation: {
+            /** Operator Id */
+            operator_id: string;
+            /** Operator Name */
+            operator_name: string;
+            /** Color */
+            color: string;
+            /** Pile Count */
+            pile_count: number;
+            /** Current Power Kw */
+            current_power_kw: number;
+            /** Curtailment Pct */
+            curtailment_pct: number;
+            /** Saved Kw */
+            saved_kw: number;
         };
         /** OperatorComplianceResponse */
         OperatorComplianceResponse: {
@@ -1390,6 +1458,39 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DIDAnalysisResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    simulate_stress_api_grid_simulate_stress_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["GridStressRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GridStressResponse"];
                 };
             };
             /** @description Validation Error */

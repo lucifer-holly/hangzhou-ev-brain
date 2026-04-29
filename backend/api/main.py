@@ -31,7 +31,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.config import get_settings
 from api.realtime import ticker
 from api.routers import ai as ai_router
-from api.routers import events, health, operators, piles, regions, stats
+from api.routers import events, grid, health, operators, piles, regions, stats
 from api.ws import router as ws_router
 
 log = logging.getLogger("api.main")
@@ -85,6 +85,7 @@ def create_app() -> FastAPI:
     app.include_router(events.router)
     app.include_router(stats.router)
     app.include_router(ai_router.router)
+    app.include_router(grid.router)
     app.include_router(ws_router)
 
     return app

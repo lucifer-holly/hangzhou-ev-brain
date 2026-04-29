@@ -514,6 +514,31 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/grid/simulate-stress:
+    post:
+      tags:
+      - grid
+      summary: Run LP curtailment plan for a given target MW reduction
+      operationId: simulate_stress_api_grid_simulate_stress_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GridStressRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GridStressResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/stats/snapshot:
     get:
       tags:
@@ -830,6 +855,69 @@ components:
       - total
       - buckets
       title: FaultTypesResponse
+    GridStressRequest:
+      properties:
+        target_curtailment_mw:
+          type: number
+          minimum: 0.1
+          maximum: 10.0
+          title: Target Curtailment Mw
+        max_per_operator_pct:
+          type: number
+          minimum: 0.05
+          maximum: 0.6
+          default: 0.3
+          title: Max Per Operator Pct
+      type: object
+      required:
+      - target_curtailment_mw
+      title: GridStressRequest
+    GridStressResponse:
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        current_load_mw:
+          type: number
+          title: Current Load Mw
+        target_curtailment_mw:
+          type: number
+          title: Target Curtailment Mw
+        achieved_curtailment_mw:
+          type: number
+          title: Achieved Curtailment Mw
+        achieved_pct_of_target:
+          type: number
+          title: Achieved Pct Of Target
+        new_load_mw:
+          type: number
+          title: New Load Mw
+        pricing_discount_pct:
+          type: number
+          title: Pricing Discount Pct
+        expected_response_rate:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          title: Expected Response Rate
+        operator_allocations:
+          type: array
+          items:
+            $ref: '#/components/schemas/OperatorAllocation'
+          title: Operator Allocations
+      type: object
+      required:
+      - generated_at
+      - current_load_mw
+      - target_curtailment_mw
+      - achieved_curtailment_mw
+      - achieved_pct_of_target
+      - new_load_mw
+      - pricing_discount_pct
+      - expected_response_rate
+      - operator_allocations
+      title: GridStressResponse
     HTTPValidationError:
       properties:
         detail:
@@ -862,6 +950,42 @@ components:
       - avg_occupancy
       - sample_count
       title: HourlyOccupancy
+    OperatorAllocation:
+      properties:
+        operator_id:
+          type: string
+          title: Operator Id
+        operator_name:
+          type: string
+          title: Operator Name
+        color:
+          type: string
+          title: Color
+        pile_count:
+          type: integer
+          title: Pile Count
+        current_power_kw:
+          type: number
+          title: Current Power Kw
+        curtailment_pct:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          title: Curtailment Pct
+        saved_kw:
+          type: number
+          minimum: 0.0
+          title: Saved Kw
+      type: object
+      required:
+      - operator_id
+      - operator_name
+      - color
+      - pile_count
+      - current_power_kw
+      - curtailment_pct
+      - saved_kw
+      title: OperatorAllocation
     OperatorComplianceResponse:
       properties:
         generated_at:
