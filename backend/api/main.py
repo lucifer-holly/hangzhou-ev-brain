@@ -11,6 +11,17 @@ Run ``uvicorn api.main:app --reload`` for local dev, or ``docker-compose up``.
 
 from __future__ import annotations
 
+import os
+
+# Cap OpenMP / MKL threads to 1 — multiple libraries (PyTorch, XGBoost,
+# ONNXRuntime) link OpenMP from different runtimes on Apple Silicon and
+# can segfault when their thread pools collide.  AI inference here is
+# tiny and single-threaded is plenty fast.  Set BEFORE numpy / torch
+# imports trigger.
+os.environ.setdefault("OMP_NUM_THREADS", "1")
+os.environ.setdefault("MKL_NUM_THREADS", "1")
+os.environ.setdefault("OPENBLAS_NUM_THREADS", "1")
+
 import logging
 from contextlib import asynccontextmanager
 
@@ -19,6 +30,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from api.config import get_settings
 from api.realtime import ticker
+from api.routers import ai as ai_router
 from api.routers import events, health, operators, piles, regions
 from api.ws import router as ws_router
 
@@ -71,6 +83,7 @@ def create_app() -> FastAPI:
     app.include_router(operators.router)
     app.include_router(regions.router)
     app.include_router(events.router)
+    app.include_router(ai_router.router)
     app.include_router(ws_router)
 
     return app

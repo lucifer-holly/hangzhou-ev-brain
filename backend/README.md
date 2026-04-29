@@ -180,11 +180,31 @@ docker-compose run --rm backend python -m db.seed --force
 
 ## What this layer does NOT do
 
-- ❌ No AI inference (Spawn 4).
 - ❌ No real operator API integration (synthetic only).
 - ❌ No auth / HTTPS / rate limiting.
 - ❌ No Wokwi firmware (Spawn 8 — only the broker is here).
-- ❌ No `contracts/` files (Spawn 2 — but `/openapi.json` is the source).
+
+## AI endpoints (Spawn 4)
+
+The 4 AI models live under [`backend/ai/`](./ai/) and are exposed under
+`/api/ai`.  See [`ai/README.md`](./ai/README.md) for full details and
+training instructions.
+
+| Method | Path | Model |
+| --- | --- | --- |
+| `POST` | `/api/ai/predict/demand` | LSTM hourly demand prediction |
+| `POST` | `/api/ai/predict/site` | XGBoost + SHAP site selection |
+| `GET`  | `/api/ai/anomaly/{pile_id}` | Autoencoder reconstruction error |
+| `POST` | `/api/ai/yolo/detect` | YOLOv8 vehicle detection (image upload) |
+
+To train all three trainable models from a clean checkout:
+
+```bash
+./scripts/train_all_models.sh
+```
+
+(YOLO uses Ultralytics' pretrained `yolov8n.pt` and is downloaded on
+demand at first inference.)
 
 ## Troubleshooting
 

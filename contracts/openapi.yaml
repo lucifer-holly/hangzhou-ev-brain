@@ -291,8 +291,200 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/ai/predict/demand:
+    post:
+      tags:
+      - AI
+      summary: LSTM demand prediction
+      operationId: predict_demand_api_ai_predict_demand_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DemandRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DemandResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ai/predict/site:
+    post:
+      tags:
+      - AI
+      summary: XGBoost + SHAP site selection
+      operationId: predict_site_api_ai_predict_site_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SiteFeatures'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SiteResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ai/anomaly/{pile_id}:
+    get:
+      tags:
+      - AI
+      summary: Autoencoder anomaly check
+      operationId: check_anomaly_api_ai_anomaly__pile_id__get
+      parameters:
+      - name: pile_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Pile Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnomalyResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/ai/yolo/detect:
+    post:
+      tags:
+      - AI
+      summary: YOLOv8 occupancy detection
+      operationId: yolo_detect_api_ai_yolo_detect_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_yolo_detect_api_ai_yolo_detect_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/YoloResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
+    AnomalyResponse:
+      properties:
+        pile_id:
+          type: string
+          title: Pile Id
+        is_anomaly:
+          type: boolean
+          title: Is Anomaly
+        reconstruction_error:
+          type: number
+          minimum: 0.0
+          title: Reconstruction Error
+        threshold:
+          type: number
+          minimum: 0.0
+          title: Threshold
+        margin_ratio:
+          type: number
+          title: Margin Ratio
+      type: object
+      required:
+      - pile_id
+      - is_anomaly
+      - reconstruction_error
+      - threshold
+      - margin_ratio
+      title: AnomalyResponse
+    Body_yolo_detect_api_ai_yolo_detect_post:
+      properties:
+        image:
+          type: string
+          format: binary
+          title: Image
+          description: JPEG / PNG image of a parking area.
+      type: object
+      required:
+      - image
+      title: Body_yolo_detect_api_ai_yolo_detect_post
+    DemandRequest:
+      properties:
+        pile_id:
+          type: string
+          title: Pile Id
+          description: Pile id (must exist in the DB).
+        hours_ahead:
+          type: integer
+          maximum: 24.0
+          minimum: 1.0
+          title: Hours Ahead
+          description: Forecast horizon in hours.
+          default: 1
+      type: object
+      required:
+      - pile_id
+      title: DemandRequest
+    DemandResponse:
+      properties:
+        pile_id:
+          type: string
+          title: Pile Id
+        hours_ahead:
+          type: integer
+          title: Hours Ahead
+        predicted_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Predicted Occupancy
+        std:
+          type: number
+          minimum: 0.0
+          title: Std
+        ci_low:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Ci Low
+        ci_high:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Ci High
+      type: object
+      required:
+      - pile_id
+      - hours_ahead
+      - predicted_occupancy
+      - std
+      - ci_low
+      - ci_high
+      title: DemandResponse
     EventOut:
       properties:
         id:
@@ -620,6 +812,118 @@ components:
       - radius_km
       - description
       title: RegionOut
+    ShapContributionOut:
+      properties:
+        feature:
+          type: string
+          title: Feature
+        value:
+          type: number
+          title: Value
+        shap_contribution:
+          type: number
+          title: Shap Contribution
+      type: object
+      required:
+      - feature
+      - value
+      - shap_contribution
+      title: ShapContributionOut
+    SiteFeatures:
+      properties:
+        lat:
+          type: number
+          title: Lat
+          description: Latitude (杭州 ~30.x).
+        lng:
+          type: number
+          title: Lng
+          description: Longitude (杭州 ~120.x).
+        pop_density_1km:
+          type: number
+          minimum: 0.0
+          title: Pop Density 1Km
+          description: People per km² in 1 km radius.
+        poi_mall_count:
+          type: integer
+          minimum: 0.0
+          title: Poi Mall Count
+        poi_office_count:
+          type: integer
+          minimum: 0.0
+          title: Poi Office Count
+        poi_residential_count:
+          type: integer
+          minimum: 0.0
+          title: Poi Residential Count
+        existing_pile_count_1km:
+          type: integer
+          minimum: 0.0
+          title: Existing Pile Count 1Km
+        avg_utilization_1km:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Avg Utilization 1Km
+        road_grade:
+          type: integer
+          maximum: 3.0
+          minimum: 1.0
+          title: Road Grade
+          description: 1=支路 / 2=次干道 / 3=主干道
+        operator:
+          type: string
+          title: Operator
+          description: Operator slug — one of state_grid/teld/starcharge/nio.
+          default: state_grid
+      type: object
+      required:
+      - lat
+      - lng
+      - pop_density_1km
+      - poi_mall_count
+      - poi_office_count
+      - poi_residential_count
+      - existing_pile_count_1km
+      - avg_utilization_1km
+      - road_grade
+      title: SiteFeatures
+      description: 'Pydantic input for the API endpoint.
+
+
+        Used both as the FastAPI request schema and as the source for
+
+        :func:`features_to_vector`.'
+    SiteResponse:
+      properties:
+        predicted_utilization_6m:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Predicted Utilization 6M
+        confidence_interval_95:
+          prefixItems:
+          - type: number
+          - type: number
+          type: array
+          maxItems: 2
+          minItems: 2
+          title: Confidence Interval 95
+        shap_top3:
+          items:
+            $ref: '#/components/schemas/ShapContributionOut'
+          type: array
+          title: Shap Top3
+        shap_base_value:
+          type: number
+          title: Shap Base Value
+      type: object
+      required:
+      - predicted_utilization_6m
+      - confidence_interval_95
+      - shap_top3
+      - shap_base_value
+      title: SiteResponse
     TelemetryPoint:
       properties:
         ts:
@@ -683,3 +987,59 @@ components:
       - msg
       - type
       title: ValidationError
+    YoloBox:
+      properties:
+        x1:
+          type: number
+          title: X1
+        y1:
+          type: number
+          title: Y1
+        x2:
+          type: number
+          title: X2
+        y2:
+          type: number
+          title: Y2
+        confidence:
+          type: number
+          title: Confidence
+        class_name:
+          type: string
+          title: Class Name
+      type: object
+      required:
+      - x1
+      - y1
+      - x2
+      - y2
+      - confidence
+      - class_name
+      title: YoloBox
+    YoloResponse:
+      properties:
+        vehicle_count:
+          type: integer
+          title: Vehicle Count
+        boxes:
+          items:
+            $ref: '#/components/schemas/YoloBox'
+          type: array
+          title: Boxes
+        image_width:
+          type: integer
+          title: Image Width
+        image_height:
+          type: integer
+          title: Image Height
+        inference_ms:
+          type: number
+          title: Inference Ms
+      type: object
+      required:
+      - vehicle_count
+      - boxes
+      - image_width
+      - image_height
+      - inference_ms
+      title: YoloResponse

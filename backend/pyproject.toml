@@ -9,8 +9,9 @@ description = "HZ-EV Brain backend: FastAPI + synthetic data generator + SQLite 
 requires-python = ">=3.11"
 authors = [{ name = "HZ-EV Brain" }]
 dependencies = [
-    "fastapi>=0.115,<0.120",
+    "fastapi>=0.115,<0.121",
     "uvicorn[standard]>=0.30,<0.35",
+    "python-multipart>=0.0.9",
     "sqlalchemy>=2.0,<2.1",
     "aiosqlite>=0.20,<0.22",
     "greenlet>=3.0,<4.0",
@@ -19,7 +20,20 @@ dependencies = [
     "apscheduler>=3.10,<4.0",
     "paho-mqtt>=2.1,<3.0",
     "numpy>=1.26,<3.0",
+    "scipy>=1.13,<2.0",
+    "pandas>=2.2",
+    "scikit-learn>=1.4",
     "python-dateutil>=2.9,<3.0",
+    # AI / models
+    "torch>=2.4",
+    "xgboost>=2.1",
+    "shap>=0.46",
+    "ultralytics>=8.2",
+    "onnx>=1.17",
+    "onnxruntime>=1.19",
+    "Pillow>=10.0",
+    "matplotlib>=3.8",
+    "joblib>=1.3",
 ]
 
 [project.optional-dependencies]
@@ -32,7 +46,7 @@ dev = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["api*", "synth*", "db*"]
+include = ["api*", "synth*", "db*", "ai*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -123,11 +123,25 @@ backend's adapter layer reads through this contract.
 
 ## What's intentionally NOT here
 
-- ❌ Schemas for the AI-model HTTP endpoints — those are in OpenAPI under
-  `/api/ai/*` once Spawn 4 ships them.
 - ❌ Frontend-only types (component props, store shapes) — TS local concern.
 - ❌ Wokwi pin-out / hardware schema — that lives in
   `firmware/pile-simulator/diagram.json` (Spawn 8).
 - ❌ A runtime validator middleware — this is a demo; prod-grade contract
   enforcement at request time is out of scope (decision logged in
   `docs/spec.md` §13).
+
+## AI-model endpoints (Spawn 4)
+
+The 4 AI inference endpoints live in `openapi.yaml` under `/api/ai/*`:
+
+| Path | Method | Tag |
+| --- | --- | --- |
+| `/api/ai/predict/demand` | POST | AI |
+| `/api/ai/predict/site` | POST | AI |
+| `/api/ai/anomaly/{pile_id}` | GET | AI |
+| `/api/ai/yolo/detect` | POST | AI |
+
+`POST /api/ai/yolo/detect` is the one route that takes a multipart upload
+(`image: UploadFile`).  Frontend codegen tools must handle the
+`multipart/form-data` body shape — most generators do this automatically
+when the request body schema includes `format: binary`.
