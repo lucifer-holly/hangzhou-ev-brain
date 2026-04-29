@@ -1,44 +1,46 @@
-import { useMemo } from 'react'
-
 import type { Pile } from '@/api/piles'
-import { MapProvider, type MapMarker } from '@/components/map/MapProvider'
+import { env } from '@/lib/env'
+
+import { AMapCityMap } from './AMapCityMap'
+import { OSMCityMap } from './OSMCityMap'
 
 interface CityMapProps {
   piles: Pile[]
+  /** When true, the map is rendering predicted (LSTM) occupancy not realtime. */
+  predicted?: boolean
   onPileClick?: (pile: Pile) => void
   className?: string
 }
 
 /**
- * Composed city map — Phase B/C/D-aware overlay layer over MapProvider.
+ * IOC city map — switches between AMap and OSM-Leaflet implementations
+ * based on the `VITE_MAP_PROVIDER` env var.
  *
- * Phase B: pile markers + click-to-navigate (this stub).
- * Phase C: + region polygons + heatmap overlay + hover tooltip.
- * Phase D: + mode-aware coloring (predicted utilization).
+ * Both implementations render the SAME visual layers in the SAME order:
+ *   1. dark base tiles (AMap "grey" / Carto dark_all)
+ *   2. region polygons + glow labels (Future Tech City + Qiantang New Area)
+ *   3. heat halos — translucent circles per pile, sized + tinted by occupancy
+ *   4. pile markers — colored by status (or blue when predicted), clickable
+ *      with a rich hover tooltip (id / op / region / kW / occ / capacity / V)
+ *   5. legend overlay (status dots + heat gradient)
  */
-export function CityMap({ piles, onPileClick, className }: CityMapProps) {
-  const markers: MapMarker[] = useMemo(
-    () =>
-      piles.map((p) => ({
-        id: p.id,
-        lat: p.lat,
-        lng: p.lng,
-        status: p.current_status,
-        label: `${p.id.slice(0, 14)} · ${p.current_status} · ${(p.current_occupancy * 100).toFixed(0)}%`,
-      })),
-    [piles],
-  )
-
-  return (
-    <div className={className}>
-      <MapProvider
-        markers={markers}
-        theme="dark"
-        onMarkerClick={(m) => {
-          const pile = piles.find((p) => p.id === m.id)
-          if (pile) onPileClick?.(pile)
-        }}
+export function CityMap({ piles, predicted, onPileClick, className }: CityMapProps) {
+  if (env.mapProvider === 'amap') {
+    return (
+      <AMapCityMap
+        piles={piles}
+        predicted={predicted}
+        onPileClick={onPileClick}
+        className={className}
       />
-    </div>
+    )
+  }
+  return (
+    <OSMCityMap
+      piles={piles}
+      predicted={predicted}
+      onPileClick={onPileClick}
+      className={className}
+    />
   )
 }
