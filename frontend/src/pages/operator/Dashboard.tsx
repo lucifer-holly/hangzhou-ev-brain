@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { Activity, AlertOctagon, Network, Plug, Trophy, Zap } from 'lucide-react'
+import { Activity, AlertOctagon, Plug, Trophy, Zap } from 'lucide-react'
 import { toast } from 'sonner'
 
 import { useEvents } from '@/hooks/useEvents'
@@ -166,14 +166,14 @@ export function OperatorDashboard() {
       {/* IOC dark topbar — keeps brand identity consistent across consoles */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-ioc-border bg-ioc-deep px-5">
         <div className="flex items-center gap-3">
-          <Network className="h-5 w-5 text-ioc-cyan" />
-          <span className="font-title text-base font-bold uppercase tracking-[0.2em] text-ioc-cyan text-glow-cyan">
-            HZ-EV Brain
+          <img src="/logo.svg" alt="智枢" className="h-7 w-7" />
+          <span className="font-display text-lg font-semibold tracking-wide text-ioc-cyan text-glow-cyan">
+            智枢
           </span>
-          <span className="text-xs text-ioc-text-secondary">运营商工作台</span>
-          <span className="ml-2 hidden lg:inline rounded-sm border border-saas-accent/40 bg-saas-accent/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-saas-accent">
-            v1 · OPERATOR
+          <span className="hidden md:inline font-mono text-[10px] uppercase tracking-[0.2em] text-ioc-text-muted">
+            ZHISHU
           </span>
+          <span className="hidden lg:inline text-xs text-ioc-text-secondary">运营商工作台</span>
         </div>
         <div className="flex items-center gap-3 text-xs text-ioc-text-secondary">
           <div className="flex items-center gap-2 rounded-sm border border-ioc-border/50 bg-ioc-deep/60 px-2 py-1">

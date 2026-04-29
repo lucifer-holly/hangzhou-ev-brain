@@ -36,15 +36,37 @@ const config: Config = {
         },
       },
       fontFamily: {
-        title: ['Orbitron', 'Manrope', 'system-ui', 'sans-serif'],
-        body: [
-          'Inter',
+        // Geist + Noto Sans SC harmonize EN/ZH at the same x-height.
+        display: [
+          '"Geist Variable"',
+          '"Noto Sans SC"',
           'PingFang SC',
           'Hiragino Sans GB',
           'system-ui',
           'sans-serif',
         ],
-        mono: ['JetBrains Mono', 'ui-monospace', 'monospace'],
+        body: [
+          '"Geist Variable"',
+          '"Noto Sans SC"',
+          'PingFang SC',
+          'Hiragino Sans GB',
+          'system-ui',
+          'sans-serif',
+        ],
+        mono: [
+          '"Geist Mono Variable"',
+          'JetBrains Mono',
+          'ui-monospace',
+          'monospace',
+        ],
+        // Back-compat alias for legacy `font-title` usages.
+        title: [
+          '"Geist Variable"',
+          '"Noto Sans SC"',
+          'PingFang SC',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       backgroundImage: {
         'ioc-radial':

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Bookmark, Car, List, Map as MapIcon, Network, Search } from 'lucide-react'
+import { Bookmark, Car, List, Map as MapIcon, Search } from 'lucide-react'
 import { toast } from 'sonner'
 
 import type { Operator } from '@/api/operators'
@@ -167,9 +167,9 @@ export function DriverApp() {
         {/* Top bar (IOC dark, mini) */}
         <header className="flex shrink-0 items-center justify-between gap-2 border-b border-ioc-border bg-ioc-deep px-4 py-2.5 sm:rounded-t-3xl">
           <div className="flex items-center gap-2 truncate">
-            <Network className="h-4 w-4 shrink-0 text-ioc-cyan" />
-            <span className="font-title text-xs font-bold uppercase tracking-[0.2em] text-ioc-cyan">
-              HZ-EV
+            <img src="/logo.svg" alt="智枢" className="h-5 w-5 shrink-0" />
+            <span className="font-display text-sm font-semibold tracking-wide text-ioc-cyan">
+              智枢
             </span>
             <span className="text-[10px] text-ioc-text-secondary">车主端</span>
           </div>

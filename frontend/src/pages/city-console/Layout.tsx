@@ -1,5 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
-import { Activity, AlertTriangle, BarChart3, Coins, MapPinned, Network, ShieldCheck, Zap } from 'lucide-react'
+import { Activity, AlertTriangle, BarChart3, Coins, MapPinned, ShieldCheck, Zap } from 'lucide-react'
 
 import { LiveClock } from '@/components/ioc/LiveClock'
 import { PulseDot } from '@/components/ioc/PulseDot'
@@ -17,12 +17,12 @@ interface NavItem {
 
 const NAV_ITEMS: NavItem[] = [
   { to: '/city', label: 'Overview · 总览', icon: Activity, end: true },
-  { to: '/city/heatmap', label: '1 · Heatmap 热力图', icon: MapPinned },
-  { to: '/city/site-selection', label: '2 · Site Selection 选址 ⭐', icon: BarChart3 },
-  { to: '/city/grid', label: '3 · Grid Coordination 电网协同', icon: Zap },
-  { to: '/city/compliance', label: '4 · Compliance 合规审计', icon: ShieldCheck },
-  { to: '/city/emergency', label: '5 · Emergency 应急响应', icon: AlertTriangle },
-  { to: '/city/subsidy', label: '6 · Subsidy 补贴评估', icon: Coins },
+  { to: '/city/heatmap', label: 'Heatmap 热力图', icon: MapPinned },
+  { to: '/city/site-selection', label: 'Site Selection 选址 ⭐', icon: BarChart3 },
+  { to: '/city/grid', label: 'Grid Coordination 电网协同', icon: Zap },
+  { to: '/city/compliance', label: 'Compliance 合规审计', icon: ShieldCheck },
+  { to: '/city/emergency', label: 'Emergency 应急响应', icon: AlertTriangle },
+  { to: '/city/subsidy', label: 'Subsidy 补贴评估', icon: Coins },
 ]
 
 /**
@@ -39,15 +39,15 @@ export function CityConsoleLayout() {
       {/* Topbar */}
       <header className="flex h-14 shrink-0 items-center justify-between border-b border-ioc-border px-5">
         <div className="flex items-center gap-3">
-          <Network className="h-5 w-5 text-ioc-cyan" />
-          <span className="font-title text-base font-bold uppercase tracking-[0.2em] text-ioc-cyan text-glow-cyan">
-            HZ-EV Brain
+          <img src="/logo.svg" alt="智枢" className="h-7 w-7" />
+          <span className="font-display text-lg font-semibold tracking-wide text-ioc-cyan text-glow-cyan">
+            智枢
           </span>
-          <span className="text-xs text-ioc-text-secondary">
+          <span className="hidden md:inline font-mono text-[10px] uppercase tracking-[0.2em] text-ioc-text-muted">
+            ZHISHU
+          </span>
+          <span className="hidden lg:inline text-xs text-ioc-text-secondary">
             杭州智慧充电城市大脑
-          </span>
-          <span className="ml-2 hidden lg:inline rounded-sm border border-ioc-cyan/30 bg-ioc-cyan/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ioc-cyan">
-            v1 · IOC
           </span>
         </div>
         <div className="flex items-center gap-3 text-xs text-ioc-text-secondary">

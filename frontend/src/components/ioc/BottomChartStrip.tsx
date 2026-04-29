@@ -96,7 +96,7 @@ export function BottomChartStrip({ operators, className }: BottomChartStripProps
           top: '46%',
           style: {
             text: String(total),
-            fontFamily: 'Orbitron, sans-serif',
+            fontFamily: '"Geist Variable", sans-serif',
             fontSize: 22,
             fontWeight: 700,
             fill: ioc.accent.cyan,
@@ -230,7 +230,7 @@ export function BottomChartStrip({ operators, className }: BottomChartStripProps
           top: '36%',
           style: {
             text: String(total),
-            fontFamily: 'Orbitron, sans-serif',
+            fontFamily: '"Geist Variable", sans-serif',
             fontSize: 20,
             fontWeight: 700,
             fill: ioc.status.warning,

@@ -1,5 +1,7 @@
-# HZ-EV Brain · 杭州智慧充电城市大脑
+# 智枢 · ZHISHU · HZ-EV Brain
 
+> **From Pile to Brain · From Charging to Governing**
+>
 > AIoT-enabled municipal EV charging governance dashboard for Hangzhou.
 > Full-stack portfolio + course project: **React + FastAPI + PyTorch + ESP32**.
 > 6 governance functions × 4 AI models × 3 user dashboards.

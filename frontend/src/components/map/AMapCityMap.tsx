@@ -107,7 +107,7 @@ export function AMapCityMap({ piles, predicted = false, onPileClick, className }
               'background-color': 'transparent',
               'border-color': 'transparent',
               color: ioc.accent.cyan,
-              'font-family': 'Orbitron, sans-serif',
+              'font-family': '"Geist Variable", sans-serif',
               'font-size': '11px',
               'font-weight': '700',
               'letter-spacing': '0.25em',

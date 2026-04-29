@@ -1,4 +1,6 @@
-# HZ-EV Brain · 杭州智慧充电城市大脑
+# 智枢 · ZHISHU · HZ-EV Brain
+
+> **杭州智慧充电城市大脑** — *From Pile to Brain · From Charging to Governing*
 
 **Design Specification**
 Version 1.0 · 2026-04-30
@@ -7,7 +9,7 @@ Version 1.0 · 2026-04-30
 
 ## 0. Executive Summary
 
-**项目名**：HZ-EV Brain（杭州智慧充电城市大脑）
+**项目名**：智枢（ZHISHU · HZ-EV Brain）— 杭州智慧充电城市大脑
 
 **项目类型**：研究生课程作业（CityU EIE 532 AIoT Technologies）+ 求职 GitHub portfolio
 

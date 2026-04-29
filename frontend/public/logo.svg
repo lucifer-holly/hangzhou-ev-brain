@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" aria-label="智枢">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00D4FF"/>
+      <stop offset="1" stop-color="#4A9EFF"/>
+    </linearGradient>
+    <radialGradient id="ring" cx="32" cy="32" r="30" gradientUnits="userSpaceOnUse">
+      <stop offset="0.85" stop-color="#00D4FF" stop-opacity="0"/>
+      <stop offset="1" stop-color="#00D4FF" stop-opacity="0.45"/>
+    </radialGradient>
+  </defs>
+  <!-- outer pulse ring -->
+  <circle cx="32" cy="32" r="30" fill="url(#ring)"/>
+  <circle cx="32" cy="32" r="29" stroke="#00D4FF" stroke-opacity="0.45" stroke-width="1"/>
+  <!-- city skyline strip -->
+  <path d="M8 44 H14 V36 H18 V42 H22 V32 H26 V42 H30 V38 H34 V42 H38 V34 H42 V42 H46 V40 H50 V42 H56" stroke="#4A9EFF" stroke-opacity="0.55" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- lightning bolt -->
+  <path d="M34 12 L20 34 H30 L26 52 L46 28 H34 Z" fill="url(#g)" stroke="#00D4FF" stroke-width="0.8" stroke-linejoin="round"/>
+</svg>

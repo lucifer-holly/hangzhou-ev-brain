@@ -1,19 +1,23 @@
 /**
  * Typography tokens.
  *
- * Three font roles:
- *   - title : Orbitron (futuristic, KPI numbers, page titles)
- *   - body  : Inter + PingFang SC (everything else, ZH+EN)
- *   - mono  : JetBrains Mono (telemetry values, code, IDs)
+ * Three font roles (all self-hosted via @fontsource):
+ *   - display : Geist Variable (modern geometric, KPI numbers, page titles)
+ *   - body    : Geist Variable + Noto Sans SC (UI text, EN+ZH harmonized)
+ *   - mono    : Geist Mono Variable (telemetry values, code, IDs)
  *
- * Loaded via `<link>` in `index.html`. Tailwind exposes them as
- * `font-title`, `font-body`, `font-mono`.
+ * Loaded via `import` in `main.tsx`. Tailwind exposes them as
+ * `font-display`, `font-body`, `font-mono`.
+ *
+ * `font-title` is kept as a back-compat alias mapping to `display` while
+ * legacy components migrate.
  */
 
 export const fontFamily = {
-  title: "'Orbitron', 'Manrope', system-ui, sans-serif",
-  body: "'Inter', 'PingFang SC', 'Hiragino Sans GB', system-ui, sans-serif",
-  mono: "'JetBrains Mono', ui-monospace, monospace",
+  display:
+    "'Geist Variable', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', system-ui, sans-serif",
+  body: "'Geist Variable', 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', system-ui, sans-serif",
+  mono: "'Geist Mono Variable', 'JetBrains Mono', ui-monospace, monospace",
 } as const
 
 export const fontSize = {
