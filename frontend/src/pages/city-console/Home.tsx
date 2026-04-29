@@ -145,7 +145,7 @@ export function Home() {
   const utilTone: 'cyan' | 'success' | 'warning' = mode === 'predict' ? 'success' : 'cyan'
 
   return (
-    <div className="relative flex h-full flex-col overflow-hidden p-4">
+    <div className="bg-ioc-circuit relative flex h-full flex-col overflow-hidden p-4">
       <ScanLine />
 
       {/* Mode header row */}

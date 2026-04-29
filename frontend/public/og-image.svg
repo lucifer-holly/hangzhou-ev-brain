@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="630" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0A0E1A"/>
+      <stop offset="1" stop-color="#141E3C"/>
+    </linearGradient>
+    <linearGradient id="logoG" x1="0" y1="0" x2="200" y2="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00D4FF"/>
+      <stop offset="1" stop-color="#4A9EFF"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="180" cy="315" r="200" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#00D4FF" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#00D4FF" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M40 0 H0 V40" stroke="#00D4FF" stroke-opacity="0.06" stroke-width="1" fill="none"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#grid)"/>
+  <rect width="1200" height="630" fill="url(#halo)"/>
+
+  <!-- Logo -->
+  <g transform="translate(120,210) scale(2)">
+    <circle cx="32" cy="32" r="29" stroke="#00D4FF" stroke-opacity="0.45" stroke-width="1"/>
+    <path d="M8 44 H14 V36 H18 V42 H22 V32 H26 V42 H30 V38 H34 V42 H38 V34 H42 V42 H46 V40 H50 V42 H56" stroke="#4A9EFF" stroke-opacity="0.6" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M34 12 L20 34 H30 L26 52 L46 28 H34 Z" fill="url(#logoG)" stroke="#00D4FF" stroke-width="0.8"/>
+  </g>
+
+  <!-- Text -->
+  <text x="320" y="290" fill="#FFFFFF" font-family="'Geist', system-ui, sans-serif" font-size="120" font-weight="700">智枢</text>
+  <text x="320" y="345" fill="#00D4FF" font-family="'Geist Mono', monospace" font-size="32" font-weight="500" letter-spacing="8">ZHISHU · HZ-EV BRAIN</text>
+  <text x="320" y="410" fill="#A0B0CC" font-family="'Geist', system-ui, sans-serif" font-size="28" font-weight="400">From Pile to Brain · From Charging to Governing</text>
+  <text x="320" y="450" fill="#5A6680" font-family="'Geist', system-ui, sans-serif" font-size="22">杭州智慧充电城市大脑 · Hangzhou EV Charging Brain</text>
+
+  <!-- Bottom strip -->
+  <line x1="120" y1="540" x2="1080" y2="540" stroke="#00D4FF" stroke-opacity="0.2"/>
+  <text x="120" y="580" fill="#5A6680" font-family="'Geist Mono', monospace" font-size="16" letter-spacing="4">FastAPI · React · PyTorch · ESP32 · AMap · 100 piles · 4 AI models</text>
+</svg>

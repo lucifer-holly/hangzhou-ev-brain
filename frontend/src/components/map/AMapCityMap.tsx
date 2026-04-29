@@ -6,6 +6,7 @@ import { ioc, pileStatusColor } from '@/design-tokens'
 import { env } from '@/lib/env'
 import { cn, formatPct } from '@/lib/utils'
 
+import { HANGZHOU_LANDMARKS, LANDMARK_MIN_ZOOM } from './landmarks'
 import { CITY_REGIONS } from './regions'
 import { HZ_CENTER } from './types'
 
@@ -57,6 +58,7 @@ export function AMapCityMap({ piles, predicted = false, onPileClick, className }
   const haloLayerRef = useRef<any[]>([])
   const markerLayerRef = useRef<any[]>([])
   const polygonLayerRef = useRef<any[]>([])
+  const landmarkLayerRef = useRef<any[]>([])
   const onPileClickRef = useRef(onPileClick)
 
   useEffect(() => {
@@ -118,6 +120,38 @@ export function AMapCityMap({ piles, predicted = false, onPileClick, className }
           text.setMap(map)
           polygonLayerRef.current.push(text)
         }
+
+        // Landmark pills — only visible at zoom ≥ LANDMARK_MIN_ZOOM
+        // so they don't clutter the city-wide view.
+        const renderLandmarks = () => {
+          const z = map.getZoom()
+          const visible = z >= LANDMARK_MIN_ZOOM
+          if (!visible) {
+            landmarkLayerRef.current.forEach((l) => l?.setMap?.(null))
+            landmarkLayerRef.current = []
+            return
+          }
+          if (landmarkLayerRef.current.length > 0) return
+          for (const lm of HANGZHOU_LANDMARKS) {
+            const html = `
+              <div style="display:flex;align-items:center;gap:4px;padding:2px 6px 2px 4px;border-radius:9999px;background:rgba(10,14,26,0.85);border:1px solid ${lm.color}66;color:${lm.color};font-size:10px;font-family:'Geist Variable',sans-serif;letter-spacing:0.5px;backdrop-filter:blur(4px);opacity:0.7">
+                <span style="font-size:13px">${lm.icon}</span>
+                <span>${lm.name}</span>
+              </div>
+            `
+            const m = new AMap.Marker({
+              position: [lm.lng, lm.lat],
+              content: html,
+              anchor: 'middle-left',
+              offset: new AMap.Pixel(8, 0),
+              zIndex: 50,
+            })
+            m.setMap(map)
+            landmarkLayerRef.current.push(m)
+          }
+        }
+        renderLandmarks()
+        map.on('zoomend', renderLandmarks)
       })
       .catch((err: unknown) => {
         // eslint-disable-next-line no-console
@@ -132,6 +166,8 @@ export function AMapCityMap({ piles, predicted = false, onPileClick, className }
       haloLayerRef.current = []
       markerLayerRef.current.forEach((l) => l?.setMap?.(null))
       markerLayerRef.current = []
+      landmarkLayerRef.current.forEach((l) => l?.setMap?.(null))
+      landmarkLayerRef.current = []
       mapRef.current?.destroy?.()
       mapRef.current = null
     }
