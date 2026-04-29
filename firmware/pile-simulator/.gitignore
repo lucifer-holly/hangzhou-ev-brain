@@ -1,0 +1,11 @@
+# PlatformIO build artefacts
+.pio/
+.pioenvs/
+.piolibdeps/
+.vscode/
+*.bin
+*.elf
+*.map
+
+# Wokwi side-files (generated locally on first run)
+.wokwi/

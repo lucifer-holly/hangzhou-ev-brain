@@ -244,8 +244,8 @@ The trade-off is documented in
 | Check                            | Status       | Notes                                |
 |----------------------------------|--------------|--------------------------------------|
 | `diagram.json` is valid JSON     | ✅            | 11 parts, 29 connections             |
-| `pio run` compiles               | ⚠️ deferred  | PlatformIO not installed in spawn env|
-| Wokwi simulation runs            | ⚠️ deferred  | Needs `pio run` artifact first       |
+| `pio run` compiles               | ✅            | clean, RAM 14.2 %, Flash 23 % (≈ 750 KB) |
+| Wokwi simulation runs            | ⚠️ deferred  | Needs hands-on click — verify locally|
 | MQTT schema match                | ✅            | hand-checked vs `contracts/asyncapi.yaml` |
 | TFLite quantization              | ❌ skipped   | see "Plan A vs Plan B"               |
 
