@@ -18,6 +18,7 @@ RUN pip install --upgrade pip && pip install .
 COPY api ./api
 COPY synth ./synth
 COPY db ./db
+COPY ai ./ai
 
 RUN mkdir -p /app/data
 
