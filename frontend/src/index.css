@@ -171,37 +171,41 @@
     opacity: 0;
     animation: splash-fade-up 0.4s ease-out 1.4s forwards;
   }
+}
 
-  /* ────────────────────────────────────────────────────────────────────
-   * AMap attribution / logo contrast fix.
-   *
-   * AMap injects a dark-on-white "高德地图" credit + logo into the bottom
-   * corners of every map. On our dark IOC surface the black text and PNG
-   * logo become near-invisible. We can't restyle their innards directly
-   * (different AMap minor versions ship different class names), so we use
-   * a layered selector + a logo filter as a belt-and-braces fix.
-   * ──────────────────────────────────────────────────────────────────── */
-  .amap-copyright,
-  .amap-copyright a,
-  .amap-copyright span,
-  .amap-logo,
-  .amap-logo a {
-    color: rgba(255, 255, 255, 0.55) !important;
-    opacity: 0.6 !important;
-    text-shadow: 0 0 4px rgba(10, 14, 26, 0.6);
-  }
-  .amap-copyright a:hover,
-  .amap-logo a:hover {
-    color: rgba(0, 212, 255, 0.95) !important;
-    opacity: 1 !important;
-  }
-  /* Invert the rasterised logo so the dark glyph reads on dark surfaces. */
-  .amap-logo img,
-  .amap-copyright img {
-    filter: invert(1) brightness(1.4) opacity(0.55);
-  }
-  .amap-logo img:hover,
-  .amap-copyright img:hover {
-    filter: invert(1) brightness(1.6) opacity(0.95);
-  }
+/* ────────────────────────────────────────────────────────────────────
+ * AMap attribution / logo contrast fix.
+ *
+ * AMap injects a dark-on-white "高德地图" credit + logo into the bottom
+ * corners of every map. On our dark IOC surface the black text and PNG
+ * logo become near-invisible. We can't restyle their innards directly
+ * (different AMap minor versions ship different class names), so we use
+ * a layered selector + a logo filter as a belt-and-braces fix.
+ *
+ * Kept OUTSIDE @layer so Tailwind doesn't purge the selectors — the
+ * .amap-copyright / .amap-logo classes are injected by the AMap SDK at
+ * runtime and never appear in the source files Tailwind scans.
+ * ──────────────────────────────────────────────────────────────────── */
+.amap-copyright,
+.amap-copyright a,
+.amap-copyright span,
+.amap-logo,
+.amap-logo a {
+  color: rgba(255, 255, 255, 0.55) !important;
+  opacity: 0.6 !important;
+  text-shadow: 0 0 4px rgba(10, 14, 26, 0.6);
+}
+.amap-copyright a:hover,
+.amap-logo a:hover {
+  color: rgba(0, 212, 255, 0.95) !important;
+  opacity: 1 !important;
+}
+/* Invert the rasterised logo so the dark glyph reads on dark surfaces. */
+.amap-logo img,
+.amap-copyright img {
+  filter: invert(1) brightness(1.4) opacity(0.55);
+}
+.amap-logo img:hover,
+.amap-copyright img:hover {
+  filter: invert(1) brightness(1.6) opacity(0.95);
 }
