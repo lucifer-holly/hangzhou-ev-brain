@@ -1,7 +1,10 @@
 import { NavLink, Outlet } from 'react-router-dom'
 import { Activity, AlertTriangle, BarChart3, Coins, MapPinned, Network, ShieldCheck, Zap } from 'lucide-react'
 
+import { LiveClock } from '@/components/ioc/LiveClock'
 import { PulseDot } from '@/components/ioc/PulseDot'
+import { RoleSwitcher } from '@/components/ioc/RoleSwitcher'
+import { WeatherBadge } from '@/components/ioc/WeatherBadge'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { cn } from '@/lib/utils'
 
@@ -29,12 +32,12 @@ const NAV_ITEMS: NavItem[] = [
  * grid; the placeholder Home page already proves the design tokens work.
  */
 export function CityConsoleLayout() {
-  const { isConnected, lastTickAt } = useWebSocket()
+  const { isConnected } = useWebSocket()
 
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-ioc-radial">
       {/* Topbar */}
-      <header className="flex h-14 items-center justify-between border-b border-ioc-border px-6">
+      <header className="flex h-14 shrink-0 items-center justify-between border-b border-ioc-border px-5">
         <div className="flex items-center gap-3">
           <Network className="h-5 w-5 text-ioc-cyan" />
           <span className="font-title text-base font-bold uppercase tracking-[0.2em] text-ioc-cyan text-glow-cyan">
@@ -43,15 +46,20 @@ export function CityConsoleLayout() {
           <span className="text-xs text-ioc-text-secondary">
             杭州智慧充电城市大脑
           </span>
+          <span className="ml-2 hidden lg:inline rounded-sm border border-ioc-cyan/30 bg-ioc-cyan/10 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-ioc-cyan">
+            v1 · IOC
+          </span>
         </div>
-        <div className="flex items-center gap-4 text-xs text-ioc-text-secondary">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3 text-xs text-ioc-text-secondary">
+          <div className="flex items-center gap-2 rounded-sm border border-ioc-border/50 bg-ioc-deep/60 px-2 py-1">
             <PulseDot tone={isConnected ? 'success' : 'danger'} size="sm" />
-            <span>{isConnected ? 'Realtime · 实时' : 'Offline · 离线'}</span>
+            <span className="font-mono text-[10px]">
+              {isConnected ? 'WS · LIVE' : 'WS · OFFLINE'}
+            </span>
           </div>
-          {lastTickAt ? (
-            <span className="font-mono">{lastTickAt.slice(11, 19)}</span>
-          ) : null}
+          <WeatherBadge />
+          <LiveClock tz="Asia/Shanghai" />
+          <RoleSwitcher current="city" />
         </div>
       </header>
 

@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { toast } from 'sonner'
 
 import { BottomChartStrip } from '@/components/ioc/BottomChartStrip'
 import { KpiCard } from '@/components/ioc/KpiCard'
@@ -49,6 +50,58 @@ export function Home() {
   }, [piles.data, latestTelemetry])
 
   const forecast = useDemandForecast(1, mode === 'predict')
+
+  // Toast on WebSocket disconnect transitions (don't fire on initial mount).
+  const wasConnected = useRef<boolean | null>(null)
+  useEffect(() => {
+    if (wasConnected.current === null) {
+      wasConnected.current = isConnected
+      return
+    }
+    if (wasConnected.current && !isConnected) {
+      toast.warning('WebSocket disconnected', {
+        description: 'Realtime stream lost · attempting reconnect…',
+      })
+    } else if (!wasConnected.current && isConnected) {
+      toast.success('WebSocket reconnected', {
+        description: 'Realtime stream restored.',
+        duration: 2500,
+      })
+    }
+    wasConnected.current = isConnected
+  }, [isConnected])
+
+  // Toast on new critical events.
+  const seenCritical = useRef<Set<string>>(new Set())
+  useEffect(() => {
+    for (const evt of recentEvents) {
+      if (evt.severity !== 'critical') continue
+      const key = `${evt.pile_id}:${evt.ts}`
+      if (seenCritical.current.has(key)) continue
+      seenCritical.current.add(key)
+      toast.error(evt.message, {
+        description: `${evt.pile_id?.slice(0, 14)} · ${evt.type}`,
+        duration: 6000,
+      })
+    }
+  }, [recentEvents])
+
+  // Toast on forecast result.
+  const lastForecastTs = useRef<number | null>(null)
+  useEffect(() => {
+    if (!forecast.generatedAt) return
+    if (lastForecastTs.current === forecast.generatedAt) return
+    lastForecastTs.current = forecast.generatedAt
+    if (mode === 'predict') {
+      toast.success(
+        `LSTM forecast 完成 · ${forecast.pileCount} piles`,
+        {
+          description: `平均预测 ${(forecast.averageOccupancy * 100).toFixed(1)}% · 置信度 ${(forecast.averageConfidence * 100).toFixed(0)}%`,
+          duration: 4000,
+        },
+      )
+    }
+  }, [forecast.generatedAt, forecast.pileCount, forecast.averageOccupancy, forecast.averageConfidence, mode])
 
   const displayPiles = useMemo(() => {
     if (mode === 'predict') {
