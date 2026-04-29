@@ -72,6 +72,7 @@ void setup() {
 
   sensor_init();
   status_init();
+  g_anomaly.begin();
   mqtt_init();
   Serial.println(F("[main] init complete; entering control loop."));
 }
@@ -146,12 +147,14 @@ void loop() {
     const char* status_str = mode_to_status(g_mode, g_anomaly_latched);
     bool ok = mqtt_publish_telemetry(s, g_last_duty, g_last_fuzzy_k,
                                      g_session_energy_kwh, status_str);
+    const unsigned long inf_us = g_anomaly.last_inference_us();
     Serial.printf(
         "[t=%6lu] V=%6.1f I=%5.1f Tcab=%5.1f Tcab2=%5.1f acc=%4.2fg | "
-        "duty=%4.1f%% k=%4.2f mode=%s mqtt=%s\n",
+        "duty=%4.1f%% k=%4.2f mode=%s mqtt=%s ai=%s inf=%luµs\n",
         s.ts_ms, s.voltage_v, s.current_a, s.cable_temp_c, s.cabinet_temp_c,
         s.accel_mag, g_last_duty * 100.0f, g_last_fuzzy_k,
-        status_str, ok ? "ok" : (mqtt_connected() ? "?" : "down"));
+        status_str, ok ? "ok" : (mqtt_connected() ? "?" : "down"),
+        g_anomaly.using_tflite() ? "TFLM" : "z3σ", inf_us);
   }
 
   delay(5);

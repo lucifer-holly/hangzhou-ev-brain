@@ -74,10 +74,15 @@ SensorData sensor_read() {
     s.gyro_z    = g.gyro.z;
     s.imu_temp_c = t.temperature;
   }
-  // If the user is holding "IMPACT" we synthesise a 4 g spike so the anomaly
-  // detector has something to fire on regardless of MPU6050 availability.
+  // IMPACT button injects two anomaly signatures simultaneously:
+  //   - a 4 g accel-X spike (visible in MPU6050 channels, matches the
+  //     accel-based anomaly story even when no IMU is wired)
+  //   - a 60 V voltage spike on top of whatever the pot is reading
+  //     (this one feeds the Spawn 4 Autoencoder's V channel and triggers
+  //     reconstruction-error anomalies even without IMU coupling).
   if (s.impact_pressed) {
-    s.accel_x += 4.0f;
+    s.accel_x   += 4.0f;
+    s.voltage_v += 60.0f;
   }
   s.accel_mag = sqrtf(s.accel_x * s.accel_x +
                       s.accel_y * s.accel_y +

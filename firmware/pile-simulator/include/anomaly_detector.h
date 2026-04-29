@@ -1,16 +1,24 @@
-// Statistical anomaly detector — Plan B fallback for the Edge AI loop.
+// Edge AI anomaly detector — TFLite Micro Autoencoder (Plan A) with a
+// z-score fallback (Plan B) selectable at compile time via HZEV_USE_TFLITE.
 //
-// Original spec (§7.4) calls for an INT8-quantised Autoencoder running under
-// TensorFlow Lite Micro.  The trained model lives at
-// backend/ai/anomaly_detection/saved/autoencoder.onnx but the ONNX→TFLite
-// INT8 path is not stable on Apple Silicon + Python 3.14 (see backend
-// quantize_tflite.py docstring) and the TensorFlowLite_ESP32 PlatformIO
-// library has been unmaintained since 2021.
+// Plan A (default): runs the FP32 Autoencoder trained in Spawn 4
+// (backend/ai/anomaly_detection/saved/autoencoder.pt) through TFLite Micro,
+// computes per-window reconstruction MSE, trips when MSE > kAnomalyThreshold
+// (the 99-th percentile from training).
 //
-// This implementation keeps the architectural shape (multi-channel ring
-// buffer → per-channel scoring → fused trip decision) so swapping in TFLite
-// later is a drop-in replacement.  The score is a multi-channel Mahalanobis-
-// like z-score: max |x - μ| / σ over a rolling window.
+// Plan B (HZEV_USE_TFLITE=0): retains the original Spawn 8 multi-channel
+// rolling z-score detector — strictly cheaper and used as a safety net if
+// the TFLM library cannot be linked on a given target.
+//
+// The 8 channels mirror backend/ai/anomaly_detection/model.py:
+//   0 voltage  / 500
+//   1 current  / 400
+//   2 power    / 250
+//   3 occupancy_rate            (∈ [0, 1])
+//   4 energy_delivered_kwh / 250
+//   5 voltage_diff (Δ between consecutive steps, normalised)
+//   6 current_diff
+//   7 status_encoded            (idle=0, charging=0.33, occupied=0.66, fault=1.0)
 
 #pragma once
 
@@ -33,39 +41,43 @@ enum class AnomalyType {
 
 struct AnomalyResult {
   bool is_anomaly = false;
-  float score = 0.0f;       // max z-score across channels
+  float score = 0.0f;       // reconstruction MSE (Plan A) or max z-score (Plan B)
   AnomalyType type = AnomalyType::None;
   const char* type_str = "none";
   const char* message = "";
+  // Inference latency (Plan A only, microseconds).  0 in Plan B.
+  unsigned long inference_us = 0;
 };
 
 class AnomalyDetector {
  public:
-  // Called once per control tick (10 Hz).  Mutates internal ring buffers,
-  // returns the verdict for the latest sample.
+  bool begin();          // returns false if TFLM init fails (Plan A only)
   AnomalyResult check(const SensorData& s);
-
-  // Resets the rolling stats — useful after a long offline period or when a
-  // fault has been cleared by the cloud.
   void reset();
 
- private:
-  static constexpr size_t kWin = ANOMALY_WINDOW_LEN;  // 32
-  static constexpr size_t kCh  = 5;                   // V, I, T_cable, T_cabinet, |a|
+  bool using_tflite() const { return using_tflite_; }
+  unsigned long last_inference_us() const { return last_inference_us_; }
 
-  float buf_[kCh][kWin] = {};
-  size_t head_ = 0;
+ private:
+  static constexpr size_t kSeqLen   = 32;
+  static constexpr size_t kNumCh    = 8;
+  static constexpr size_t kInputDim = kSeqLen * kNumCh;   // 256
+
+  // Channel-major × time ring buffer (kNumCh × kSeqLen).
+  float buf_[kNumCh][kSeqLen] = {};
+  size_t head_   = 0;
   size_t filled_ = 0;
   unsigned long last_trip_ms_ = 0;
+  unsigned long last_inference_us_ = 0;
+  bool using_tflite_ = false;
 
-  void push(size_t ch, float x) {
-    buf_[ch][head_] = x;
-  }
-  void advance() {
-    head_ = (head_ + 1) % kWin;
-    if (filled_ < kWin) ++filled_;
-  }
-  void stats(size_t ch, float* mean, float* stddev) const;
+  // Previous raw values for Δ channels.
+  float prev_voltage_ = 0.0f;
+  float prev_current_ = 0.0f;
+
+  void push_sample(const SensorData& s);
+  AnomalyResult plan_a_tflite_(const SensorData& s);
+  AnomalyResult plan_b_zscore_(const SensorData& s);
 };
 
 }  // namespace hzev
