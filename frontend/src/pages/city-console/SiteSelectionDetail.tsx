@@ -1,13 +1,4 @@
 import { useMemo, useState } from 'react'
-import {
-  CircleMarker,
-  MapContainer,
-  Polygon,
-  TileLayer,
-  Tooltip,
-  useMapEvents,
-} from 'react-leaflet'
-import 'leaflet/dist/leaflet.css'
 import { Crosshair, Loader2, Sparkles, Star, Trash2, X } from 'lucide-react'
 import { toast } from 'sonner'
 
@@ -19,17 +10,15 @@ import {
   type SiteResponse,
 } from '@/api/ai'
 import { Button } from '@/components/ui/button'
-import { CITY_REGIONS } from '@/components/map/regions'
-import { HZ_CENTER } from '@/components/map/types'
+import { SiteMap } from '@/components/map/SiteMap'
+import { CANDIDATE_COLORS, type SiteCandidate } from '@/components/map/types'
 import { useOperators } from '@/hooks/useOperators'
 import { usePiles } from '@/hooks/usePiles'
-import { ioc } from '@/design-tokens/colors'
 import { cn, formatPct } from '@/lib/utils'
 
 import { DetailHeader } from './_shared/DetailHeader'
 import { SaasCard } from './_shared/SaasCard'
 
-const CANDIDATE_COLORS = ['#22d3ee', '#fb923c', '#a855f7', '#10b981', '#f43f5e']
 const PILE_COUNT_PRESETS = [5, 10, 20] as const
 type PileCount = (typeof PILE_COUNT_PRESETS)[number]
 
@@ -204,7 +193,17 @@ export function SiteSelectionDetail() {
           </div>
           <div className="h-[480px] w-full">
             <SiteMap
-              candidates={candidates}
+              candidates={candidates.map<SiteCandidate>((c) => ({
+                id: c.id,
+                index: c.index,
+                lat: c.lat,
+                lng: c.lng,
+                predictionLabel: c.prediction
+                  ? `${(c.prediction.predicted_utilization_6m * 100).toFixed(1)}%`
+                  : c.loading
+                    ? 'loading…'
+                    : undefined,
+              }))}
               existingPiles={piles.data ?? []}
               activeId={activeId}
               onMapClick={onMapClick}
@@ -345,114 +344,6 @@ export function SiteSelectionDetail() {
       </p>
     </div>
   )
-}
-
-/* ----------------------------- map ----------------------------- */
-
-function SiteMap({
-  candidates,
-  existingPiles,
-  activeId,
-  onMapClick,
-  onCandidateClick,
-}: {
-  candidates: Candidate[]
-  existingPiles: { id: string; lat: number; lng: number }[]
-  activeId: string | null
-  onMapClick: (lat: number, lng: number) => void
-  onCandidateClick: (id: string) => void
-}) {
-  return (
-    <MapContainer
-      center={[HZ_CENTER.lat, HZ_CENTER.lng]}
-      zoom={11}
-      scrollWheelZoom
-      zoomControl={false}
-      className="h-full w-full bg-ioc-deep"
-    >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-        attribution="&copy; CARTO &copy; OpenStreetMap"
-        subdomains={['a', 'b', 'c', 'd']}
-      />
-
-      {CITY_REGIONS.map((r) => (
-        <Polygon
-          key={r.id}
-          positions={r.polygon}
-          pathOptions={{
-            color: ioc.accent.cyan,
-            weight: 1.2,
-            opacity: 0.45,
-            fillColor: ioc.accent.cyan,
-            fillOpacity: 0.04,
-            dashArray: '6 4',
-          }}
-        >
-          <Tooltip direction="center" permanent opacity={0.85}>
-            <span
-              className="font-title text-[10px] font-bold uppercase tracking-[0.25em]"
-              style={{ color: ioc.accent.cyan }}
-            >
-              {r.name_zh}
-            </span>
-          </Tooltip>
-        </Polygon>
-      ))}
-
-      {/* Existing piles — small grey reference dots (non-interactive). */}
-      {existingPiles.map((p) => (
-        <CircleMarker
-          key={p.id}
-          center={[p.lat, p.lng]}
-          radius={2}
-          interactive={false}
-          pathOptions={{
-            color: ioc.text.muted,
-            fillColor: ioc.text.muted,
-            fillOpacity: 0.6,
-            weight: 0.5,
-          }}
-        />
-      ))}
-
-      {/* Candidates — colored pulsing markers. */}
-      {candidates.map((c) => (
-        <CircleMarker
-          key={c.id}
-          center={[c.lat, c.lng]}
-          radius={c.id === activeId ? 12 : 8}
-          eventHandlers={{ click: () => onCandidateClick(c.id) }}
-          pathOptions={{
-            color: CANDIDATE_COLORS[c.index % CANDIDATE_COLORS.length],
-            fillColor: CANDIDATE_COLORS[c.index % CANDIDATE_COLORS.length],
-            fillOpacity: 0.7,
-            weight: 2,
-          }}
-        >
-          <Tooltip direction="top" offset={[0, -8]} opacity={1}>
-            <span className="font-mono text-[11px]">
-              candidate #{c.index + 1}
-              {c.prediction
-                ? ` · ${(c.prediction.predicted_utilization_6m * 100).toFixed(1)}%`
-                : c.loading
-                  ? ' · loading…'
-                  : ''}
-            </span>
-          </Tooltip>
-        </CircleMarker>
-      ))}
-
-      <ClickListener onMapClick={onMapClick} />
-    </MapContainer>
-  )
-}
-
-function ClickListener({ onMapClick }: { onMapClick: (lat: number, lng: number) => void }) {
-  useMapEvents({
-    click: (e) => onMapClick(e.latlng.lat, e.latlng.lng),
-  })
-  return null
 }
 
 /* ----------------------------- panel ----------------------------- */

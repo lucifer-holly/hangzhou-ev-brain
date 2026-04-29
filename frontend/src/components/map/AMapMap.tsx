@@ -41,9 +41,10 @@ export function AMapMap({
     // the security key in the bundle; production deployments should proxy
     // AMap requests server-side and avoid shipping the secret.
     if (env.amapSecurity) {
-      ;(
-        window as unknown as { _AMapSecurityConfig?: { securityJsCode: string } }
-      )._AMapSecurityConfig = { securityJsCode: env.amapSecurity }
+      const w = window as unknown as {
+        _AMapSecurityConfig?: { securityJsCode: string }
+      }
+      w._AMapSecurityConfig = { securityJsCode: env.amapSecurity }
     }
 
     AMapLoader.load({
