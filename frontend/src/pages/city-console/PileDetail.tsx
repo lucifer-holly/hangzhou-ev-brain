@@ -507,6 +507,8 @@ function YoloPanel({
               ref={imgRef}
               src="/sample-parking.jpg"
               alt="sample parking lot"
+              loading="lazy"
+              decoding="async"
               className="block h-auto w-full"
               onLoad={(e) =>
                 setImgSize({
