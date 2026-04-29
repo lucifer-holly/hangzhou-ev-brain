@@ -1,0 +1,6 @@
+# Wokwi project descriptor — used by the Wokwi VS Code / CLI runner.
+# See https://docs.wokwi.com/vscode/getting-started for usage.
+[wokwi]
+version = 1
+firmware = '.pio/build/esp32-s3-devkitc-1/firmware.bin'
+elf = '.pio/build/esp32-s3-devkitc-1/firmware.elf'

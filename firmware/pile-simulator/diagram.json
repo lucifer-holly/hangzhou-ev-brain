@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "author": "HZ-EV Brain",
+  "editor": "wokwi",
+  "parts": [
+    {
+      "type": "board-esp32-s3-devkitc-1",
+      "id": "esp",
+      "top": 0,
+      "left": 0,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot_voltage",
+      "top": -150,
+      "left": -180,
+      "attrs": { "value": "60" }
+    },
+    {
+      "type": "wokwi-potentiometer",
+      "id": "pot_current",
+      "top": -150,
+      "left": -40,
+      "attrs": { "value": "55" }
+    },
+    {
+      "type": "wokwi-ntc-temperature-sensor",
+      "id": "temp_cable",
+      "top": -150,
+      "left": 100,
+      "attrs": { "temperature": "25" }
+    },
+    {
+      "type": "wokwi-ntc-temperature-sensor",
+      "id": "temp_cabinet",
+      "top": -150,
+      "left": 240,
+      "attrs": { "temperature": "30" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_plug",
+      "top": 200,
+      "left": -180,
+      "attrs": { "color": "green", "label": "PLUG" }
+    },
+    {
+      "type": "wokwi-pushbutton",
+      "id": "btn_impact",
+      "top": 200,
+      "left": -60,
+      "attrs": { "color": "red", "label": "IMPACT" }
+    },
+    {
+      "type": "wokwi-rgb-led",
+      "id": "led_status",
+      "top": 200,
+      "left": 80,
+      "attrs": { "common": "cathode" }
+    },
+    {
+      "type": "wokwi-servo",
+      "id": "servo_lock",
+      "top": 200,
+      "left": 200,
+      "attrs": {}
+    },
+    {
+      "type": "wokwi-buzzer",
+      "id": "buzzer",
+      "top": 320,
+      "left": -180,
+      "attrs": { "volume": "0.1" }
+    },
+    {
+      "type": "board-mpu6050",
+      "id": "imu",
+      "top": 320,
+      "left": 50,
+      "attrs": {}
+    }
+  ],
+  "connections": [
+    [ "esp:GND.1", "pot_voltage:GND", "black", [] ],
+    [ "esp:3V3", "pot_voltage:VCC", "red", [] ],
+    [ "esp:1", "pot_voltage:SIG", "green", [] ],
+
+    [ "esp:GND.2", "pot_current:GND", "black", [] ],
+    [ "esp:3V3", "pot_current:VCC", "red", [] ],
+    [ "esp:2", "pot_current:SIG", "yellow", [] ],
+
+    [ "esp:GND.1", "temp_cable:GND", "black", [] ],
+    [ "esp:3V3", "temp_cable:VCC", "red", [] ],
+    [ "esp:3", "temp_cable:OUT", "orange", [] ],
+
+    [ "esp:GND.2", "temp_cabinet:GND", "black", [] ],
+    [ "esp:3V3", "temp_cabinet:VCC", "red", [] ],
+    [ "esp:4", "temp_cabinet:OUT", "magenta", [] ],
+
+    [ "esp:GND.1", "btn_plug:1.l", "black", [] ],
+    [ "esp:5",     "btn_plug:2.l", "green", [] ],
+
+    [ "esp:GND.2", "btn_impact:1.l", "black", [] ],
+    [ "esp:6",     "btn_impact:2.l", "red", [] ],
+
+    [ "esp:GND.1", "led_status:COM", "black", [] ],
+    [ "esp:17",    "led_status:R",   "red", [] ],
+    [ "esp:18",    "led_status:G",   "green", [] ],
+    [ "esp:19",    "led_status:B",   "blue", [] ],
+
+    [ "esp:GND.2", "servo_lock:GND", "black", [] ],
+    [ "esp:5V",    "servo_lock:V+",  "red", [] ],
+    [ "esp:10",    "servo_lock:PWM", "orange", [] ],
+
+    [ "esp:GND.1", "buzzer:1", "black", [] ],
+    [ "esp:11",    "buzzer:2", "purple", [] ],
+
+    [ "esp:GND.2", "imu:GND", "black", [] ],
+    [ "esp:3V3",   "imu:VCC", "red", [] ],
+    [ "esp:8",     "imu:SDA", "blue", [] ],
+    [ "esp:9",     "imu:SCL", "cyan", [] ]
+  ],
+  "dependencies": {}
+}
