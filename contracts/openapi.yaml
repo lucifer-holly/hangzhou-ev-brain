@@ -1,0 +1,685 @@
+# HZ-EV Brain · OpenAPI Specification
+# Auto-generated from FastAPI backend at /openapi.json
+# Source of truth: contracts/openapi.yaml (this file)
+# All frontend API clients & operator adapters must conform to this spec
+#
+# To regenerate after backend changes:
+#   docker-compose up -d backend && \
+#     curl -s http://localhost:8000/openapi.json | \
+#     python3 -c "import yaml,json,sys; yaml.dump(json.load(sys.stdin), sys.stdout, allow_unicode=True, sort_keys=False)" > contracts/openapi.yaml
+openapi: 3.1.0
+info:
+  title: HZ-EV Brain Backend
+  description: HZ-EV Brain backend.  100% synthetic data, 100 piles across 杭州未来科技城
+    + 钱塘新区, 30-day history + 1 Hz live ticks.
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      tags:
+      - health
+      summary: Liveness probe
+      description: 'Return ``{"status": "ok"}`` when the process is alive.'
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Health Health Get
+  /version:
+    get:
+      tags:
+      - health
+      summary: Version metadata
+      operationId: version_version_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Version Version Get
+  /api/piles:
+    get:
+      tags:
+      - piles
+      summary: List piles
+      description: Return all piles, with optional region / operator / status filters.
+      operationId: list_piles_api_piles_get
+      parameters:
+      - name: region
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by region id.
+          title: Region
+        description: Filter by region id.
+      - name: operator
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by operator id.
+          title: Operator
+        description: Filter by operator id.
+      - name: status
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by current_status.
+          title: Status
+        description: Filter by current_status.
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PileOut'
+                title: Response List Piles Api Piles Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/piles/{pile_id}:
+    get:
+      tags:
+      - piles
+      summary: Pile detail
+      description: Return a single pile with its 24-hour rolling summary.
+      operationId: get_pile_api_piles__pile_id__get
+      parameters:
+      - name: pile_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Pile Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PileDetail'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/piles/{pile_id}/telemetry:
+    get:
+      tags:
+      - piles
+      summary: Pile telemetry (history)
+      description: Return historical telemetry for a single pile, newest first.
+      operationId: get_telemetry_api_piles__pile_id__telemetry_get
+      parameters:
+      - name: pile_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Pile Id
+      - name: from
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: From
+      - name: to
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: To
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 10000
+          minimum: 1
+          default: 500
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TelemetryPoint'
+                title: Response Get Telemetry Api Piles  Pile Id  Telemetry Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/operators:
+    get:
+      tags:
+      - operators
+      summary: List operators
+      description: Return all operators with their pile counts.
+      operationId: list_operators_api_operators_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/OperatorOut'
+                type: array
+                title: Response List Operators Api Operators Get
+  /api/regions:
+    get:
+      tags:
+      - regions
+      summary: List regions
+      operationId: list_regions_api_regions_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/RegionOut'
+                type: array
+                title: Response List Regions Api Regions Get
+  /api/events:
+    get:
+      tags:
+      - events
+      summary: List events
+      operationId: list_events_api_events_get
+      parameters:
+      - name: type
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by event type.
+          title: Type
+        description: Filter by event type.
+      - name: severity
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by severity.
+          title: Severity
+        description: Filter by severity.
+      - name: pile_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Filter by pile id.
+          title: Pile Id
+        description: Filter by pile id.
+      - name: since
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          description: Only events on/after this UTC ts.
+          title: Since
+        description: Only events on/after this UTC ts.
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 2000
+          minimum: 1
+          default: 100
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventOut'
+                title: Response List Events Api Events Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    EventOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        pile_id:
+          type: string
+          title: Pile Id
+        ts:
+          type: string
+          format: date-time
+          title: Ts
+        type:
+          type: string
+          enum:
+          - voltage_anomaly
+          - thermal_fault
+          - vibration_event
+          - cable_fault
+          - communication_loss
+          - charging_start
+          - charging_end
+          title: Type
+        severity:
+          type: string
+          enum:
+          - info
+          - warning
+          - critical
+          title: Severity
+        message:
+          type: string
+          title: Message
+        duration_minutes:
+          type: number
+          title: Duration Minutes
+        resolved:
+          type: boolean
+          title: Resolved
+      type: object
+      required:
+      - id
+      - pile_id
+      - ts
+      - type
+      - severity
+      - message
+      - duration_minutes
+      - resolved
+      title: EventOut
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    OperatorOut:
+      properties:
+        id:
+          type: string
+          title: Id
+          description: Operator slug, e.g. 'state_grid'.
+        name_zh:
+          type: string
+          title: Name Zh
+        name_en:
+          type: string
+          title: Name En
+        market_share:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Market Share
+        color:
+          type: string
+          title: Color
+        pile_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pile Count
+          description: Number of piles owned.
+      type: object
+      required:
+      - id
+      - name_zh
+      - name_en
+      - market_share
+      - color
+      title: OperatorOut
+    PileDetail:
+      properties:
+        id:
+          type: string
+          title: Id
+        operator_id:
+          type: string
+          title: Operator Id
+        region_id:
+          type: string
+          title: Region Id
+        lat:
+          type: number
+          title: Lat
+        lng:
+          type: number
+          title: Lng
+        capacity_kw:
+          type: number
+          title: Capacity Kw
+        connector_type:
+          type: string
+          title: Connector Type
+        installed_at:
+          type: string
+          format: date-time
+          title: Installed At
+        subsidy_amount:
+          type: number
+          title: Subsidy Amount
+        subsidy_group:
+          type: string
+          enum:
+          - treatment
+          - control
+          title: Subsidy Group
+        current_status:
+          type: string
+          enum:
+          - idle
+          - charging
+          - occupied
+          - fault
+          - offline
+          title: Current Status
+        current_voltage:
+          type: number
+          title: Current Voltage
+        current_current:
+          type: number
+          title: Current Current
+        current_power:
+          type: number
+          title: Current Power
+        current_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Current Occupancy
+        last_seen_at:
+          type: string
+          format: date-time
+          title: Last Seen At
+        summary_24h:
+          $ref: '#/components/schemas/PileSummary24h'
+      type: object
+      required:
+      - id
+      - operator_id
+      - region_id
+      - lat
+      - lng
+      - capacity_kw
+      - connector_type
+      - installed_at
+      - subsidy_amount
+      - subsidy_group
+      - current_status
+      - current_voltage
+      - current_current
+      - current_power
+      - current_occupancy
+      - last_seen_at
+      - summary_24h
+      title: PileDetail
+    PileOut:
+      properties:
+        id:
+          type: string
+          title: Id
+        operator_id:
+          type: string
+          title: Operator Id
+        region_id:
+          type: string
+          title: Region Id
+        lat:
+          type: number
+          title: Lat
+        lng:
+          type: number
+          title: Lng
+        capacity_kw:
+          type: number
+          title: Capacity Kw
+        connector_type:
+          type: string
+          title: Connector Type
+        installed_at:
+          type: string
+          format: date-time
+          title: Installed At
+        subsidy_amount:
+          type: number
+          title: Subsidy Amount
+        subsidy_group:
+          type: string
+          enum:
+          - treatment
+          - control
+          title: Subsidy Group
+        current_status:
+          type: string
+          enum:
+          - idle
+          - charging
+          - occupied
+          - fault
+          - offline
+          title: Current Status
+        current_voltage:
+          type: number
+          title: Current Voltage
+        current_current:
+          type: number
+          title: Current Current
+        current_power:
+          type: number
+          title: Current Power
+        current_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Current Occupancy
+        last_seen_at:
+          type: string
+          format: date-time
+          title: Last Seen At
+      type: object
+      required:
+      - id
+      - operator_id
+      - region_id
+      - lat
+      - lng
+      - capacity_kw
+      - connector_type
+      - installed_at
+      - subsidy_amount
+      - subsidy_group
+      - current_status
+      - current_voltage
+      - current_current
+      - current_power
+      - current_occupancy
+      - last_seen_at
+      title: PileOut
+    PileSummary24h:
+      properties:
+        avg_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Avg Occupancy
+        peak_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Peak Occupancy
+        total_energy_kwh:
+          type: number
+          title: Total Energy Kwh
+        fault_count:
+          type: integer
+          title: Fault Count
+        sample_count:
+          type: integer
+          title: Sample Count
+      type: object
+      required:
+      - avg_occupancy
+      - peak_occupancy
+      - total_energy_kwh
+      - fault_count
+      - sample_count
+      title: PileSummary24h
+    RegionOut:
+      properties:
+        id:
+          type: string
+          title: Id
+        name_zh:
+          type: string
+          title: Name Zh
+        name_en:
+          type: string
+          title: Name En
+        center_lat:
+          type: number
+          title: Center Lat
+        center_lng:
+          type: number
+          title: Center Lng
+        radius_km:
+          type: number
+          title: Radius Km
+        description:
+          type: string
+          title: Description
+        pile_count:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Pile Count
+      type: object
+      required:
+      - id
+      - name_zh
+      - name_en
+      - center_lat
+      - center_lng
+      - radius_km
+      - description
+      title: RegionOut
+    TelemetryPoint:
+      properties:
+        ts:
+          type: string
+          format: date-time
+          title: Ts
+        voltage:
+          type: number
+          title: Voltage
+        current:
+          type: number
+          title: Current
+        power:
+          type: number
+          title: Power
+        occupancy_rate:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Occupancy Rate
+        energy_delivered_kwh:
+          type: number
+          title: Energy Delivered Kwh
+        status:
+          type: string
+          enum:
+          - idle
+          - charging
+          - occupied
+          - fault
+          - offline
+          title: Status
+      type: object
+      required:
+      - ts
+      - voltage
+      - current
+      - power
+      - occupancy_rate
+      - energy_delivered_kwh
+      - status
+      title: TelemetryPoint
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

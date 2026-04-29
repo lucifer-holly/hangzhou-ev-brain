@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://hz-ev-brain.local/contracts/operators/nio.schema.json",
+  "title": "NIO Power Pile Schema",
+  "description": "NIO Power (蔚来能源) pile schema (mock). Carrier-style: camelCase + vehicle / battery context bleeds into the API even though this is the pile side. Notice the swap-station hybrid model and the SoC / vehicle-bound fields.",
+  "type": "object",
+  "required": ["pileId", "powerStationId", "stationType"],
+  "additionalProperties": false,
+  "properties": {
+    "pileId": {
+      "type": "string",
+      "pattern": "^NIO-[A-Z]{2}[0-9]{6}$"
+    },
+    "powerStationId": {
+      "type": "string"
+    },
+    "stationType": {
+      "enum": ["CHARGING", "SWAPPING", "HYBRID"]
+    },
+    "powerLevel": {
+      "enum": ["AC_7KW", "DC_20KW", "DC_60KW", "DC_180KW", "DC_500KW"]
+    },
+    "vehicleCompatibility": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": ["ES8", "ES6", "ES7", "EC6", "EC7", "ET7", "ET5", "ET5T", "EL7"]
+      }
+    },
+    "swapInventory": {
+      "type": ["object", "null"],
+      "description": "Only present when stationType is SWAPPING or HYBRID.",
+      "additionalProperties": false,
+      "properties": {
+        "totalBatteryBays": { "type": "integer", "minimum": 0 },
+        "readyBatteryCount": { "type": "integer", "minimum": 0 },
+        "chargingBatteryCount": { "type": "integer", "minimum": 0 },
+        "averageSocPercent": { "type": "number", "minimum": 0, "maximum": 100 },
+        "monthlySwapCount": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "currentSession": {
+      "type": ["object", "null"],
+      "description": "Active session linked to a specific NIO vehicle, null when idle.",
+      "additionalProperties": false,
+      "properties": {
+        "vehicleVin": {
+          "type": "string",
+          "pattern": "^[A-HJ-NPR-Z0-9]{17}$"
+        },
+        "ownerNioId": {
+          "type": "string",
+          "description": "蔚来 App account id."
+        },
+        "batterySoc": { "type": "number", "minimum": 0, "maximum": 100 },
+        "batteryHealthIndex": { "type": "number", "minimum": 0, "maximum": 1 },
+        "estimatedFinishMinutes": { "type": "integer", "minimum": 0 },
+        "isPowerSwapMember": { "type": "boolean" }
+      }
+    },
+    "realTimePower": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "voltage": { "type": "number" },
+        "current": { "type": "number" },
+        "powerKw": { "type": "number" },
+        "deliveredKwh": { "type": "number", "minimum": 0 }
+      }
+    },
+    "stationStatus": {
+      "enum": ["IN_SERVICE", "QUEUE_ONLY", "MAINTENANCE", "OFFLINE"]
+    },
+    "lastTelemetryAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

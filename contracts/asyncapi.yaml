@@ -1,0 +1,399 @@
+# HZ-EV Brain · AsyncAPI Specification
+# Hand-written reference for the MQTT channels exchanged between the cloud
+# (FastAPI backend) and the edge (ESP32 piles).  All publish / subscribe
+# operations below are described **from the cloud's perspective**:
+#   - `subscribe` = cloud receives (pile → cloud)
+#   - `publish`   = cloud sends    (cloud → pile)
+#
+# Source of truth for: Wokwi firmware (Spawn 8) + backend MQTT subscriber.
+asyncapi: "2.6.0"
+
+info:
+  title: HZ-EV Brain MQTT Channels
+  version: "0.1.0"
+  description: |
+    MQTT topics used by the HZ-EV Brain demo.
+
+    The broker is Mosquitto (anonymous, local-only).  All payloads are
+    JSON; binary frames are rejected.  Pile-scoped channels use
+    `pile/{pile_id}/...`; cloud-broadcast channels live under `system/...`.
+
+    Because this is a demo, no QoS-2 / retained / persistent-session
+    guarantees are required.  Producers SHOULD use QoS-1 to limit
+    duplicate delivery; consumers MUST tolerate occasional duplicates.
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  contact:
+    name: HZ-EV Brain
+    url: https://github.com/your-handle/hz-ev-brain
+
+defaultContentType: application/json
+
+servers:
+  mosquitto:
+    url: mosquitto:1883
+    protocol: mqtt
+    description: Local Mosquitto broker (`docker-compose up`).
+    bindings:
+      mqtt:
+        clientId: hzev-cloud-${random.uuid}
+        cleanSession: true
+        keepAlive: 30
+        bindingVersion: "0.1.0"
+
+# ------------------------------------------------------------------
+# CHANNELS
+# ------------------------------------------------------------------
+channels:
+  pile/{pile_id}/telemetry:
+    description: |
+      Per-pile telemetry stream — one frame per second from the
+      ESP32-side firmware.  Cloud subscribes for ingestion + WebSocket
+      fan-out + Autoencoder anomaly scoring.
+    parameters:
+      pile_id:
+        $ref: "#/components/parameters/PileId"
+    subscribe:
+      summary: Cloud receives 1 Hz pile telemetry.
+      operationId: receiveTelemetry
+      bindings:
+        mqtt:
+          qos: 1
+          retain: false
+          bindingVersion: "0.1.0"
+      message:
+        $ref: "#/components/messages/PileTelemetry"
+
+  pile/{pile_id}/event:
+    description: |
+      Pile-side state-change events: charging-start / -end, fault entered,
+      fault cleared, comm restored, manual reboot, etc.
+    parameters:
+      pile_id:
+        $ref: "#/components/parameters/PileId"
+    subscribe:
+      summary: Cloud receives discrete pile events.
+      operationId: receivePileEvent
+      bindings:
+        mqtt:
+          qos: 1
+          retain: false
+          bindingVersion: "0.1.0"
+      message:
+        $ref: "#/components/messages/PileEvent"
+
+  pile/{pile_id}/command:
+    description: |
+      Cloud-issued commands targeted at one specific pile: power
+      throttling (functions 3 + 5), connector lock / unlock, soft reboot,
+      remote diagnostic dump.
+    parameters:
+      pile_id:
+        $ref: "#/components/parameters/PileId"
+    publish:
+      summary: Cloud commands a single pile.
+      operationId: sendPileCommand
+      bindings:
+        mqtt:
+          qos: 1
+          retain: false
+          bindingVersion: "0.1.0"
+      message:
+        $ref: "#/components/messages/PileCommand"
+
+  system/grid/alert:
+    description: |
+      Fleet-wide grid-pressure broadcast — every pile's firmware
+      subscribes and the local fuzzy-logic controller folds the
+      `grid_pressure` value into its de-rating decision (function 3).
+    publish:
+      summary: Cloud broadcasts a grid alert to every pile.
+      operationId: sendGridAlert
+      bindings:
+        mqtt:
+          qos: 1
+          retain: true
+          bindingVersion: "0.1.0"
+      message:
+        $ref: "#/components/messages/GridAlert"
+
+  system/emergency/{event_id}:
+    description: |
+      Region-scoped emergency broadcast — used by function 5 to push
+      mass-event handling instructions to piles inside an affected
+      region (e.g. 亚运 stadium evacuation, 西湖 typhoon shelter,
+      春运 surge).  ``event_id`` is a stable slug that lets the
+      consumer suppress duplicates after reconnection.
+    parameters:
+      event_id:
+        $ref: "#/components/parameters/EmergencyEventId"
+    publish:
+      summary: Cloud broadcasts an emergency directive to a region.
+      operationId: sendEmergencyDirective
+      bindings:
+        mqtt:
+          qos: 1
+          retain: true
+          bindingVersion: "0.1.0"
+      message:
+        $ref: "#/components/messages/EmergencyDirective"
+
+# ------------------------------------------------------------------
+# COMPONENTS
+# ------------------------------------------------------------------
+components:
+  parameters:
+    PileId:
+      description: Stable pile identifier, e.g. ``pile-031-bfddc3d9``.
+      schema:
+        type: string
+        pattern: "^pile-[0-9]{3}-[0-9a-f]{8}$"
+
+    EmergencyEventId:
+      description: Slug of the emergency event, e.g. ``asian-games-2022-stadium``.
+      schema:
+        type: string
+        pattern: "^[a-z0-9][a-z0-9-]{2,63}$"
+
+  messages:
+    PileTelemetry:
+      name: PileTelemetry
+      title: Pile Telemetry Frame
+      summary: 1 Hz physical-layer reading.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PileTelemetryPayload"
+
+    PileEvent:
+      name: PileEvent
+      title: Pile Event
+      summary: Discrete state-change event.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PileEventPayload"
+
+    PileCommand:
+      name: PileCommand
+      title: Pile Command
+      summary: Cloud-issued instruction.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/PileCommandPayload"
+
+    GridAlert:
+      name: GridAlert
+      title: Grid Alert
+      summary: Fleet-wide grid-pressure broadcast.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/GridAlertPayload"
+
+    EmergencyDirective:
+      name: EmergencyDirective
+      title: Emergency Directive
+      summary: Region-scoped emergency instruction.
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/EmergencyDirectivePayload"
+
+  schemas:
+    # --- Common enums (shared across messages) ----------------------
+    PileStatus:
+      type: string
+      enum: [idle, charging, occupied, fault, offline]
+
+    EventSeverity:
+      type: string
+      enum: [info, warning, critical]
+
+    PileFaultType:
+      type: string
+      enum:
+        - voltage_anomaly
+        - thermal_fault
+        - vibration_event
+        - cable_fault
+
+    CommandType:
+      type: string
+      enum:
+        - throttle_power
+        - lock_connector
+        - unlock_connector
+        - soft_reboot
+        - run_self_diagnostic
+        - clear_fault
+
+    GridPressureLevel:
+      type: string
+      enum: [normal, elevated, high, critical]
+
+    EmergencyKind:
+      type: string
+      enum:
+        - asian_games
+        - concert
+        - typhoon
+        - chinese_new_year
+        - extreme_heat
+
+    # --- Telemetry payload ------------------------------------------
+    PileTelemetryPayload:
+      type: object
+      required: [pile_id, ts, voltage, current, power, occupancy_rate, status]
+      properties:
+        pile_id:
+          type: string
+        ts:
+          type: string
+          format: date-time
+        voltage:
+          type: number
+          description: DC bus voltage (V).
+        current:
+          type: number
+          description: Output current (A).
+        power:
+          type: number
+          description: Instant active power (kW).
+        occupancy_rate:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Fraction of capacity in use this second.
+        energy_delivered_kwh:
+          type: number
+          description: Cumulative energy this charging session.
+        status:
+          $ref: "#/components/schemas/PileStatus"
+        sensors:
+          type: object
+          description: Raw sensor channels (Wokwi mirror; absent in cloud-synth).
+          properties:
+            cable_temp_c:    { type: number }
+            cabinet_temp_c:  { type: number }
+            strain:          { type: number }
+            accel_g:         { type: array, items: { type: number }, minItems: 3, maxItems: 3 }
+
+    # --- Event payload ----------------------------------------------
+    PileEventPayload:
+      type: object
+      required: [pile_id, ts, type, severity]
+      properties:
+        pile_id:
+          type: string
+        ts:
+          type: string
+          format: date-time
+        type:
+          $ref: "#/components/schemas/PileFaultType"
+          description: For fault events.
+        severity:
+          $ref: "#/components/schemas/EventSeverity"
+        message:
+          type: string
+          description: Human-readable summary, may contain CJK.
+        duration_minutes:
+          type: number
+          minimum: 0
+        resolved:
+          type: boolean
+          default: false
+
+    # --- Command payload --------------------------------------------
+    PileCommandPayload:
+      type: object
+      required: [command_id, type, issued_at]
+      properties:
+        command_id:
+          type: string
+          format: uuid
+          description: Idempotency key — pile must dedupe on this.
+        type:
+          $ref: "#/components/schemas/CommandType"
+        issued_at:
+          type: string
+          format: date-time
+        valid_until:
+          type: string
+          format: date-time
+          description: Pile MUST drop the command if received after this.
+        params:
+          type: object
+          description: Type-specific knob bag.
+          properties:
+            target_power_kw:
+              type: number
+              description: For ``throttle_power``.
+            target_kfactor:
+              type: number
+              minimum: 0
+              maximum: 1
+              description: For ``throttle_power`` (alternative to absolute kW).
+            reason:
+              type: string
+
+    # --- Grid alert payload -----------------------------------------
+    GridAlertPayload:
+      type: object
+      required: [alert_id, level, issued_at]
+      properties:
+        alert_id:
+          type: string
+          format: uuid
+        level:
+          $ref: "#/components/schemas/GridPressureLevel"
+        issued_at:
+          type: string
+          format: date-time
+        valid_until:
+          type: string
+          format: date-time
+        recommended_kfactor:
+          type: number
+          minimum: 0
+          maximum: 1
+          description: Suggested fleet-wide power scale factor (0 = blackout).
+        affected_regions:
+          type: array
+          items:
+            type: string
+          description: Empty array means "all regions".
+        message:
+          type: string
+
+    # --- Emergency directive payload --------------------------------
+    EmergencyDirectivePayload:
+      type: object
+      required: [event_id, kind, region_id, issued_at]
+      properties:
+        event_id:
+          type: string
+        kind:
+          $ref: "#/components/schemas/EmergencyKind"
+        region_id:
+          type: string
+          description: Region slug (e.g. ``future_tech_city``).
+        issued_at:
+          type: string
+          format: date-time
+        valid_until:
+          type: string
+          format: date-time
+        playbook:
+          type: string
+          description: Slug of the YAML playbook to execute (function 5).
+        recommended_actions:
+          type: array
+          items:
+            type: string
+            enum:
+              - throttle_power
+              - prioritize_emergency_vehicles
+              - lock_all_connectors
+              - publish_dynamic_pricing
+              - notify_operators
+        notes_zh:
+          type: string
+          description: Operator-facing Chinese description.
