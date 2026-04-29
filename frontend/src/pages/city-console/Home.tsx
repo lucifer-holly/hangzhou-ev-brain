@@ -146,11 +146,16 @@ export function Home() {
   const utilTone: 'cyan' | 'success' | 'warning' = mode === 'predict' ? 'success' : 'cyan'
 
   return (
-    <div className="bg-ioc-circuit relative flex h-full flex-col overflow-hidden p-4">
+    // Spawn 9.7/B: page is now naturally tall and scrolls inside the parent
+    // <main>. Previously this was h-full + overflow-hidden with the map/event
+    // row taking flex-1, which crushed both panels on smaller viewports.
+    // Each major section now declares its own height so the user can scroll
+    // and read the full IOC overview at a comfortable density.
+    <div className="bg-ioc-circuit relative flex min-h-full flex-col gap-4 p-4">
       <ScanLine />
 
       {/* Mode header row */}
-      <div className="mb-2 flex shrink-0 items-end justify-between gap-3">
+      <div className="flex shrink-0 items-end justify-between gap-3">
         <div className="flex items-baseline gap-3">
           <h2 className="font-title text-base font-bold uppercase tracking-[0.25em] text-ioc-cyan text-glow-cyan">
             City Overview · 城市总览
@@ -202,10 +207,13 @@ export function Home() {
         />
       </section>
 
-      {/* Map + event stream */}
-      <section className="mt-3 grid min-h-0 flex-1 grid-cols-1 gap-3 lg:grid-cols-[2.4fr_1fr]">
+      {/* Map + event stream — main stage. Each panel is given a fixed
+          640 px height so the map is genuinely large and the event
+          stream has room for ~12 visible rows without stealing space
+          from the map. */}
+      <section className="grid grid-cols-1 gap-3 lg:grid-cols-[2.4fr_1fr]">
         <TechBorder>
-          <div className="relative flex h-full flex-col">
+          <div className="relative flex h-[640px] flex-col">
             <div className="flex items-center justify-between border-b border-ioc-border/50 px-3 py-2 text-[11px] uppercase tracking-[0.2em] text-ioc-text-secondary">
               <span>
                 Hangzhou Pile Map · 杭州充电桩地图
@@ -233,7 +241,7 @@ export function Home() {
         </TechBorder>
 
         <TechBorder>
-          <div className="h-full">
+          <div className="h-[640px]">
             <LiveEventStream
               realtimeEvents={recentEvents}
               isConnected={isConnected}
@@ -244,14 +252,14 @@ export function Home() {
       </section>
 
       {/* Bottom 3-chart strip */}
-      <section className="mt-3 shrink-0">
+      <section className="shrink-0">
         <BottomChartStrip operators={operators.data ?? []} />
       </section>
 
       {/* AI models showcase — surfaces the 4 models + measured metrics
           so portfolio visitors see the AI surface area without needing
           to drill into any detail page. */}
-      <section className="mt-3 shrink-0">
+      <section className="shrink-0">
         <AIModelsCard />
       </section>
     </div>
