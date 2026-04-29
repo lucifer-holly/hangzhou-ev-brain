@@ -68,11 +68,11 @@ export function SplashScreen() {
 
       {/* Logo */}
       <div className="splash-logo">
-        <img src="/logo.svg" alt="智枢" className="h-24 w-24 drop-shadow-[0_0_24px_rgba(0,212,255,0.6)]" />
+        <img src="/logo.svg" alt="智枢" className="h-28 w-28 drop-shadow-[0_0_28px_rgba(0,212,255,0.65)]" />
       </div>
 
       {/* CN brand */}
-      <h1 className="splash-cn font-display text-6xl font-semibold tracking-wider text-ioc-cyan">
+      <h1 className="splash-cn font-display text-8xl font-extrabold tracking-wider text-ioc-cyan">
         智枢
       </h1>
 

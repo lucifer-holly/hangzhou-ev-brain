@@ -9,8 +9,8 @@ import { useOperatorCompliance } from '@/hooks/useStats'
 import { usePiles } from '@/hooks/usePiles'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { Footer } from '@/components/Footer'
+import { StatusBadges } from '@/components/StatusBadges'
 import { LiveClock } from '@/components/ioc/LiveClock'
-import { PulseDot } from '@/components/ioc/PulseDot'
 import { RoleSwitcher } from '@/components/ioc/RoleSwitcher'
 import { env } from '@/lib/env'
 import { MapProvider, type MapMarker } from '@/components/map/MapProvider'
@@ -166,24 +166,32 @@ export function OperatorDashboard() {
   return (
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-saas-bg-alt">
       {/* IOC dark topbar — keeps brand identity consistent across consoles */}
-      <header className="flex h-14 shrink-0 items-center justify-between border-b border-ioc-border bg-ioc-deep px-5">
+      <header className="flex h-20 shrink-0 items-center justify-between border-b border-ioc-border bg-ioc-deep px-5">
         <div className="flex items-center gap-3">
-          <img src="/logo.svg" alt="智枢" className="h-7 w-7" />
-          <span className="font-display text-lg font-semibold tracking-wide text-ioc-cyan text-glow-cyan">
-            智枢
-          </span>
-          <span className="hidden md:inline font-mono text-[10px] uppercase tracking-[0.2em] text-ioc-text-muted">
-            ZHISHU
-          </span>
-          <span className="hidden lg:inline text-xs text-ioc-text-secondary">运营商工作台</span>
-        </div>
-        <div className="flex items-center gap-3 text-xs text-ioc-text-secondary">
-          <div className="flex items-center gap-2 rounded-sm border border-ioc-border/50 bg-ioc-deep/60 px-2 py-1">
-            <PulseDot tone={isConnected ? 'success' : 'danger'} size="sm" />
-            <span className="font-mono text-[10px]">
-              {isConnected ? 'WS · LIVE' : 'WS · OFFLINE'}
+          <img
+            src="/logo.svg"
+            alt="智枢"
+            className="h-10 w-10 drop-shadow-[0_0_12px_rgba(0,212,255,0.45)]"
+          />
+          <div className="flex flex-col leading-tight">
+            <div className="flex items-baseline gap-2">
+              <span
+                className="font-display text-3xl font-extrabold tracking-wide text-ioc-cyan"
+                style={{ textShadow: '0 0 14px rgba(0,212,255,0.55)' }}
+              >
+                智枢
+              </span>
+              <span className="font-mono text-[11px] uppercase tracking-[0.32em] text-ioc-text-muted">
+                ZHISHU
+              </span>
+            </div>
+            <span className="text-[11px] tracking-wide text-ioc-text-secondary">
+              运营商工作台 · Operator Console
             </span>
           </div>
+        </div>
+        <div className="flex items-center gap-3 text-xs text-ioc-text-secondary">
+          <StatusBadges variant="compact" />
           <OperatorPicker
             operators={operators.data ?? []}
             selectedId={operatorId}
@@ -197,9 +205,11 @@ export function OperatorDashboard() {
             rel="noopener noreferrer"
             title="View on GitHub"
             aria-label="GitHub repository"
-            className="btn-press hover-glow flex h-8 w-8 items-center justify-center rounded-sm border border-ioc-border/50 bg-ioc-deep/60 text-ioc-text-secondary transition-colors hover:text-ioc-cyan"
+            className="btn-press hover-glow flex items-center gap-1.5 rounded-md border border-ioc-cyan/40 bg-ioc-cyan/10 px-3 py-1.5 text-xs font-medium text-ioc-cyan transition-colors hover:bg-ioc-cyan/20"
           >
             <Github className="h-4 w-4" />
+            <span>GitHub</span>
+            <span aria-hidden className="text-[10px] opacity-70">↗</span>
           </a>
         </div>
       </header>

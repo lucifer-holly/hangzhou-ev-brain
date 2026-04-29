@@ -168,11 +168,22 @@ export function DriverApp() {
         {/* Top bar (IOC dark, mini) */}
         <header className="flex shrink-0 items-center justify-between gap-2 border-b border-ioc-border bg-ioc-deep px-4 py-2.5 sm:rounded-t-3xl">
           <div className="flex items-center gap-2 truncate">
-            <img src="/logo.svg" alt="智枢" className="h-5 w-5 shrink-0" />
-            <span className="font-display text-sm font-semibold tracking-wide text-ioc-cyan">
-              智枢
-            </span>
-            <span className="text-[10px] text-ioc-text-secondary">车主端</span>
+            <img
+              src="/logo.svg"
+              alt="智枢"
+              className="h-7 w-7 shrink-0 drop-shadow-[0_0_8px_rgba(0,212,255,0.4)]"
+            />
+            <div className="flex flex-col leading-tight">
+              <span
+                className="font-display text-lg font-extrabold tracking-wide text-ioc-cyan"
+                style={{ textShadow: '0 0 10px rgba(0,212,255,0.5)' }}
+              >
+                智枢
+              </span>
+              <span className="text-[9px] tracking-wider text-ioc-text-muted">
+                ZHISHU · 车主端
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-2 text-[10px] text-ioc-text-secondary">
             <PulseDot tone={isConnected ? 'success' : 'danger'} size="sm" />
