@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import type { GridStressResponse, OperatorAllocation } from '@/api/grid'
 import { simulateGridStress } from '@/api/grid'
 import { Button } from '@/components/ui/button'
+import { HowItWorksCard } from '@/components/HowItWorksCard'
 import { useOperators } from '@/hooks/useOperators'
 import { saas } from '@/design-tokens/colors'
 import { cn } from '@/lib/utils'
@@ -319,12 +320,13 @@ export function GridCoordinationDetail() {
         </SaasCard>
       </section>
 
-      <p className="mt-3 text-[11px] text-saas-text-light">
-        LP formulation: minimise Σ_i weight_i · cut_i · power_i · subject to Σ_i cut_i ·
-        power_i ≥ target ; 0 ≤ cut_i ≤ {30}%. Weight uses 0.5 + market_share so larger
-        operators are reluctantly curtailed last (real-world political reality of
-        grid coordination negotiations).
-      </p>
+      <HowItWorksCard
+        className="mt-4"
+        icon={<span aria-hidden>⚡</span>}
+        title="电网协同算法 · How it works"
+        description="当电网负荷接近警戒线时，系统使用线性规划在 4 家运营商之间自动分配降功率任务，按市场份额加权，且不超过单家 SLA 上限。份额越大的运营商越晚被切，对应真实的合约成本。"
+        techBadges={['Linear Programming', 'SLA-aware']}
+      />
     </div>
   )
 }

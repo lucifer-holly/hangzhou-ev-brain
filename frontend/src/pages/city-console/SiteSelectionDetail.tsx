@@ -10,6 +10,7 @@ import {
   type SiteResponse,
 } from '@/api/ai'
 import { Button } from '@/components/ui/button'
+import { HowItWorksCard } from '@/components/HowItWorksCard'
 import { SiteMap } from '@/components/map/SiteMap'
 import { CANDIDATE_COLORS, type SiteCandidate } from '@/components/map/types'
 import { useOperators } from '@/hooks/useOperators'
@@ -336,12 +337,13 @@ export function SiteSelectionDetail() {
         </SaasCard>
       ) : null}
 
-      <p className="mt-3 text-[11px] leading-relaxed text-saas-text-light">
-        Pipeline · 流水线: 点击地图 → POST /api/ai/features-for-location 合成 12 维
-        特征 (POI / 人口 / 邻桩 prior) → POST /api/ai/predict/site → XGBoost 推断 +
-        SHAP TreeExplainer 取 top-3 贡献。预期收入与 ROI 由 utilisation × 桩数 ×
-        电价启发式估算（4.0 kWh / hour-per-pile · ¥0.95 / kWh net margin）。
-      </p>
+      <HowItWorksCard
+        className="mt-4"
+        icon={<span aria-hidden>🧠</span>}
+        title="AI 选址引擎 · How it works"
+        description="在地图上点击候选位置，AI 会分析周边写字楼、人口、已有桩位等多维特征，预测未来 6 个月利用率与投资回报。SHAP 解释告诉你 Top 3 影响因子。"
+        techBadges={['XGBoost', 'SHAP']}
+      />
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { useOperators, useRegions } from '@/hooks/useOperators'
 import { usePiles } from '@/hooks/usePiles'
 import { usePileSnapshot } from '@/hooks/useStats'
 import { useWebSocket } from '@/hooks/useWebSocket'
+import { HowItWorksCard } from '@/components/HowItWorksCard'
 import { CityMap } from '@/components/map/CityMap'
 import { TechBorder } from '@/components/ioc/TechBorder'
 import { cn, formatPct } from '@/lib/utils'
@@ -393,6 +394,14 @@ export function HeatmapDetail() {
           </p>
         </SaasCard>
       ) : null}
+
+      <HowItWorksCard
+        className="mt-4"
+        icon={<span aria-hidden>🌡️</span>}
+        title="实时供需 · How it works"
+        description="系统每秒聚合全城 100 个充电桩的状态，用核密度算法绘制需求热力图。切换“预测”模式时，AI 会基于过去 24 小时数据预测未来 1 小时的占用走势。"
+        techBadges={['KDE', 'LSTM']}
+      />
     </div>
   )
 }

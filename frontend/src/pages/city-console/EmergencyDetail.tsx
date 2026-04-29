@@ -16,6 +16,7 @@ import type { Pile } from '@/api/piles'
 import { useOperators } from '@/hooks/useOperators'
 import { usePiles } from '@/hooks/usePiles'
 import { CityMap } from '@/components/map/CityMap'
+import { HowItWorksCard } from '@/components/HowItWorksCard'
 import { TechBorder } from '@/components/ioc/TechBorder'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -419,11 +420,13 @@ export function EmergencyDetail() {
         </section>
       )}
 
-      <p className="mt-4 text-[11px] text-saas-text-light">
-        预案以前端 TS config 形式声明（4 事件 × 3-4 动作），地图影响范围由
-        haversine 距离 + 半径阈值实时计算。Out of scope: 真正的 LSTM 影响范围
-        预测调用——后续可由 /api/ai/predict/demand 增量替换。
-      </p>
+      <HowItWorksCard
+        className="mt-4"
+        icon={<span aria-hidden>🚨</span>}
+        title="应急响应预案 · How it works"
+        description="选择事件类型后，规则引擎自动激活对应预案：识别影响区域、推荐处置动作（动态定价、限制单次会话、调度移动充电车），并预测未来需求走势。一键下发把多家运营商串成一致行动。"
+        techBadges={['Rule Engine', 'LSTM']}
+      />
     </div>
   )
 }

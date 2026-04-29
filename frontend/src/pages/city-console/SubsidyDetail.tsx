@@ -3,6 +3,7 @@ import ReactECharts from 'echarts-for-react'
 import { TrendingUp, Lightbulb } from 'lucide-react'
 
 import type { SubsidyPileRow } from '@/api/stats'
+import { HowItWorksCard } from '@/components/HowItWorksCard'
 import { useOperators } from '@/hooks/useOperators'
 import { useSubsidyAnalysis } from '@/hooks/useStats'
 import { saas } from '@/design-tokens/colors'
@@ -121,6 +122,14 @@ export function SubsidyDetail() {
           </section>
 
           <PolicyAdviceCards data={analysis.data} />
+
+          <HowItWorksCard
+            className="mt-5"
+            icon={<span aria-hidden>💰</span>}
+            title="因果推断分析 · How it works"
+            description="用 DID（双重差分）方法对比受补贴桩与对照组的利用率提升，剥离时间趋势影响，给出补贴的真实因果效应。p-value 告诉你这个效应是否统计显著，区域分布告诉你预算在哪续期最值得。"
+            techBadges={['DID', 'Causal Inference']}
+          />
         </>
       ) : null}
     </div>

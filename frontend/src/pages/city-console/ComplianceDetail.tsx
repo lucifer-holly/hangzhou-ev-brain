@@ -4,6 +4,7 @@ import { toast } from 'sonner'
 
 import type { ComplianceWindow, OperatorComplianceRow } from '@/api/stats'
 import { Button } from '@/components/ui/button'
+import { HowItWorksCard } from '@/components/HowItWorksCard'
 import { useOperatorCompliance } from '@/hooks/useStats'
 import { cn, formatPct } from '@/lib/utils'
 
@@ -242,12 +243,13 @@ export function ComplianceDetail() {
             <DrillDownPanel row={selectedRow} window={windowParam} />
           </section>
 
-          <p className="mt-3 text-[11px] text-saas-text-light">
-            Methodology · 算法说明: composite =
-            0.45·availability + 0.20·(1 − MTTR/90 min) + 0.20·(1 − price_anom/pile)
-            + 0.15·(1 − complaints/(pile·5)) → 0–100. Price anomaly 用 voltage_anomaly
-            事件作为 z-score &gt; 2σ 价格偏离的代理指标。
-          </p>
+          <HowItWorksCard
+            className="mt-4"
+            icon={<span aria-hidden>🛡️</span>}
+            title="合规审计引擎 · How it works"
+            description="系统自动统计每家运营商的可用率、故障响应时长、价格异常率，给出 A/B/C/D 综合评级。价格异常通过 z-score 检测全市偏离度，评级越低，监管关注越紧。"
+            techBadges={['Z-Score', 'SLA Scoring']}
+          />
         </>
       )}
     </div>
