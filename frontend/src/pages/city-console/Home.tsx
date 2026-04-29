@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 
+import { AIModelsCard } from '@/components/AIModelsCard'
 import { BottomChartStrip } from '@/components/ioc/BottomChartStrip'
 import { KpiCard } from '@/components/ioc/KpiCard'
 import { LiveEventStream } from '@/components/ioc/LiveEventStream'
@@ -245,6 +246,13 @@ export function Home() {
       {/* Bottom 3-chart strip */}
       <section className="mt-3 shrink-0">
         <BottomChartStrip operators={operators.data ?? []} />
+      </section>
+
+      {/* AI models showcase — surfaces the 4 models + measured metrics
+          so portfolio visitors see the AI surface area without needing
+          to drill into any detail page. */}
+      <section className="mt-3 shrink-0">
+        <AIModelsCard />
       </section>
     </div>
   )

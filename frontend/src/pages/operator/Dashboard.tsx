@@ -10,6 +10,7 @@ import { usePiles } from '@/hooks/usePiles'
 import { useWebSocket } from '@/hooks/useWebSocket'
 import { Footer } from '@/components/Footer'
 import { StatusBadges } from '@/components/StatusBadges'
+import { TechStackRibbon } from '@/components/TechStackRibbon'
 import { LiveClock } from '@/components/ioc/LiveClock'
 import { RoleSwitcher } from '@/components/ioc/RoleSwitcher'
 import { env } from '@/lib/env'
@@ -217,8 +218,9 @@ export function OperatorDashboard() {
       {/* SaaS body */}
       <main className="flex-1 overflow-auto">
         <div className="mx-auto flex max-w-[1600px] flex-col gap-4 p-5">
-          {/* Title row */}
-          <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+          {/* Title row + Tech Stack ribbon (takes the empty
+              real-estate to the right of the title block). */}
+          <div className="grid grid-cols-1 gap-3 lg:grid-cols-[1fr_minmax(320px,420px)] lg:items-start">
             <div>
               <div className="font-mono text-[11px] uppercase tracking-[0.25em] text-saas-accent/80">
                 Operator Console · 运营商工作台
@@ -242,18 +244,17 @@ export function OperatorDashboard() {
               <p className="mt-1 text-sm text-saas-text-mid">
                 单运营商视角 · 桩状态 / 异常 / 利用率 / 收益 / 同业对标
               </p>
+              {compliance.data ? (
+                <div className="mt-3 inline-flex items-center gap-2 rounded-md border border-saas-border bg-white px-3 py-1.5 text-xs text-saas-text-mid shadow-sm">
+                  <span>City rank</span>
+                  <span className="font-bold tabular-nums text-saas-text-dark">
+                    #{kpis.rank} / {kpis.rankTotal}
+                  </span>
+                  <span className="text-saas-text-light">· 综合得分排行</span>
+                </div>
+              ) : null}
             </div>
-            {compliance.data ? (
-              <div className="flex items-center gap-2 rounded-md border border-saas-border bg-white px-3 py-1.5 text-xs text-saas-text-mid shadow-sm">
-                <span>City rank</span>
-                <span className="font-bold tabular-nums text-saas-text-dark">
-                  #{kpis.rank} / {kpis.rankTotal}
-                </span>
-                <span className="text-saas-text-light">
-                  · 综合得分排行
-                </span>
-              </div>
-            ) : null}
+            <TechStackRibbon variant="full" theme="light" />
           </div>
 
           {/* KPI strip */}
