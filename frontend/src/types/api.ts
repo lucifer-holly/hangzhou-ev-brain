@@ -295,6 +295,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/stats/subsidy-analysis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Difference-in-differences causal evaluation of pile subsidies */
+        get: operations["subsidy_analysis_api_stats_subsidy_analysis_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/stats/operator-compliance": {
         parameters: {
             query?: never;
@@ -343,6 +360,42 @@ export interface components {
          * @enum {string}
          */
         ComplianceWindow: "24h" | "7d" | "30d";
+        /** DIDAnalysisResponse */
+        DIDAnalysisResponse: {
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Pre Window Days */
+            pre_window_days: number;
+            /** Post Window Days */
+            post_window_days: number;
+            /** Treatment N */
+            treatment_n: number;
+            /** Control N */
+            control_n: number;
+            /** Treatment Pre Avg */
+            treatment_pre_avg: number;
+            /** Treatment Post Avg */
+            treatment_post_avg: number;
+            /** Treatment Uplift */
+            treatment_uplift: number;
+            /** Control Pre Avg */
+            control_pre_avg: number;
+            /** Control Post Avg */
+            control_post_avg: number;
+            /** Control Uplift */
+            control_uplift: number;
+            /** Did Effect */
+            did_effect: number;
+            /** P Value */
+            p_value: number;
+            /** Avg Treatment Subsidy */
+            avg_treatment_subsidy: number;
+            /** Rows */
+            rows: components["schemas"]["SubsidyPileRow"][];
+        };
         /** DemandRequest */
         DemandRequest: {
             /**
@@ -728,6 +781,30 @@ export interface components {
             shap_top3: components["schemas"]["ShapContributionOut"][];
             /** Shap Base Value */
             shap_base_value: number;
+        };
+        /** SubsidyPileRow */
+        SubsidyPileRow: {
+            /** Pile Id */
+            pile_id: string;
+            /** Operator Id */
+            operator_id: string;
+            /** Region Id */
+            region_id: string;
+            /** Subsidy Amount */
+            subsidy_amount: number;
+            /**
+             * Subsidy Group
+             * @enum {string}
+             */
+            subsidy_group: "treatment" | "control";
+            /** Pre Avg Occupancy */
+            pre_avg_occupancy: number;
+            /** Post Avg Occupancy */
+            post_avg_occupancy: number;
+            /** Occupancy Lift */
+            occupancy_lift: number;
+            /** Roi Per Kyuan */
+            roi_per_kyuan: number;
         };
         /** TelemetryPoint */
         TelemetryPoint: {
@@ -1232,6 +1309,38 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["YoloResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    subsidy_analysis_api_stats_subsidy_analysis_get: {
+        parameters: {
+            query?: {
+                pre_days?: number;
+                post_days?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DIDAnalysisResponse"];
                 };
             };
             /** @description Validation Error */

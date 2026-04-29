@@ -478,6 +478,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/stats/subsidy-analysis:
+    get:
+      tags:
+      - stats
+      summary: Difference-in-differences causal evaluation of pile subsidies
+      operationId: subsidy_analysis_api_stats_subsidy_analysis_get
+      parameters:
+      - name: pre_days
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 7
+          maximum: 30
+          default: 23
+      - name: post_days
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 14
+          default: 7
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DIDAnalysisResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/stats/operator-compliance:
     get:
       tags:
@@ -551,6 +587,76 @@ components:
       - 7d
       - 30d
       title: ComplianceWindow
+    DIDAnalysisResponse:
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        pre_window_days:
+          type: integer
+          title: Pre Window Days
+        post_window_days:
+          type: integer
+          title: Post Window Days
+        treatment_n:
+          type: integer
+          title: Treatment N
+        control_n:
+          type: integer
+          title: Control N
+        treatment_pre_avg:
+          type: number
+          title: Treatment Pre Avg
+        treatment_post_avg:
+          type: number
+          title: Treatment Post Avg
+        treatment_uplift:
+          type: number
+          title: Treatment Uplift
+        control_pre_avg:
+          type: number
+          title: Control Pre Avg
+        control_post_avg:
+          type: number
+          title: Control Post Avg
+        control_uplift:
+          type: number
+          title: Control Uplift
+        did_effect:
+          type: number
+          title: Did Effect
+        p_value:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          title: P Value
+        avg_treatment_subsidy:
+          type: number
+          title: Avg Treatment Subsidy
+        rows:
+          type: array
+          items:
+            $ref: '#/components/schemas/SubsidyPileRow'
+          title: Rows
+      type: object
+      required:
+      - generated_at
+      - pre_window_days
+      - post_window_days
+      - treatment_n
+      - control_n
+      - treatment_pre_avg
+      - treatment_post_avg
+      - treatment_uplift
+      - control_pre_avg
+      - control_post_avg
+      - control_uplift
+      - did_effect
+      - p_value
+      - avg_treatment_subsidy
+      - rows
+      title: DIDAnalysisResponse
     DemandRequest:
       properties:
         pile_id:
@@ -1255,6 +1361,55 @@ components:
       - shap_top3
       - shap_base_value
       title: SiteResponse
+    SubsidyPileRow:
+      properties:
+        pile_id:
+          type: string
+          title: Pile Id
+        operator_id:
+          type: string
+          title: Operator Id
+        region_id:
+          type: string
+          title: Region Id
+        subsidy_amount:
+          type: number
+          minimum: 0.0
+          title: Subsidy Amount
+        subsidy_group:
+          type: string
+          enum:
+          - treatment
+          - control
+          title: Subsidy Group
+        pre_avg_occupancy:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          title: Pre Avg Occupancy
+        post_avg_occupancy:
+          type: number
+          minimum: 0.0
+          maximum: 1.0
+          title: Post Avg Occupancy
+        occupancy_lift:
+          type: number
+          title: Occupancy Lift
+        roi_per_kyuan:
+          type: number
+          title: Roi Per Kyuan
+      type: object
+      required:
+      - pile_id
+      - operator_id
+      - region_id
+      - subsidy_amount
+      - subsidy_group
+      - pre_avg_occupancy
+      - post_avg_occupancy
+      - occupancy_lift
+      - roi_per_kyuan
+      title: SubsidyPileRow
     TelemetryPoint:
       properties:
         ts:

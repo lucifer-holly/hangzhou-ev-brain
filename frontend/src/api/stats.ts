@@ -31,3 +31,17 @@ export async function getOperatorCompliance(
   )
   return data
 }
+
+export type SubsidyAnalysis = components['schemas']['DIDAnalysisResponse']
+export type SubsidyPileRow = components['schemas']['SubsidyPileRow']
+
+export async function getSubsidyAnalysis(
+  preDays = 23,
+  postDays = 7,
+): Promise<SubsidyAnalysis> {
+  const { data } = await apiClient.get<SubsidyAnalysis>(
+    '/api/stats/subsidy-analysis',
+    { params: { pre_days: preDays, post_days: postDays } },
+  )
+  return data
+}

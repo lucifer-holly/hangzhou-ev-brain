@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import {
   getFaultTypes,
   getOperatorCompliance,
+  getSubsidyAnalysis,
   getUtilization24h,
   type ComplianceWindow,
 } from '@/api/stats'
@@ -30,5 +31,13 @@ export function useOperatorCompliance(window: ComplianceWindow = '24h') {
     queryKey: ['stats', 'operator-compliance', window],
     queryFn: () => getOperatorCompliance(window),
     staleTime: 60_000,
+  })
+}
+
+export function useSubsidyAnalysis(preDays = 23, postDays = 7) {
+  return useQuery({
+    queryKey: ['stats', 'subsidy-analysis', preDays, postDays],
+    queryFn: () => getSubsidyAnalysis(preDays, postDays),
+    staleTime: 5 * 60_000,
   })
 }
