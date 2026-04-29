@@ -1,17 +1,8 @@
-# HZ-EV Brain · OpenAPI Specification
-# Auto-generated from FastAPI backend at /openapi.json
-# Source of truth: contracts/openapi.yaml (this file)
-# All frontend API clients & operator adapters must conform to this spec
-#
-# To regenerate after backend changes:
-#   docker-compose up -d backend && \
-#     curl -s http://localhost:8000/openapi.json | \
-#     python3 -c "import yaml,json,sys; yaml.dump(json.load(sys.stdin), sys.stdout, allow_unicode=True, sort_keys=False)" > contracts/openapi.yaml
 openapi: 3.1.0
 info:
   title: HZ-EV Brain Backend
-  description: HZ-EV Brain backend.  100% synthetic data, 100 piles across 杭州未来科技城
-    + 钱塘新区, 30-day history + 1 Hz live ticks.
+  description: HZ-EV Brain backend.  100% synthetic data, 100 piles across 杭州未来科技城 + 钱塘新区, 30-day history
+    + 1 Hz live ticks.
   version: 0.1.0
 paths:
   /health:
@@ -291,6 +282,62 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /api/stats/utilization-24h:
+    get:
+      tags:
+      - stats
+      summary: Citywide hourly utilization for the last 24 hours
+      description: 'Return 24 hourly buckets of average occupancy across all piles.
+
+
+        Used by the IOC homepage bottom-strip line chart. Each bucket is an
+
+        hour-of-day (0-23 UTC); the value is the mean occupancy across all
+
+        telemetry rows in the last 24h that fell into that hour.'
+      operationId: utilization_24h_api_stats_utilization_24h_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Utilization24hResponse'
+  /api/stats/fault-types:
+    get:
+      tags:
+      - stats
+      summary: Fault-type distribution over a recent window
+      description: 'Return event counts grouped by type (fault categories only).
+
+
+        Charging start/end and communication-loss are excluded; we want the
+
+        "what''s actually breaking" view for the bottom-strip donut chart.'
+      operationId: fault_types_api_stats_fault_types_get
+      parameters:
+      - name: hours
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 168
+          minimum: 1
+          default: 24
+          title: Hours
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaultTypesResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /api/ai/predict/demand:
     post:
       tags:
@@ -535,6 +582,50 @@ components:
       - duration_minutes
       - resolved
       title: EventOut
+    FaultTypeBucket:
+      properties:
+        type:
+          type: string
+          title: Type
+        count:
+          type: integer
+          minimum: 0.0
+          title: Count
+        severity_breakdown:
+          additionalProperties:
+            type: integer
+          type: object
+          title: Severity Breakdown
+      type: object
+      required:
+      - type
+      - count
+      - severity_breakdown
+      title: FaultTypeBucket
+    FaultTypesResponse:
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        window_hours:
+          type: integer
+          title: Window Hours
+        total:
+          type: integer
+          title: Total
+        buckets:
+          items:
+            $ref: '#/components/schemas/FaultTypeBucket'
+          type: array
+          title: Buckets
+      type: object
+      required:
+      - generated_at
+      - window_hours
+      - total
+      - buckets
+      title: FaultTypesResponse
     HTTPValidationError:
       properties:
         detail:
@@ -544,6 +635,29 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    HourlyOccupancy:
+      properties:
+        hour:
+          type: integer
+          maximum: 23.0
+          minimum: 0.0
+          title: Hour
+          description: Hour of day, 0-23 in UTC.
+        avg_occupancy:
+          type: number
+          maximum: 1.0
+          minimum: 0.0
+          title: Avg Occupancy
+        sample_count:
+          type: integer
+          minimum: 0.0
+          title: Sample Count
+      type: object
+      required:
+      - hour
+      - avg_occupancy
+      - sample_count
+      title: HourlyOccupancy
     OperatorOut:
       properties:
         id:
@@ -966,6 +1080,22 @@ components:
       - energy_delivered_kwh
       - status
       title: TelemetryPoint
+    Utilization24hResponse:
+      properties:
+        generated_at:
+          type: string
+          format: date-time
+          title: Generated At
+        hourly:
+          items:
+            $ref: '#/components/schemas/HourlyOccupancy'
+          type: array
+          title: Hourly
+      type: object
+      required:
+      - generated_at
+      - hourly
+      title: Utilization24hResponse
     ValidationError:
       properties:
         loc:

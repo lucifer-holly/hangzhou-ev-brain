@@ -155,10 +155,176 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/stats/utilization-24h": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Citywide hourly utilization for the last 24 hours
+         * @description Return 24 hourly buckets of average occupancy across all piles.
+         *
+         *     Used by the IOC homepage bottom-strip line chart. Each bucket is an
+         *     hour-of-day (0-23 UTC); the value is the mean occupancy across all
+         *     telemetry rows in the last 24h that fell into that hour.
+         */
+        get: operations["utilization_24h_api_stats_utilization_24h_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/stats/fault-types": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Fault-type distribution over a recent window
+         * @description Return event counts grouped by type (fault categories only).
+         *
+         *     Charging start/end and communication-loss are excluded; we want the
+         *     "what's actually breaking" view for the bottom-strip donut chart.
+         */
+        get: operations["fault_types_api_stats_fault_types_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/predict/demand": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** LSTM demand prediction */
+        post: operations["predict_demand_api_ai_predict_demand_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/predict/site": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** XGBoost + SHAP site selection */
+        post: operations["predict_site_api_ai_predict_site_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/anomaly/{pile_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Autoencoder anomaly check */
+        get: operations["check_anomaly_api_ai_anomaly__pile_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/ai/yolo/detect": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** YOLOv8 occupancy detection */
+        post: operations["yolo_detect_api_ai_yolo_detect_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** AnomalyResponse */
+        AnomalyResponse: {
+            /** Pile Id */
+            pile_id: string;
+            /** Is Anomaly */
+            is_anomaly: boolean;
+            /** Reconstruction Error */
+            reconstruction_error: number;
+            /** Threshold */
+            threshold: number;
+            /** Margin Ratio */
+            margin_ratio: number;
+        };
+        /** Body_yolo_detect_api_ai_yolo_detect_post */
+        Body_yolo_detect_api_ai_yolo_detect_post: {
+            /**
+             * Image
+             * Format: binary
+             * @description JPEG / PNG image of a parking area.
+             */
+            image: string;
+        };
+        /** DemandRequest */
+        DemandRequest: {
+            /**
+             * Pile Id
+             * @description Pile id (must exist in the DB).
+             */
+            pile_id: string;
+            /**
+             * Hours Ahead
+             * @description Forecast horizon in hours.
+             * @default 1
+             */
+            hours_ahead: number;
+        };
+        /** DemandResponse */
+        DemandResponse: {
+            /** Pile Id */
+            pile_id: string;
+            /** Hours Ahead */
+            hours_ahead: number;
+            /** Predicted Occupancy */
+            predicted_occupancy: number;
+            /** Std */
+            std: number;
+            /** Ci Low */
+            ci_low: number;
+            /** Ci High */
+            ci_high: number;
+        };
         /** EventOut */
         EventOut: {
             /** Id */
@@ -187,10 +353,47 @@ export interface components {
             /** Resolved */
             resolved: boolean;
         };
+        /** FaultTypeBucket */
+        FaultTypeBucket: {
+            /** Type */
+            type: string;
+            /** Count */
+            count: number;
+            /** Severity Breakdown */
+            severity_breakdown: {
+                [key: string]: number;
+            };
+        };
+        /** FaultTypesResponse */
+        FaultTypesResponse: {
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Window Hours */
+            window_hours: number;
+            /** Total */
+            total: number;
+            /** Buckets */
+            buckets: components["schemas"]["FaultTypeBucket"][];
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HourlyOccupancy */
+        HourlyOccupancy: {
+            /**
+             * Hour
+             * @description Hour of day, 0-23 in UTC.
+             */
+            hour: number;
+            /** Avg Occupancy */
+            avg_occupancy: number;
+            /** Sample Count */
+            sample_count: number;
         };
         /** OperatorOut */
         OperatorOut: {
@@ -340,6 +543,74 @@ export interface components {
             /** Pile Count */
             pile_count?: number | null;
         };
+        /** ShapContributionOut */
+        ShapContributionOut: {
+            /** Feature */
+            feature: string;
+            /** Value */
+            value: number;
+            /** Shap Contribution */
+            shap_contribution: number;
+        };
+        /**
+         * SiteFeatures
+         * @description Pydantic input for the API endpoint.
+         *
+         *     Used both as the FastAPI request schema and as the source for
+         *     :func:`features_to_vector`.
+         */
+        SiteFeatures: {
+            /**
+             * Lat
+             * @description Latitude (杭州 ~30.x).
+             */
+            lat: number;
+            /**
+             * Lng
+             * @description Longitude (杭州 ~120.x).
+             */
+            lng: number;
+            /**
+             * Pop Density 1Km
+             * @description People per km² in 1 km radius.
+             */
+            pop_density_1km: number;
+            /** Poi Mall Count */
+            poi_mall_count: number;
+            /** Poi Office Count */
+            poi_office_count: number;
+            /** Poi Residential Count */
+            poi_residential_count: number;
+            /** Existing Pile Count 1Km */
+            existing_pile_count_1km: number;
+            /** Avg Utilization 1Km */
+            avg_utilization_1km: number;
+            /**
+             * Road Grade
+             * @description 1=支路 / 2=次干道 / 3=主干道
+             */
+            road_grade: number;
+            /**
+             * Operator
+             * @description Operator slug — one of state_grid/teld/starcharge/nio.
+             * @default state_grid
+             */
+            operator: string;
+        };
+        /** SiteResponse */
+        SiteResponse: {
+            /** Predicted Utilization 6M */
+            predicted_utilization_6m: number;
+            /** Confidence Interval 95 */
+            confidence_interval_95: [
+                number,
+                number
+            ];
+            /** Shap Top3 */
+            shap_top3: components["schemas"]["ShapContributionOut"][];
+            /** Shap Base Value */
+            shap_base_value: number;
+        };
         /** TelemetryPoint */
         TelemetryPoint: {
             /**
@@ -363,6 +634,16 @@ export interface components {
              */
             status: "idle" | "charging" | "occupied" | "fault" | "offline";
         };
+        /** Utilization24hResponse */
+        Utilization24hResponse: {
+            /**
+             * Generated At
+             * Format: date-time
+             */
+            generated_at: string;
+            /** Hourly */
+            hourly: components["schemas"]["HourlyOccupancy"][];
+        };
         /** ValidationError */
         ValidationError: {
             /** Location */
@@ -371,6 +652,34 @@ export interface components {
             msg: string;
             /** Error Type */
             type: string;
+        };
+        /** YoloBox */
+        YoloBox: {
+            /** X1 */
+            x1: number;
+            /** Y1 */
+            y1: number;
+            /** X2 */
+            x2: number;
+            /** Y2 */
+            y2: number;
+            /** Confidence */
+            confidence: number;
+            /** Class Name */
+            class_name: string;
+        };
+        /** YoloResponse */
+        YoloResponse: {
+            /** Vehicle Count */
+            vehicle_count: number;
+            /** Boxes */
+            boxes: components["schemas"]["YoloBox"][];
+            /** Image Width */
+            image_width: number;
+            /** Image Height */
+            image_height: number;
+            /** Inference Ms */
+            inference_ms: number;
         };
     };
     responses: never;
@@ -593,6 +902,187 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["EventOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    utilization_24h_api_stats_utilization_24h_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Utilization24hResponse"];
+                };
+            };
+        };
+    };
+    fault_types_api_stats_fault_types_get: {
+        parameters: {
+            query?: {
+                hours?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FaultTypesResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    predict_demand_api_ai_predict_demand_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["DemandRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DemandResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    predict_site_api_ai_predict_site_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SiteFeatures"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    check_anomaly_api_ai_anomaly__pile_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                pile_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AnomalyResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    yolo_detect_api_ai_yolo_detect_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["Body_yolo_detect_api_ai_yolo_detect_post"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["YoloResponse"];
                 };
             };
             /** @description Validation Error */
