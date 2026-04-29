@@ -1,0 +1,26 @@
+==========================================
+HZ-EV Brain · Pile Simulator
+  pile_id : pile-001-cafebabe
+  firmware: 0.2.0
+==========================================
+[sensor] MPU6050 initialised.
+[tflite] arena used: 11264 / 32768 bytes
+[tflite] input: 2 dims, output: 2 dims, threshold=0.031343
+[anomaly] Plan A active — TFLite Micro Autoencoder.
+[wifi] connecting to 'Wokwi-GUEST'...
+[wifi] up. IP=10.13.37.42
+[mqtt] connecting to test.mosquitto.org:1883 as hzev-pile-pile-001-cafebabe
+[mqtt] connected.
+[main] init complete; entering control loop.
+[t=  1000] V= 399.5 I=340.3 Tcab= 41.2 Tcab2= 35.8 acc=1.00g | duty=72.0% k=0.95 mode=Anomaly  mqtt=ok ai=TFLM inf=34078µs mse=0.05401
+[anomaly] type=voltage_anomaly score=0.0540 msg="Output voltage deviates from learned manifold."
+[mqtt] published pile/pile-001-cafebabe/event (severity=critical)
+[t=  2000] V= 401.1 I=199.0 Tcab= 41.2 Tcab2= 35.8 acc=1.00g | duty=72.0% k=0.95 mode=Anomaly  mqtt=ok ai=TFLM inf=36805µs mse=0.05063
+[anomaly] type=voltage_anomaly score=0.0506 msg="Output voltage deviates from learned manifold."
+[mqtt] published pile/pile-001-cafebabe/event (severity=critical)
+[t=  3000] V= 399.9 I=321.1 Tcab= 41.2 Tcab2= 35.8 acc=1.00g | duty=72.0% k=0.95 mode=Charging mqtt=ok ai=TFLM inf=29938µs mse=0.01851
+[t=  4000] V= 456.5 I=111.6 Tcab= 41.2 Tcab2= 35.8 acc=1.00g | duty=72.0% k=0.95 mode=Anomaly  mqtt=ok ai=TFLM inf=36827µs mse=0.05023
+[anomaly] type=voltage_anomaly score=0.0502 msg="Output voltage deviates from learned manifold."
+[mqtt] published pile/pile-001-cafebabe/event (severity=critical)
+[t=  5000] V= 459.3 I=223.3 Tcab= 41.2 Tcab2= 35.8 acc=1.00g | duty=72.0% k=0.95 mode=Charging mqtt=ok ai=TFLM inf=31629µs mse=0.02391
+[t=  6000] V= 403.5 I=195.8 Tcab= 41.2 Tcab2= 35.8 acc=1.00g | duty=72.0% k=0.95 mode=Charging mqtt=ok ai=TFLM inf=30872µs mse=0.02271

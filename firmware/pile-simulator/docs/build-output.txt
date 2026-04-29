@@ -1,0 +1,10 @@
+|-- Chirale_TensorFLowLite @ 2.0.0
+|-- WiFi @ 2.0.0
+|-- Wire @ 2.0.0
+Building in release mode
+Retrieving maximum program size .pio/build/esp32-s3-devkitc-1/firmware.elf
+Checking size .pio/build/esp32-s3-devkitc-1/firmware.elf
+Advanced Memory Usage is available via "PlatformIO Home > Project Inspect"
+RAM:   [===       ]  26.2% (used 85848 bytes from 327680 bytes)
+Flash: [====      ]  35.9% (used 1200413 bytes from 3342336 bytes)
+========================= [SUCCESS] Took 2.89 seconds =========================
