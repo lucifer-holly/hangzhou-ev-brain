@@ -307,7 +307,7 @@ python -m ai.eval.benchmark        # 打印上表 + PASS/FAIL gates
 | Spec-driven 合约 | ✅ 完成 |
 | 文档包（本目录）| ✅ 完成（Spawn 9）|
 | Demo 视频 | ⏳ Spawn 10 |
-| 课程 PPT（12 页 + 演讲稿 + Q&A 预案） | ✅ 已完成（Spawn 11） — 见 [`ppt/`](./ppt/) |
+| 演示 PPT（12 页 + 演讲稿 + Q&A 预案） | ✅ 已完成（Spawn 11） — 见 [`ppt/`](./ppt/) |
 
 ---
 

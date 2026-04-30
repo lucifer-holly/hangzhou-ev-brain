@@ -316,7 +316,7 @@ Authentication, HTTPS, observability, and database migrations are
 | Spec-driven contracts | ✅ complete |
 | Documentation pack (this folder) | ✅ complete (Spawn 9) |
 | Demo video | ⏳ Spawn 10 |
-| Course PPT (12 pages + speaker notes + Q&A prep) | ✅ complete (Spawn 11) — see [`ppt/`](./ppt/) |
+| Demo deck (12 pages + speaker notes + Q&A prep) | ✅ complete (Spawn 11) — see [`ppt/`](./ppt/) |
 
 ---
 
