@@ -402,8 +402,8 @@ PID 是主控，模糊逻辑并联做安全门，强制限制功率。
 
 ```
 hangzhou-ev-brain/
-├── README.md                          # 双语 hero（含 demo 视频嵌入）
-├── README.zh.md
+├── README.md                          # 中文 hero（含 demo 视频嵌入）
+├── README.en.md                        # 英文 hero
 ├── LICENSE                             # MIT
 ├── docker-compose.yml                  # 一键启动
 ├── .env.example

@@ -80,7 +80,8 @@ font-mono:  'JetBrains Mono'
 ```
 hz-ev-brain/
 ├── CLAUDE.md         # 本文件
-├── README.md         # 双语 hero
+├── README.md         # 中文 hero
+├── README.en.md      # 英文 hero
 ├── docker-compose.yml
 ├── .env.example
 ├── docs/             # spec.md + 4 篇 docs
