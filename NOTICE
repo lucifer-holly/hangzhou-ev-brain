@@ -1,0 +1,174 @@
+HZ-EV Brain · 智枢
+==================
+
+Copyright (c) 2026 HZ-EV Brain contributors.
+Licensed under the MIT License — see LICENSE.
+
+This project incorporates and depends upon a number of open-source
+components.  Their licenses are reproduced via their respective
+package distributions; this NOTICE file lists the primary direct
+dependencies and their upstream licenses for transparency.
+
+The list below is curated — runtime transitive dependencies are
+maintained by `pip` (`backend/pyproject.toml`) and `pnpm`
+(`frontend/package.json` / `pnpm-lock.yaml`).  See those files for the
+fully-resolved tree.
+
+--------------------------------------------------------------------------------
+BACKEND — Python (`backend/pyproject.toml`)
+--------------------------------------------------------------------------------
+
+Web / async runtime
+  - FastAPI                         MIT      Sebastián Ramírez et al.
+  - Uvicorn                         BSD-3    Encode (Tom Christie et al.)
+  - Pydantic                        MIT      Pydantic Services Inc.
+  - Pydantic Settings               MIT      Pydantic Services Inc.
+  - SQLAlchemy                      MIT      SQLAlchemy authors
+  - aiosqlite                       MIT      Amethyst Reese
+  - APScheduler                     MIT      Alex Grönholm
+  - python-multipart                Apache-2 Andrew Dunham
+  - greenlet                        MIT/PSF  greenlet contributors
+
+MQTT
+  - paho-mqtt                       EPL-2.0 / EDL-1.0  Eclipse Foundation
+
+Scientific stack
+  - NumPy                           BSD-3    NumPy developers
+  - SciPy                           BSD-3    SciPy developers
+  - pandas                          BSD-3    AQR / pandas developers
+  - scikit-learn                    BSD-3    scikit-learn developers
+  - matplotlib                      PSF-based / BSD-style  Matplotlib Dev Team
+
+Machine learning
+  - PyTorch                         BSD-3    Meta Platforms / PyTorch
+  - XGBoost                         Apache-2 XGBoost contributors
+  - SHAP                            MIT      Scott Lundberg et al.
+  - Ultralytics (YOLOv8 inference)  AGPL-3.0 Ultralytics
+                                             We use the pretrained
+                                             yolov8n.pt for inference
+                                             only; if you redistribute
+                                             a derivative work, the
+                                             AGPL terms apply to that
+                                             redistribution.
+  - ONNX                            Apache-2 ONNX contributors
+  - ONNX Runtime                    MIT      Microsoft
+  - Pillow                          MIT-CMU  Jeffrey A. Clark / Pillow
+  - joblib                          BSD-3    joblib developers
+
+Dev / test
+  - pytest                          MIT      Holger Krekel et al.
+  - pytest-asyncio                  Apache-2 pytest-asyncio authors
+  - httpx                           BSD-3    Encode
+  - ruff                            MIT      Charlie Marsh / Astral
+
+--------------------------------------------------------------------------------
+FRONTEND — JavaScript / TypeScript (`frontend/package.json`)
+--------------------------------------------------------------------------------
+
+Core runtime
+  - React                           MIT      Meta Platforms
+  - React DOM                       MIT      Meta Platforms
+  - React Router                    MIT      Remix Software / @remix-run
+  - TypeScript                      Apache-2 Microsoft
+
+Build tooling
+  - Vite                            MIT      Evan You + Vite contributors
+  - Tailwind CSS                    MIT      Tailwind Labs
+  - PostCSS / Autoprefixer          MIT      PostCSS contributors
+  - ESLint                          MIT      OpenJS Foundation
+  - Prettier                        MIT      Prettier contributors
+  - prettier-plugin-tailwindcss     MIT      Tailwind Labs
+  - openapi-typescript              MIT      Drew Powers
+  - vite-tsconfig-paths             MIT      Alec Larson
+
+UI primitives
+  - shadcn/ui (copied components)   MIT      shadcn
+  - Radix UI (Dialog, DropdownMenu, ScrollArea, etc.)
+                                    MIT      WorkOS / Modulz
+  - tailwindcss-animate             MIT      Jamie Kyle
+  - class-variance-authority        Apache-2 Joe Bell
+  - clsx, tailwind-merge            MIT      Luke Edwards / Daniel Buehrer
+  - lucide-react                    ISC      Lucide Contributors
+  - sonner                          MIT      Emil Kowalski
+  - framer-motion                   MIT      Framer
+
+Data / charts
+  - TanStack Query (react-query)    MIT      Tanner Linsley
+  - axios                           MIT      Matt Zabriskie
+  - zustand                         MIT      Poimandres collective
+  - echarts + echarts-for-react     Apache-2 Apache Software Foundation / hustcc
+  - react-countup                   MIT      Glenn Reyes
+
+Map providers
+  - @amap/amap-jsapi-loader         MIT      高德 / AMap
+  - leaflet + react-leaflet         BSD-2 / Hippocratic-2.1 + MIT
+                                             Leaflet contributors / Paul Le Cam
+
+Fonts (self-hosted)
+  - Geist Variable                  SIL OFL-1.1  Vercel Inc.
+  - Geist Mono Variable             SIL OFL-1.1  Vercel Inc.
+  - Noto Sans SC (system-fallback)  SIL OFL-1.1  Google Inc. / Adobe
+
+--------------------------------------------------------------------------------
+EMBEDDED — C++ (`firmware/pile-simulator/platformio.ini`)
+--------------------------------------------------------------------------------
+
+  - Arduino core for ESP32          LGPL-2.1+  Espressif Systems
+  - PubSubClient (MQTT)             MIT        Nicholas O'Leary
+  - ArduinoJson                     MIT        Benoît Blanchon
+  - Adafruit MPU6050                MIT        Adafruit Industries
+  - Adafruit Unified Sensor         Apache-2   Adafruit Industries
+  - ESP32Servo                      LGPL-2.1+  Kevin Harrington / madhephaestus
+  - Chirale_TensorFlowLite          Apache-2   Chirale Studio
+                                               (Arduino API port of
+                                               TensorFlow Lite Micro,
+                                               which is itself
+                                               Apache-2.0 by Google.)
+
+--------------------------------------------------------------------------------
+INFRASTRUCTURE
+--------------------------------------------------------------------------------
+
+  - Eclipse Mosquitto 2             EPL-2.0 / EDL-1.0  Eclipse Foundation
+  - Docker / Docker Compose         Apache-2  Docker Inc.
+  - SQLite                          Public Domain  D. Richard Hipp
+  - nginx (frontend serving image)  BSD-2     NGINX, Inc. / F5
+
+--------------------------------------------------------------------------------
+ASSETS / DATA
+--------------------------------------------------------------------------------
+
+  - YOLOv8 sample image (sample_bus.jpg)
+                                    AGPL-3.0  Ultralytics — copied
+                                              from the upstream
+                                              ultralytics/assets
+                                              folder for offline demo.
+
+  - Synthetic procedural parking-lot image (sample_parking_lot.jpg)
+                                    MIT       generated procedurally
+                                              by the project; no
+                                              third-party imagery.
+
+  - All charging-pile telemetry, fault events, and operator data are
+    100% synthetic — generated deterministically by `backend/synth/`
+    from a fixed RNG seed.  See docs/data-model.md for methodology.
+
+--------------------------------------------------------------------------------
+ATTRIBUTION REQUIREMENT
+--------------------------------------------------------------------------------
+
+Per AGPL-3.0 (Ultralytics YOLOv8 inference) — if you publish a
+derivative work that incorporates the YOLOv8 weights, you must release
+the full source of that derivative under AGPL-3.0 and provide your
+users with access to that source.  Using YOLOv8 only as a service
+for inference (as this demo does) does not by itself trigger the
+copyleft, but redistribution does.
+
+If in doubt, see https://www.ultralytics.com/legal/agpl-3-0-software-license
+
+--------------------------------------------------------------------------------
+
+This NOTICE file is informational and intended to make license
+provenance visible.  The full text of each license is reproduced in
+the corresponding package's distribution; the canonical version is
+whatever ships with the package itself.
