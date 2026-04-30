@@ -322,8 +322,7 @@ python -m ai.eval.benchmark        # 打印上表 + PASS/FAIL gates
 
 <div align="center">
 
-**智枢 · ZHISHU · HZ-EV Brain** —— 从香港城市大学 *EIE 532 AIoT Technologies*
-研究生课程作业开始，发现题目值得做大，于是扩展成完整 portfolio。
+**智枢 · ZHISHU · HZ-EV Brain** —— 受香港智慧充电桩政府项目启发，独立构建的端到端 AIoT 开源演示平台。
 
 *From Pile to Brain — From Charging to Governing.*
 

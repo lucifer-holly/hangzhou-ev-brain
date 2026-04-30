@@ -331,9 +331,9 @@ Contributions welcome — see [`CONTRIBUTING.md`](./CONTRIBUTING.md).
 
 <div align="center">
 
-**智枢 · ZHISHU · HZ-EV Brain** — built as part of the *EIE 532 AIoT Technologies*
-graduate course at City University of Hong Kong, then expanded into a full
-portfolio piece because the brief deserved it.
+**智枢 · ZHISHU · HZ-EV Brain** — an open-source end-to-end AIoT demo,
+independently built and inspired by the author's work on a Hong Kong
+smart-charging government project.
 
 *From Pile to Brain — From Charging to Governing.*
 

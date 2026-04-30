@@ -1,7 +1,7 @@
 # Contributing to HZ-EV Brain · 智枢
 
 Thanks for considering a contribution! HZ-EV Brain is primarily a
-graduate-course portfolio project, but the codebase is open-source MIT
+personal portfolio project, but the codebase is open-source MIT
 and we welcome **bug fixes, doc clarifications, and small extensions**
 that keep the project's scope intact.
 

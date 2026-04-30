@@ -5,8 +5,8 @@
 ## 项目身份
 
 **项目**：HZ-EV Brain（杭州智慧充电城市大脑）
-**性质**：研究生课程作业（CityU EIE 532 AIoT Technologies）+ 求职 GitHub portfolio
-**优先级**：GitHub portfolio 完成度 > 课程 PPT/视频
+**性质**：端到端 AIoT 开源演示平台。受作者参与的香港智慧充电桩政府项目启发，独立设计构建；同时作为 PolyU *EIE 532 AIoT Technologies* 研究生课程交付物。
+**优先级**：开源 demo 完成度 > 课程交付物（PPT/视频）
 **核心目标**：以 Hangzhou 为锚点，构建一个**演示驱动、可交互**的城市级 AIoT 充电治理平台。
 
 **完整设计在** `docs/spec.md` —— 任何具体功能/接口/算法疑问优先查这份。
