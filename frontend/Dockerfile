@@ -31,7 +31,7 @@ ARG VITE_WS_URL=ws://localhost:8000/ws
 ARG VITE_MAP_PROVIDER=osm
 ARG VITE_AMAP_KEY=
 ARG VITE_AMAP_SECURITY_KEY=
-ARG VITE_GITHUB_URL=https://github.com/your-username/hz-ev-brain
+ARG VITE_GITHUB_URL=https://github.com/lucifer-holly/hangzhou-ev-brain
 
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL \
     VITE_WS_URL=$VITE_WS_URL \

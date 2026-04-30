@@ -50,8 +50,6 @@
 
 ## 截图
 
-<!-- 6 个截图占位，Spawn 10 会替换为真实 PNG。 -->
-
 <table>
   <tr>
     <td align="center" width="50%">
@@ -96,8 +94,6 @@
     </td>
   </tr>
 </table>
-
-> 现为占位图，Spawn 10 替换为真实 PNG 截图。
 
 ---
 
@@ -151,8 +147,8 @@
 ## 快速启动
 
 ```bash
-git clone https://github.com/your-username/hz-ev-brain.git
-cd hz-ev-brain
+git clone https://github.com/lucifer-holly/hangzhou-ev-brain.git
+cd hangzhou-ev-brain
 cp .env.example .env          # 有高德 key 就填 VITE_AMAP_KEY；没有就用 OSM
 docker-compose up --build     # 起 backend + mosquitto + frontend
 ```
@@ -177,7 +173,7 @@ http://localhost:8000/docs 直接可点。
 ## 项目结构
 
 ```
-hz-ev-brain/
+hangzhou-ev-brain/
 ├── README.md / README.zh.md   ← 双语 hero（你正在看）
 ├── docker-compose.yml          一键启动
 ├── .env.example
@@ -309,7 +305,7 @@ python -m ai.eval.benchmark        # 打印上表 + PASS/FAIL gates
 | Spec-driven 合约 | ✅ 完成 |
 | 文档包（本目录）| ✅ 完成（Spawn 9）|
 | Demo 视频 | ⏳ Spawn 10 |
-| 课程 PPT | ⏳ Spawn 11 |
+| 课程 PPT（12 页 + 演讲稿 + Q&A 预案） | ✅ 已完成（Spawn 11） — 见 [`ppt/`](./ppt/) |
 
 ---
 

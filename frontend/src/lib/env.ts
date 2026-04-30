@@ -29,5 +29,5 @@ export const env: AppEnv = {
   amapSecurity: import.meta.env.VITE_AMAP_SECURITY_KEY ?? '',
   githubUrl:
     import.meta.env.VITE_GITHUB_URL ??
-    'https://github.com/your-username/hz-ev-brain',
+    'https://github.com/lucifer-holly/hangzhou-ev-brain',
 }

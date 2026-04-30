@@ -54,8 +54,6 @@ Electric Vehicle Charging Infrastructure Promotion Alliance.
 
 ## Screenshots
 
-<!-- 6 placeholder screenshots — Spawn 10 fills in real PNGs into docs/images/screenshots/. -->
-
 <table>
   <tr>
     <td align="center" width="50%">
@@ -100,8 +98,6 @@ Electric Vehicle Charging Infrastructure Promotion Alliance.
     </td>
   </tr>
 </table>
-
-> Placeholders for now — Spawn 10 will replace these with real PNG captures.
 
 ---
 
@@ -156,8 +152,8 @@ Electric Vehicle Charging Infrastructure Promotion Alliance.
 ## Quick start
 
 ```bash
-git clone https://github.com/your-username/hz-ev-brain.git
-cd hz-ev-brain
+git clone https://github.com/lucifer-holly/hangzhou-ev-brain.git
+cd hangzhou-ev-brain
 cp .env.example .env          # set VITE_AMAP_KEY if you have one (OSM works otherwise)
 docker-compose up --build     # backend + mosquitto + frontend
 ```
@@ -182,7 +178,7 @@ or paste `diagram.json` into [wokwi.com](https://wokwi.com) — see
 ## Project structure
 
 ```
-hz-ev-brain/
+hangzhou-ev-brain/
 ├── README.md / README.zh.md   ← bilingual hero (you are here)
 ├── docker-compose.yml          one-command boot
 ├── .env.example
@@ -318,7 +314,7 @@ Authentication, HTTPS, observability, and database migrations are
 | Spec-driven contracts | ✅ complete |
 | Documentation pack (this folder) | ✅ complete (Spawn 9) |
 | Demo video | ⏳ Spawn 10 |
-| Course PPT | ⏳ Spawn 11 |
+| Course PPT (12 pages + speaker notes + Q&A prep) | ✅ complete (Spawn 11) — see [`ppt/`](./ppt/) |
 
 ---
 

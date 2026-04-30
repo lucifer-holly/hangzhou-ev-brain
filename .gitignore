@@ -60,3 +60,15 @@ mosquitto_log/
 
 # OS
 Thumbs.db
+
+# Local AI agent / test artifacts (not for the public repo)
+.playwright-cli/
+output/
+AGENTS.md
+/tmp/spawn*.md
+
+# PPT 工作区(等定稿后用 GitHub Release 发布)
+ppt/
+
+# 视频素材工作区(大文件,不进仓库)
+video/

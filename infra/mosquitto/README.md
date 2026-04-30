@@ -33,9 +33,9 @@ Do **not** expose port 1883 / 9001 to the public internet.
 
 ```bash
 # in a second shell after `docker-compose up`
-docker exec -it hz-ev-brain-mosquitto-1 \
+docker exec -it hz-ev-brain-mosquitto \
   mosquitto_pub -h localhost -t hzev/test -m "ping"
 
-docker exec -it hz-ev-brain-mosquitto-1 \
+docker exec -it hz-ev-brain-mosquitto \
   mosquitto_sub -h localhost -t 'hzev/#' -v
 ```

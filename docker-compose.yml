@@ -51,7 +51,7 @@ services:
         VITE_MAP_PROVIDER: ${VITE_MAP_PROVIDER:-osm}
         VITE_AMAP_KEY: ${VITE_AMAP_KEY:-}
         VITE_AMAP_SECURITY_KEY: ${VITE_AMAP_SECURITY_KEY:-}
-        VITE_GITHUB_URL: ${VITE_GITHUB_URL:-https://github.com/your-username/hz-ev-brain}
+        VITE_GITHUB_URL: ${VITE_GITHUB_URL:-https://github.com/lucifer-holly/hangzhou-ev-brain}
     container_name: hz-ev-brain-frontend
     ports:
       - "5173:80"
