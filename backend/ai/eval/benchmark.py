@@ -5,7 +5,7 @@ prints a table of metrics with PASS/FAIL against the spec targets.  YOLO
 isn't trained so we instead measure inference latency on the bundled
 sample image.
 
-Targets (spec §7 / Spawn 4 brief):
+Targets (spec §7 / AI model brief):
 
     LSTM         : MAE  < 0.08
     XGBoost      : R²   > 0.85

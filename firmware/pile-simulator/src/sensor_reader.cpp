@@ -78,7 +78,7 @@ SensorData sensor_read() {
   //   - a 4 g accel-X spike (visible in MPU6050 channels, matches the
   //     accel-based anomaly story even when no IMU is wired)
   //   - a 60 V voltage spike on top of whatever the pot is reading
-  //     (this one feeds the Spawn 4 Autoencoder's V channel and triggers
+  //     (this one feeds the cloud Autoencoder's V channel and triggers
   //     reconstruction-error anomalies even without IMU coupling).
   if (s.impact_pressed) {
     s.accel_x   += 4.0f;

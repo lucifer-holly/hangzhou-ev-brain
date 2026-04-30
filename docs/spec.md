@@ -494,28 +494,28 @@ hangzhou-ev-brain/
 
 ---
 
-## 10. Implementation Roadmap (11 Spawned Sub-conversations)
+## 10. Implementation Roadmap（历史开发阶段）
 
 **Phase 1（串行）**
-- Spawn 1: Backend Foundation（FastAPI + 合成数据生成器 + SQLite + docker-compose）
-- Spawn 2: API Contracts（OpenAPI + AsyncAPI + 4 运营商 JSON Schema）
+- Backend Foundation（FastAPI + 合成数据生成器 + SQLite + docker-compose）
+- API Contracts（OpenAPI + AsyncAPI + 4 运营商 JSON Schema）
 
 **Phase 2（并行）**
-- Spawn 3: Frontend Foundation（React + TS + Tailwind + shadcn + AMap MapProvider 抽象 + design tokens + routing）
-- Spawn 4: AI Models Training（LSTM + XGBoost+SHAP + Autoencoder + YOLO 集成）
+- Frontend Foundation（React + TS + Tailwind + shadcn + AMap MapProvider 抽象 + design tokens + routing）
+- AI Models Training（LSTM + XGBoost+SHAP + Autoencoder + YOLO 集成）
 
 **Phase 3（串行）**
-- Spawn 5: City Console - IOC 首页 ⭐（最重要的视觉呈现）
-- Spawn 6: City Console - 6 功能详情页
+- City Console - IOC 首页 ⭐（最重要的视觉呈现）
+- City Console - 6 功能详情页
 
 **Phase 4（并行）**
-- Spawn 7: Operator + Driver 简化端
-- Spawn 8: Wokwi ESP32 firmware
-- Spawn 9: Documentation（README + 5 篇 docs）
+- Operator + Driver 简化端
+- Wokwi ESP32 firmware
+- Documentation（README + 5 篇 docs）
 
 **Phase 5**
-- Spawn 10: Demo Video 录制 + 旁白稿
-- Spawn 11: VPS 公开部署 + demo 站点上线
+- Demo Video 录制 + 旁白稿
+- VPS 公开部署 + demo 站点上线
 
 **预估总时长**：8-12 个工作日（看每天投入）
 
@@ -551,7 +551,7 @@ hangzhou-ev-brain/
 
 ## 13. Acceptance Criteria
 
-每个 Spawn 完成后必须满足：
+每个阶段或模块完成后必须满足：
 
 - [ ] 代码能跑通（无导入错误，docker-compose up 成功）
 - [ ] 与已有模块兼容（API schema 不冲突）

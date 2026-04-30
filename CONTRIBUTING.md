@@ -126,7 +126,7 @@ exact paragraph; that's enough.
    ```
 
    Examples from the project history:
-   - `Spawn 5/D: mode switcher (realtime/history/predict) + batched LSTM forecast`
+   - `feat: mode switcher (realtime/history/predict) + batched LSTM forecast`
    - `Hotfix: Site Selection map now respects VITE_MAP_PROVIDER`
    - `docs: typo in architecture.md`
 

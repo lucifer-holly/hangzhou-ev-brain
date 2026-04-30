@@ -40,7 +40,7 @@ python -m ai.site_selection.train
 echo "==> 3/3  Training Autoencoder anomaly model"
 python -m ai.anomaly_detection.train
 
-echo "==> Exporting Autoencoder to ONNX (Edge consumer = Spawn 8)"
+echo "==> Exporting Autoencoder to ONNX (for edge / Wokwi firmware)"
 python -m ai.anomaly_detection.quantize_tflite || echo "(ONNX/INT8 export non-critical, see backend/ai/anomaly_detection/README.md)"
 
 echo

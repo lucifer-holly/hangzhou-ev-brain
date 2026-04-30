@@ -443,7 +443,7 @@ function AnomalyView({ anomaly }: { anomaly: AnomalyResponse }) {
       </div>
       <div className="mt-3 rounded-md border border-saas-border bg-saas-bg-alt/60 p-2 text-[11px] text-saas-text-mid">
         Cloud autoencoder (8→32→8 latent) checks the latest 60s telemetry window. Edge
-        TFLite Micro variant runs same architecture on ESP32-S3 (Spawn 8).
+        TFLite Micro variant runs same architecture on ESP32-S3.
       </div>
     </>
   )

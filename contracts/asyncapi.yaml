@@ -5,7 +5,7 @@
 #   - `subscribe` = cloud receives (pile → cloud)
 #   - `publish`   = cloud sends    (cloud → pile)
 #
-# Source of truth for: Wokwi firmware (Spawn 8) + backend MQTT subscriber.
+# Source of truth for: Wokwi firmware + backend MQTT subscriber.
 asyncapi: "2.6.0"
 
 info:

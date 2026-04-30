@@ -1,5 +1,5 @@
 /**
- * HowItWorksCard — Spawn 9.7/C
+ * HowItWorksCard — IOC “how it works” explainer
  *
  * A friendly explainer card that translates each detail page's underlying
  * algorithm into a 2–3 sentence plain-language description and surfaces the

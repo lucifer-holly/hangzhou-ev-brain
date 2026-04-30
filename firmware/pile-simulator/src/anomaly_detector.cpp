@@ -267,7 +267,7 @@ AnomalyResult AnomalyDetector::plan_b_zscore_(const SensorData& s) {
   if (filled_ < 4) return out;
 
   // Score the just-pushed sample on V, I, V_diff, I_diff (the channels that
-  // actually move at our 10 Hz tick).  Matching the original Spawn 8 logic
+  // actually move at our 10 Hz tick).  Matching the original z-score path logic
   // but driven by the new flat ring buffer.
   const struct { size_t ch; float val; } targets[] = {
       { CH_VOLTAGE, s.voltage_v / 500.0f },

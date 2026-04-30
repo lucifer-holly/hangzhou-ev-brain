@@ -23,7 +23,7 @@ import { env } from '@/lib/env'
  *   - realtime  : WS-live current_occupancy, status-coloured halos
  *   - history   : same baseline but jittered (Gaussian noise σ≈0.10) to
  *                 mimic the same hour 24h ago. Cheap stand-in for a real
- *                 historical telemetry replay; Spawn 6 detail page does
+ *                 historical telemetry replay; the pile detail page does
  *                 the proper drilldown.
  *   - predict   : pings /api/ai/predict/demand for every pile (batched
  *                 4×10 in flight) and overlays the LSTM forecast.
@@ -146,7 +146,7 @@ export function Home() {
   const utilTone: 'cyan' | 'success' | 'warning' = mode === 'predict' ? 'success' : 'cyan'
 
   return (
-    // Spawn 9.7/B: page is now naturally tall and scrolls inside the parent
+    // Layout: page is naturally tall and scrolls inside the parent
     // <main>. Previously this was h-full + overflow-hidden with the map/event
     // row taking flex-1, which crushed both panels on smaller viewports.
     // Each major section now declares its own height so the user can scroll

@@ -1,4 +1,4 @@
-"""Convert the Spawn-4 PyTorch Autoencoder to a TFLite model for ESP32.
+"""Convert the trained PyTorch Autoencoder to a TFLite model for ESP32.
 
 Bypasses onnx2tf dependency hell by rebuilding the (very simple) MLP in Keras
 directly and copying weights tensor-by-tensor.

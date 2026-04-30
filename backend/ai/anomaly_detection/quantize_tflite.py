@@ -1,7 +1,7 @@
 """Export the autoencoder to ONNX (and optionally INT8 TFLite).
 
-The Edge spawn (Spawn 8) consumes one of these artifacts to deploy the
-model on ESP32 (TFLite Micro).  Until Spawn 8 lands we ship ONNX as the
+Wokwi / edge firmware consumes one of these artifacts to deploy the
+model on ESP32 (TFLite Micro).  Until that path is stable we ship ONNX as the
 canonical interchange format because the TFLite toolchain on Apple
 Silicon + Python 3.14 is finicky — see the README for caveats.
 
@@ -56,7 +56,7 @@ def quantize_to_tflite() -> Path | None:
     2. ``onnxruntime`` static quantization → keep as ``.ort`` (still
        Edge-capable).
 
-    If both fail we leave only the ONNX behind and the Edge spawn can
+    If both fail we leave only the ONNX behind and edge firmware can
     re-quantize against its own toolchain.
     """
     onnx_path = export_onnx()
@@ -71,7 +71,7 @@ def quantize_to_tflite() -> Path | None:
             model_output=str(out_path),
             weight_type=QuantType.QInt8,
         )
-        # We name the *artifact* tflite for the Edge spawn's convenience —
+        # We name the *artifact* tflite for edge-conversion convenience —
         # they'll convert ONNX→TFLite on their own toolchain.  Copying the
         # quantized ONNX under the .tflite name is a clear marker that it
         # is "the file ready for edge deployment" but in ONNX format.

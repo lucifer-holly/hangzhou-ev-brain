@@ -41,7 +41,7 @@ const EVENT_BUFFER = 50
 
 /**
  * Subscribe to the singleton WebSocket fan-out and project incoming frames
- * into a small in-memory state. `Spawn 5/6/7` build richer state on top.
+ * into a small in-memory state; City Console pages build richer state on top.
  *
  * Implementation notes:
  *   - The backend broadcasts an aggregated telemetry frame (all piles) once

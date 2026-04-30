@@ -38,7 +38,7 @@ INT8 dynamic quantization via `onnxruntime.quantization.quantize_dynamic`
 1.25 + the dynamic-axis ONNX produced by `torch.onnx.export`).  The
 error: `[ShapeInferenceError] Inferred shape and existing shape differ
 in dimension 0: (256) vs (16)`.  We let the export step continue and
-log a warning — Spawn 8 (Wokwi firmware) will re-quantize using the
+log a warning — Wokwi firmware re-quantizes using the
 TFLite-Micro toolchain, so the FP32 ONNX is sufficient as the
 hand-off artefact.
 

@@ -24,7 +24,7 @@ interface RoleSwitcherProps {
 }
 
 /**
- * Role switcher — Spawn 9.6/C upgraded.
+ * Role switcher — City/Operator/Driver entry.
  *
  * The trigger now leads with the active role's tinted icon (so the user
  * sees what console they're in even before reading the text), shows

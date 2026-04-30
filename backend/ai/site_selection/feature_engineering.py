@@ -1,6 +1,6 @@
 """Feature engineering for the XGBoost site-selection model.
 
-The 12-D feature vector matches spec §7.3 / Spawn 4 brief:
+The 12-D feature vector matches spec §7.3 / site-selection model brief:
 
     0  lat
     1  lng

@@ -6,15 +6,16 @@ import { TechBorder } from '@/components/ioc/TechBorder'
 interface PlaceholderPageProps {
   title: string
   subtitle?: string
-  spawn?: string
+  /** Optional label shown as “Reserved for …” (e.g. module or feature name). */
+  reservedFor?: string
   notes?: string[]
 }
 
 /**
- * Reusable placeholder for routes whose real implementation belongs to a
- * later spawn. The mood matches the IOC palette so navigation feels live.
+ * Reusable placeholder for routes whose real implementation ships in a
+ * later iteration. The mood matches the IOC palette so navigation feels live.
  */
-export function PlaceholderPage({ title, subtitle, spawn, notes }: PlaceholderPageProps) {
+export function PlaceholderPage({ title, subtitle, reservedFor, notes }: PlaceholderPageProps) {
   return (
     <div className="flex h-full min-h-[calc(100vh-3.5rem)] items-start justify-center p-6">
       <TechBorder className="w-full max-w-3xl">
@@ -31,9 +32,9 @@ export function PlaceholderPage({ title, subtitle, spawn, notes }: PlaceholderPa
           {subtitle ? (
             <p className="text-sm text-ioc-text-secondary">{subtitle}</p>
           ) : null}
-          {spawn ? (
+          {reservedFor ? (
             <p className="font-mono text-xs uppercase tracking-wider text-ioc-text-muted">
-              Reserved for {spawn}
+              Reserved for {reservedFor}
             </p>
           ) : null}
           {notes && notes.length > 0 ? (

@@ -12,7 +12,7 @@ MODEL_PATH = SAVED_DIR / "model.json"
 EXPLAINER_PATH = SAVED_DIR / "shap_explainer.pkl"
 TRAINING_PNG_PATH = SAVED_DIR / "predicted_vs_actual.png"
 
-# XGBoost params (Spawn 4 brief — kept fixed, no HPO).
+# XGBoost params (site-selection brief — kept fixed, no HPO).
 XGB_PARAMS: dict = {
     "n_estimators": 100,
     "max_depth": 6,

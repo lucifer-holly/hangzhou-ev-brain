@@ -1,7 +1,7 @@
-# HZ-EV Brain — Backend (Spawn 1)
+# HZ-EV Brain — Backend
 
 FastAPI service + 100% synthetic data generator + SQLite + Mosquitto MQTT.
-This is the foundation that every other Spawn (frontend, AI models,
+This is the foundation that the rest of the stack (frontend, AI models,
 firmware, contracts) plugs into.
 
 ## What it provides
@@ -14,7 +14,7 @@ firmware, contracts) plugs into.
 - A live ticker that updates each pile's "current" snapshot every second and
   broadcasts the update over the WebSocket.
 - A Mosquitto broker container (started by `docker-compose`) that the Wokwi
-  ESP32 firmware (Spawn 8) will publish to.
+  ESP32 firmware will publish to.
 
 ## Quick start
 
@@ -87,7 +87,7 @@ The suite covers:
 | `WS`  | `/ws` | Realtime telemetry + event push |
 
 The full request/response shape lives in `api/schemas.py` — and FastAPI
-auto-generates an OpenAPI 3 document at `/openapi.json` that Spawn 2 can
+auto-generates an OpenAPI 3 document at `/openapi.json` that you can
 import wholesale into `contracts/openapi.yaml`.
 
 ### WebSocket envelope
@@ -182,9 +182,9 @@ docker-compose run --rm backend python -m db.seed --force
 
 - ❌ No real operator API integration (synthetic only).
 - ❌ No auth / HTTPS / rate limiting.
-- ❌ No Wokwi firmware (Spawn 8 — only the broker is here).
+- ❌ No Wokwi firmware (only the broker is here).
 
-## AI endpoints (Spawn 4)
+## AI endpoints
 
 The 4 AI models live under [`backend/ai/`](./ai/) and are exposed under
 `/api/ai`.  See [`ai/README.md`](./ai/README.md) for full details and

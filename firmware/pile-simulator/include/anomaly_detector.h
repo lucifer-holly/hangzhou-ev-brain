@@ -1,12 +1,12 @@
 // Edge AI anomaly detector — TFLite Micro Autoencoder (Plan A) with a
 // z-score fallback (Plan B) selectable at compile time via HZEV_USE_TFLITE.
 //
-// Plan A (default): runs the FP32 Autoencoder trained in Spawn 4
+// Plan A (default): runs the FP32 Autoencoder trained in the backend pipeline
 // (backend/ai/anomaly_detection/saved/autoencoder.pt) through TFLite Micro,
 // computes per-window reconstruction MSE, trips when MSE > kAnomalyThreshold
 // (the 99-th percentile from training).
 //
-// Plan B (HZEV_USE_TFLITE=0): retains the original Spawn 8 multi-channel
+// Plan B (HZEV_USE_TFLITE=0): retains the original multi-channel
 // rolling z-score detector — strictly cheaper and used as a safety net if
 // the TFLM library cannot be linked on a given target.
 //

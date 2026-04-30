@@ -3,7 +3,7 @@
  *
  * Numbers are derived deterministically from the cached pile snapshot so
  * they remain stable across renders without round-tripping the backend
- * for additional aggregates. Spawn 9.7 follow-up: now also surfaces the
+ * for additional aggregates. A later change also surfaces the
  * online-pile count since the SystemStatusPanel (which used to carry
  * realtime/connection info) was removed for being redundant with the
  * topbar StatusBadges.

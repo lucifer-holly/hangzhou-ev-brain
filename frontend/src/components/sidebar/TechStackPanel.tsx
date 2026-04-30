@@ -1,7 +1,7 @@
 /**
  * Sidebar "Powered by" mini badge — text-only to keep weight near zero.
  *
- * Acts as the entry point to the Architecture modal (Spawn 9.6/E):
+ * Acts as the entry point to the Architecture modal:
  * clicking opens the full system-architecture explainer.
  */
 

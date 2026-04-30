@@ -6,11 +6,11 @@ Local Mosquitto broker for the HZ-EV Brain demo.
 
 Brokers MQTT messages between:
 
-- **Wokwi ESP32 pile firmware** (Spawn 8) — publishes telemetry on
+- **Wokwi ESP32 pile firmware** — publishes telemetry on
   `hzev/pile/<pile_id>/telemetry` and subscribes to commands on
   `hzev/pile/<pile_id>/cmd`.
-- **Backend MQTT subscriber** (Spawn 1, stub for now) — currently just opens
-  the connection and logs; real ingestion will land in a later spawn.
+- **Backend MQTT subscriber** (stub for now) — currently just opens
+  the connection and logs; real ingestion may land in a follow-up change.
 
 ## Ports
 

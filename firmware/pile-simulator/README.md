@@ -42,7 +42,7 @@ What it demonstrates:
   tracking the CC-CV charging curve.
 - **Fuzzy-logic safety governor** — 27-rule Mamdani (LUT-implemented)
   derating engine with three triangular-fuzzy inputs.
-- **Edge AI anomaly detection** ⭐ — the trained Spawn-4 PyTorch
+- **Edge AI anomaly detection** ⭐ — the trained PyTorch
   Autoencoder (256→16→256) running on-device through TFLite Micro;
   reconstruction MSE compared against a persisted training-set 99-th
   percentile threshold.
@@ -264,14 +264,14 @@ cd firmware/pile-simulator && pio run
 ## Plan A vs Plan B (Edge AI strategy)
 
 This firmware ships **Plan A** (the spec design): a TFLite Micro
-Autoencoder. The Spawn 8 release shipped a **Plan B** statistical
+Autoencoder. An earlier release also shipped a **Plan B** statistical
 fallback that is still present, gated behind `HZEV_USE_TFLITE`:
 
 ```ini
 ; platformio.ini build_flags
 -DHZEV_USE_TFLITE=1   ; default — runs the Autoencoder
 ; Switch to 0 to fall back to the multi-channel z-score detector
-; (the Spawn 8 implementation, useful as a test oracle / safety net).
+; (the z-score path, useful as a test oracle / safety net).
 ```
 
 The runtime call site is the same:
@@ -378,4 +378,4 @@ firmware/pile-simulator/
 - Hardware BOM, PID design, fuzzy rule rationale: [`docs/spec.md` §4](../../docs/spec.md)
 - MQTT topic & payload schemas: [`contracts/asyncapi.yaml`](../../contracts/asyncapi.yaml)
 - Trained Autoencoder source: [`backend/ai/anomaly_detection/`](../../backend/ai/anomaly_detection/)
-- Cloud-side MQTT subscriber: `backend/api/mqtt_subscriber.py` (Spawn 1)
+- Cloud-side MQTT subscriber: `backend/api/mqtt_subscriber.py`

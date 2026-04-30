@@ -4,7 +4,7 @@
 
 `docs/spec.md` §4.5 / §7.4 specifies an INT8-quantised TFLite Micro
 Autoencoder running on the ESP32 to score reconstruction error against
-a 99-percentile threshold from training. Spawn 4 trained the model
+a 99-percentile threshold from training. The backend training pipeline produced the model
 (`backend/ai/anomaly_detection/saved/autoencoder.{pt,onnx}`) but did
 **not** produce a `.tflite` artifact.
 
@@ -18,7 +18,7 @@ a 99-percentile threshold from training. Spawn 4 trained the model
    Its current best-effort fallback writes an `autoencoder.int8.onnx`
    instead of a `.tflite` because neither `onnx2tf` nor the
    `onnx-tf → tf.lite.TFLiteConverter` path completes cleanly on the
-   spawn environment.
+   developer machine.
 
 2. **Runtime library decay.** `TensorFlowLite_ESP32` (the PlatformIO
    library bound for the v0.9.0 release) last published in 2021 and

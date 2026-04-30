@@ -470,7 +470,7 @@ The healthcheck on the backend service plus `depends_on: { mosquitto: { conditio
 | Wokwi schematic | `firmware/pile-simulator/diagram.json` | Wokwi |
 | Front-end design tokens | `frontend/src/design-tokens/*.ts` | Tailwind config mirrors these |
 
-The repo's CI (Spawn 9/H, optional) lints OpenAPI / AsyncAPI with Spectral,
+The repo's CI (optional) lints OpenAPI / AsyncAPI with Spectral,
 runs `pytest`, and verifies `pnpm build`. See
 `.github/workflows/ci.yml` if it has been added.
 
@@ -494,7 +494,7 @@ an M-series laptop without glitching:
 | Frontend first-contentful-paint (production build) | ~ 800 ms | < 1.5 s |
 | Frontend bundle (gzipped) | ~ 320 KB main + 4 vendor chunks | < 600 KB total |
 
-Spawn 9.5/E (code splitting + vendor chunking + lazy `<img>`) is what
+Code splitting, vendor chunking, and lazy `<img>` loading
 keeps the bundle under budget. See the commit log for the full sequence
 of optimisations.
 

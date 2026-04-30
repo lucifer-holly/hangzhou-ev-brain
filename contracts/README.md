@@ -42,7 +42,7 @@ curl -s http://localhost:8000/openapi.json | \
   > contracts/openapi.yaml
 ```
 
-Spawn 3 (frontend) will use this file as the input to a TypeScript
+The frontend uses this file as the input to a TypeScript
 client generator (`openapi-typescript`, `orval`, or hand-rolled fetch
 wrappers) — it MUST not write its own request/response types.
 
@@ -52,7 +52,7 @@ AsyncAPI 2.6 description of the five MQTT channels:
 
 | Channel | Direction | Used by |
 | --- | --- | --- |
-| `pile/{pile_id}/telemetry` | edge → cloud | Wokwi firmware (Spawn 8) → backend ingestion |
+| `pile/{pile_id}/telemetry` | edge → cloud | Wokwi firmware → backend ingestion |
 | `pile/{pile_id}/event`     | edge → cloud | Discrete state changes (faults, session start/end) |
 | `pile/{pile_id}/command`   | cloud → edge | Power throttling, lock / unlock, reboot |
 | `system/grid/alert`        | cloud → fleet | Function 3 — grid-pressure broadcast |
@@ -69,7 +69,7 @@ in the demo, having these four schemas in the repo:
 
 - forces a unified internal model on the backend (no leaky abstractions),
 - proves the project's authors understand why integration is hard,
-- gives Spawn 3+ something realistic to target if anyone ever wires up a
+- gives the frontend and adapters something realistic to target if anyone ever wires up a
   mock adapter chain.
 
 Each file deliberately mirrors a *real* style of API published by the
@@ -99,7 +99,7 @@ for f in contracts/operators/*.schema.json; do
 done
 ```
 
-The repo's CI (Spawn 9 will wire it) will run these checks plus a
+The repo's CI will run these checks plus a
 `spectral lint` pass against the OpenAPI / AsyncAPI files.
 
 ## Real operator API references
@@ -125,12 +125,12 @@ backend's adapter layer reads through this contract.
 
 - ❌ Frontend-only types (component props, store shapes) — TS local concern.
 - ❌ Wokwi pin-out / hardware schema — that lives in
-  `firmware/pile-simulator/diagram.json` (Spawn 8).
+  `firmware/pile-simulator/diagram.json`.
 - ❌ A runtime validator middleware — this is a demo; prod-grade contract
   enforcement at request time is out of scope (decision logged in
   `docs/spec.md` §12).
 
-## AI-model endpoints (Spawn 4)
+## AI-model endpoints
 
 The 4 AI inference endpoints live in `openapi.yaml` under `/api/ai/*`:
 

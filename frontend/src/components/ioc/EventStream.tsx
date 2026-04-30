@@ -25,7 +25,7 @@ const severityStyle = {
 /**
  * Animated rolling event feed — newest at top.
  *
- * Spawn 5 will hook this to the live WebSocket stream; for the placeholder
+ * Production wiring hooks this to the live WebSocket stream; for the placeholder
  * homepage it simply renders the events handed in.
  */
 export function EventStream({ events, className, maxItems = 25 }: EventStreamProps) {

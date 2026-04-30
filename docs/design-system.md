@@ -251,7 +251,7 @@ Three named systems:
 Page transitions and skeletons are handled by Framer Motion using the
 `easing.smooth` curve. The first-paint splash screen has its own
 `splash-*` keyframes in `index.css` (logo zoom-in, scan sweep, fade-up
-tagline) — Spawn 9.5/C documents the choreography.
+tagline) — `docs/design-system.md` documents the choreography.
 
 ---
 
@@ -302,7 +302,7 @@ purge the runtime-injected classes). It:
   to its brand blue and the "高德地图" text reads as crisp white.
 - Lifts the whole credit to full `#00D4FF` on hover.
 
-Spawn 9.7/A is the commit that finalised this. The CSS is heavily
+A later iteration finalised this. The CSS is heavily
 commented in `index.css` because the filter algebra is not obvious and
 future maintainers need to know not to change it casually.
 

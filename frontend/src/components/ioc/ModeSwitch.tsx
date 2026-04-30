@@ -32,7 +32,7 @@ const ACTIVE: Record<Item['tone'], string> = {
 }
 
 /**
- * Console mode switcher — Spawn 9.6/C upgraded version.
+ * Console mode switcher — realtime / history / predict.
  *
  * Compared to the original (small uppercase pills), each tab now exposes
  * a clear stacked layout: icon + 中文 + English label + parenthetical

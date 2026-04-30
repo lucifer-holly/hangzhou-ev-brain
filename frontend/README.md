@@ -8,9 +8,9 @@ interfaces:
 - **Operator Dashboard** (`/operator`) — light SaaS theme
 - **Driver App** (`/driver`) — mobile-first light SaaS theme
 
-> **Spawn 3 status (this commit):** foundation only. The placeholder
-> `/city` home screen verifies design tokens + REST + WebSocket. Spawns
-> 5/6/7 fill in the actual screens.
+> **Current status:** foundation only. The placeholder
+> `/city` home screen verifies design tokens + REST + WebSocket. City Console,
+> Operator, and Driver screens are filled in incrementally.
 
 ---
 
@@ -57,13 +57,13 @@ frontend/
 │   │   ├── ui/             shadcn primitives (Button, Card, Badge, …)
 │   │   ├── ioc/            dark big-screen visuals (TechBorder, KpiCard, …)
 │   │   ├── map/            MapProvider abstraction (AMap | OSM)
-│   │   └── charts/         echarts wrappers (filled in by Spawn 5+)
+│   │   └── charts/         echarts wrappers (IOC detail pages)
 │   ├── pages/
 │   │   ├── city-console/   IOC Layout + Home + 6 detail placeholders
 │   │   ├── operator/       Operator Dashboard placeholder
 │   │   └── driver/         Driver App placeholder
 │   ├── hooks/              react-query + WebSocket hooks
-│   ├── stores/             zustand stores (filled in by feature spawns)
+│   ├── stores/             zustand stores (feature work as pages grow)
 │   ├── api/                domain API modules (piles, operators, events, ws)
 │   └── types/api.ts        ✱ generated ✱ — see `pnpm run codegen`
 ├── Dockerfile              multi-stage: pnpm build → nginx serve
@@ -151,7 +151,7 @@ of the app keeps working.
 - `src/hooks/usePiles.ts` / `useOperators.ts` / `useEvents.ts` —
   react-query wrappers around the typed REST clients.
 
-When the OpenAPI spec changes (e.g. Spawn 4 adds AI endpoints), re-run
+When the OpenAPI spec changes (e.g. new AI endpoints), re-run
 `pnpm run codegen` to refresh `src/types/api.ts`. **Don't hand-edit it.**
 
 ---
@@ -193,8 +193,7 @@ pnpm format    # prettier
 
 ## Out of scope for this package
 
-- Auth / RBAC — every route is open. Spawn 7 may revisit for the
-  driver flow.
-- Real charts — Spawn 5+ wires up echarts.
+- Auth / RBAC — every route is open; the driver flow may add constraints later.
+- Real charts — echarts integrates as the IOC pages mature.
 - 6 governance pages — currently `<PlaceholderPage>` stubs that
   document what each one will look like.

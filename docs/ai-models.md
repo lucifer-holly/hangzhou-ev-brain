@@ -374,7 +374,7 @@ TFLite-Micro toolchain in the firmware build. See
 [`firmware/pile-simulator/README.md`](../firmware/pile-simulator/README.md)
 for the on-device code.
 
-Spawn 8.5/B (Edge AI runtime validation) is the commit that nailed
+Edge AI runtime validation locked in
 the on-device loop down to 30 ms with the F1 still recoverable on the
 quantised model.
 
@@ -472,6 +472,6 @@ Overall: PASS
 ```
 
 The script exits non-zero on any FAIL, which is what the optional
-`.github/workflows/ci.yml` (Spawn 9/H) gates the build on. The
+`.github/workflows/ci.yml` (optional) gates the build on. The
 verification narrative is logged at INFO level so the CI output is
 reviewer-friendly.

@@ -182,9 +182,9 @@ hangzhou-ev-brain/
 
 ## Active work (where help is welcome)
 
-- **Spawn 10**: demo video recording + voice-over script
+- **Demo video**: recording + voice-over script
   (output to `video/` — gitignored)
-- **Spawn 11**: VPS full-stack deployment + public demo site
+- **VPS deployment**: full-stack public demo site
 
 ## Deferred (don't start without user approval)
 

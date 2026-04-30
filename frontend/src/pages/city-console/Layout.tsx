@@ -35,7 +35,7 @@ export function CityConsoleLayout() {
     <div className="flex h-screen w-screen flex-col overflow-hidden bg-ioc-radial">
       {/* Topbar */}
       <header className="flex h-20 shrink-0 items-center justify-between border-b border-ioc-border px-5">
-        {/* Brand block — Spawn 9.6/B amplified. */}
+        {/* Brand block — layout emphasis */}
         <div className="flex items-center gap-3">
           <img
             src="/logo.svg"
