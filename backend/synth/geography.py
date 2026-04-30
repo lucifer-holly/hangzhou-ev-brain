@@ -18,7 +18,7 @@ import math
 import random
 import uuid
 from dataclasses import dataclass
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from synth.operators import allocate_piles_to_operators
 
@@ -131,16 +131,14 @@ def generate_pile_locations(
         Order is FTC piles first, then QTA piles.
     """
     if ftc_count + qta_count != total:
-        raise ValueError(
-            f"region counts {ftc_count}+{qta_count} must sum to total {total}"
-        )
+        raise ValueError(f"region counts {ftc_count}+{qta_count} must sum to total {total}")
 
     rng = random.Random(seed)
     operators = allocate_piles_to_operators(total)
     rng.shuffle(operators)  # so operators don't cluster by region
 
     out: list[PileLocation] = []
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     plan = [
         ("future_tech_city", ftc_count),
         ("qiantang_new_area", qta_count),

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -51,7 +51,7 @@ async def get_pile(
     if pile is None:
         raise HTTPException(status_code=404, detail=f"pile {pile_id} not found")
 
-    since = datetime.now(timezone.utc) - timedelta(hours=24)
+    since = datetime.now(UTC) - timedelta(hours=24)
     summary_stmt = select(
         func.avg(models.Telemetry.occupancy_rate),
         func.max(models.Telemetry.occupancy_rate),
@@ -92,8 +92,8 @@ async def get_pile(
 async def get_telemetry(
     pile_id: str,
     session: Annotated[AsyncSession, Depends(get_session)],
-    from_: datetime | None = Query(default=None, alias="from"),
-    to: datetime | None = Query(default=None),
+    from_: Annotated[datetime | None, Query(alias="from")] = None,
+    to: Annotated[datetime | None, Query()] = None,
     limit: int = Query(default=500, ge=1, le=10_000),
 ) -> list[TelemetryPoint]:
     """Return historical telemetry for a single pile, newest first."""

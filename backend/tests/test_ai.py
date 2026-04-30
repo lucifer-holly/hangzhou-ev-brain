@@ -12,12 +12,21 @@ from pathlib import Path
 import pytest
 from httpx import ASGITransport, AsyncClient
 
-_LSTM_CKPT = Path(__file__).resolve().parent.parent / "ai" / "lstm_demand" / "saved" / "checkpoint.pt"
-_XGB_CKPT = Path(__file__).resolve().parent.parent / "ai" / "site_selection" / "saved" / "model.json"
-_AE_CKPT = Path(__file__).resolve().parent.parent / "ai" / "anomaly_detection" / "saved" / "autoencoder.pt"
+_LSTM_CKPT = (
+    Path(__file__).resolve().parent.parent / "ai" / "lstm_demand" / "saved" / "checkpoint.pt"
+)
+_XGB_CKPT = (
+    Path(__file__).resolve().parent.parent / "ai" / "site_selection" / "saved" / "model.json"
+)
+_AE_CKPT = (
+    Path(__file__).resolve().parent.parent / "ai" / "anomaly_detection" / "saved" / "autoencoder.pt"
+)
 _YOLO_SAMPLE = (
     Path(__file__).resolve().parent.parent
-    / "ai" / "yolo_occupancy" / "sample_images" / "sample_bus.jpg"
+    / "ai"
+    / "yolo_occupancy"
+    / "sample_images"
+    / "sample_bus.jpg"
 )
 
 
@@ -31,7 +40,9 @@ async def client(seeded_db: None):
         yield c
 
 
-@pytest.mark.skipif(not _LSTM_CKPT.exists(), reason="LSTM checkpoint missing — run train_all_models.sh")
+@pytest.mark.skipif(
+    not _LSTM_CKPT.exists(), reason="LSTM checkpoint missing — run train_all_models.sh"
+)
 async def test_lstm_inference_returns_valid_occupancy(client: AsyncClient) -> None:
     piles = (await client.get("/api/piles")).json()
     assert piles, "no piles in test DB"
@@ -47,7 +58,9 @@ async def test_lstm_inference_returns_valid_occupancy(client: AsyncClient) -> No
     assert body["hours_ahead"] == 1
 
 
-@pytest.mark.skipif(not _XGB_CKPT.exists(), reason="XGBoost model missing — run train_all_models.sh")
+@pytest.mark.skipif(
+    not _XGB_CKPT.exists(), reason="XGBoost model missing — run train_all_models.sh"
+)
 async def test_site_inference_returns_shap_top3(client: AsyncClient) -> None:
     body = {
         "lat": 30.275,

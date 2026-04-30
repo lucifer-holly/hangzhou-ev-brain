@@ -113,9 +113,7 @@ def predict_all_piles(n_samples: int = 8) -> list[BatchPrediction]:
     with torch.no_grad():
         # Stack into (N, 24, 8) — one big tensor.
         ids = list(windows.keys())
-        stack = torch.from_numpy(
-            np.stack([windows[pid] for pid in ids], axis=0).astype(np.float32)
-        )
+        stack = torch.from_numpy(np.stack([windows[pid] for pid in ids], axis=0).astype(np.float32))
         n = stack.shape[0]
         outs = np.zeros((n_samples, n), dtype=np.float32)
         for s in range(n_samples):

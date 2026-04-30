@@ -20,11 +20,17 @@ async def list_operators(
     session: Annotated[AsyncSession, Depends(get_session)],
 ) -> list[OperatorOut]:
     """Return all operators with their pile counts."""
-    op_rows = (await session.execute(select(models.Operator).order_by(models.Operator.id))).scalars().all()
+    op_rows = (
+        (await session.execute(select(models.Operator).order_by(models.Operator.id)))
+        .scalars()
+        .all()
+    )
     counts = dict(
         (
             await session.execute(
-                select(models.Pile.operator_id, func.count(models.Pile.id)).group_by(models.Pile.operator_id)
+                select(models.Pile.operator_id, func.count(models.Pile.id)).group_by(
+                    models.Pile.operator_id
+                )
             )
         ).all()
     )

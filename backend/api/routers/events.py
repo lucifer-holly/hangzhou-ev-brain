@@ -22,7 +22,9 @@ async def list_events(
     type: str | None = Query(default=None, description="Filter by event type."),
     severity: str | None = Query(default=None, description="Filter by severity."),
     pile_id: str | None = Query(default=None, description="Filter by pile id."),
-    since: datetime | None = Query(default=None, description="Only events on/after this UTC ts."),
+    since: Annotated[
+        datetime | None, Query(description="Only events on/after this UTC ts.")
+    ] = None,
     limit: int = Query(default=100, ge=1, le=2000),
 ) -> list[EventOut]:
     stmt = select(models.Event)

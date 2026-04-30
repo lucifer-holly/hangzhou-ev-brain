@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Annotated
 
 import numpy as np
@@ -52,7 +52,8 @@ class GridStressResponse(BaseModel):
     achieved_pct_of_target: float
     new_load_mw: float
     pricing_discount_pct: float = Field(
-        ..., description="Suggested off-peak charging discount, 0..1.",
+        ...,
+        description="Suggested off-peak charging discount, 0..1.",
     )
     expected_response_rate: float = Field(..., ge=0, le=1)
     operator_allocations: list[OperatorAllocation]
@@ -90,10 +91,14 @@ async def simulate_stress(
     """
     # Pull operators + sum of current_power per operator.
     op_rows = (
-        await session.execute(select(models.Operator).order_by(models.Operator.id))
-    ).scalars().all()
+        (await session.execute(select(models.Operator).order_by(models.Operator.id)))
+        .scalars()
+        .all()
+    )
     if not op_rows:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="no operators seeded")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="no operators seeded"
+        )
 
     power_rows = (
         await session.execute(
@@ -129,7 +134,7 @@ async def simulate_stress(
             for i, op in enumerate(op_rows)
         ]
         return GridStressResponse(
-            generated_at=datetime.now(timezone.utc),
+            generated_at=datetime.now(UTC),
             current_load_mw=0.0,
             target_curtailment_mw=req.target_curtailment_mw,
             achieved_curtailment_mw=0.0,
@@ -152,10 +157,7 @@ async def simulate_stress(
     # Constraint: sum(pct * power) ≥ target_kw  →  -sum ≤ -target_kw
     A_ub = (-powers).reshape(1, -1).tolist()
     b_ub = [-target_kw]
-    bounds = [
-        (0.0, req.max_per_operator_pct) if active_mask[i] else (0.0, 0.0)
-        for i in range(n)
-    ]
+    bounds = [(0.0, req.max_per_operator_pct) if active_mask[i] else (0.0, 0.0) for i in range(n)]
 
     res = linprog(c=c, A_ub=A_ub, b_ub=b_ub, bounds=bounds, method="highs")
     if not res.success:
@@ -188,7 +190,7 @@ async def simulate_stress(
     ]
 
     return GridStressResponse(
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
         current_load_mw=round(current_load_kw / 1000.0, 3),
         target_curtailment_mw=req.target_curtailment_mw,
         achieved_curtailment_mw=round(achieved_kw / 1000.0, 3),

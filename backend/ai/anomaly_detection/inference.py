@@ -14,8 +14,8 @@ from ai.anomaly_detection.model import (
     AE_INPUT_DIM,
     AE_LATENT_DIM,
     NUM_CHANNELS,
-    PileAutoencoder,
     SEQ_LEN,
+    PileAutoencoder,
 )
 
 log = logging.getLogger("ai.anomaly_detection.inference")
@@ -66,9 +66,7 @@ def _load() -> tuple[PileAutoencoder, float]:
 def score_window(window: np.ndarray) -> tuple[float, float]:
     """Return (reconstruction_error, threshold) for a single (8, 32) window."""
     if window.shape != (NUM_CHANNELS, SEQ_LEN):
-        raise ValueError(
-            f"window shape {window.shape} != expected ({NUM_CHANNELS}, {SEQ_LEN})"
-        )
+        raise ValueError(f"window shape {window.shape} != expected ({NUM_CHANNELS}, {SEQ_LEN})")
     model, threshold = _load()
     with torch.no_grad():
         x = torch.from_numpy(window.astype(np.float32)).unsqueeze(0)

@@ -155,9 +155,7 @@ async def test_list_events_returns_some(client: AsyncClient) -> None:
 
 
 async def test_filter_events_by_type(client: AsyncClient) -> None:
-    r = await client.get(
-        "/api/events", params={"type": "communication_loss", "limit": 50}
-    )
+    r = await client.get("/api/events", params={"type": "communication_loss", "limit": 50})
     assert r.status_code == 200
     rows = r.json()
     assert all(r_["type"] == "communication_loss" for r_ in rows)

@@ -5,7 +5,7 @@ Schema is intentionally simple — synthetic data only, no migrations.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import (
     DateTime,
@@ -22,7 +22,7 @@ from api.database import Base
 
 
 def _utcnow() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class Operator(Base):
@@ -77,9 +77,7 @@ class Pile(Base):
     current_current: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     current_power: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
     current_occupancy: Mapped[float] = mapped_column(Float, nullable=False, default=0.0)
-    last_seen_at: Mapped[datetime] = mapped_column(
-        DateTime, nullable=False, default=_utcnow
-    )
+    last_seen_at: Mapped[datetime] = mapped_column(DateTime, nullable=False, default=_utcnow)
 
     operator_ref: Mapped[Operator] = relationship(back_populates="piles")
     region_ref: Mapped[Region] = relationship(back_populates="piles")

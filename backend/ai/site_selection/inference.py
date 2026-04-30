@@ -76,11 +76,10 @@ def predict_site(features: SiteFeatures) -> SitePrediction:
     x = features.to_vector().reshape(1, -1)
     mean_pred = float(predict(model, x)[0])
 
-    # Crude 95% band from per-tree variance: collect leaf outputs across trees.
-    booster = model.get_booster()
-    leaf_pred = booster.predict(xgb.DMatrix(x), pred_leaf=True)  # (1, n_trees)
-    # Approx tree-output variance using residuals on training set isn't free
-    # at inference time, so we approximate σ as a fixed 0.06 — calibrated
+    # Crude 95% band from per-tree variance: we could call
+    # booster.predict(xgb.DMatrix(x), pred_leaf=True) to get per-tree leaf
+    # indices and derive σ, but approximating σ from training residuals at
+    # inference time isn't free, so we approximate σ as a fixed 0.06 — calibrated
     # offline against the test-set RMSE of typical training runs.
     sigma = 0.06
     lo = max(0.0, mean_pred - 1.96 * sigma)

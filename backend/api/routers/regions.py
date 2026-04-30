@@ -23,7 +23,9 @@ async def list_regions(
     counts = dict(
         (
             await session.execute(
-                select(models.Pile.region_id, func.count(models.Pile.id)).group_by(models.Pile.region_id)
+                select(models.Pile.region_id, func.count(models.Pile.id)).group_by(
+                    models.Pile.region_id
+                )
             )
         ).all()
     )

@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 from dataclasses import dataclass
 
-import numpy as np
 import torch
 
 from ai.anomaly_detection.data_loader import build_dataset
@@ -51,7 +50,13 @@ def evaluate() -> AeMetrics:
     f1 = 2 * precision * recall / max(1e-9, precision + recall)
     log.info(
         "TP=%d FP=%d TN=%d FN=%d → precision=%.3f recall=%.3f f1=%.3f",
-        tp, fp, tn, fn, precision, recall, f1,
+        tp,
+        fp,
+        tn,
+        fn,
+        precision,
+        recall,
+        f1,
     )
     return AeMetrics(
         f1=float(f1),

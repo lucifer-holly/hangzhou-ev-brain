@@ -3,9 +3,9 @@
 from ai.anomaly_detection.model import (
     AE_INPUT_DIM,
     AE_LATENT_DIM,
-    PileAutoencoder,
-    SEQ_LEN,
     NUM_CHANNELS,
+    SEQ_LEN,
+    PileAutoencoder,
 )
 
 __all__ = [

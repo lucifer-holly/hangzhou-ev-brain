@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import logging
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Annotated, Literal
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
@@ -48,7 +48,7 @@ async def utilization_24h(
     hour-of-day (0-23 UTC); the value is the mean occupancy across all
     telemetry rows in the last 24h that fell into that hour.
     """
-    since = datetime.now(timezone.utc) - timedelta(hours=24)
+    since = datetime.now(UTC) - timedelta(hours=24)
     stmt = (
         select(
             func.strftime("%H", models.Telemetry.ts).label("hour"),
@@ -70,7 +70,7 @@ async def utilization_24h(
         for h in range(24)
     ]
     return Utilization24hResponse(
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
         hourly=hourly,
     )
 
@@ -102,7 +102,7 @@ async def fault_types(
     Charging start/end and communication-loss are excluded; we want the
     "what's actually breaking" view for the bottom-strip donut chart.
     """
-    since = datetime.now(timezone.utc) - timedelta(hours=hours)
+    since = datetime.now(UTC) - timedelta(hours=hours)
     excluded = {"charging_start", "charging_end"}
     stmt = (
         select(
@@ -130,7 +130,7 @@ async def fault_types(
     ]
     total = sum(b.count for b in buckets)
     return FaultTypesResponse(
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
         window_hours=hours,
         total=total,
         buckets=buckets,
@@ -154,7 +154,9 @@ class PredictedUtilizationResponse(BaseModel):
     pile_count: int
     average_predicted_occupancy: float = Field(..., ge=0, le=1)
     average_confidence: float = Field(
-        ..., ge=0, le=1,
+        ...,
+        ge=0,
+        le=1,
         description="Average half-CI-width across piles, 1 = perfectly tight, 0 = wide.",
     )
     predictions: list[PilePrediction]
@@ -165,7 +167,9 @@ class PredictedUtilizationResponse(BaseModel):
     response_model=PredictedUtilizationResponse,
     summary="One-shot LSTM forecast across every pile",
 )
-async def predicted_utilization(hours_ahead: int = Query(default=1, ge=1, le=6)) -> PredictedUtilizationResponse:
+async def predicted_utilization(
+    hours_ahead: int = Query(default=1, ge=1, le=6),
+) -> PredictedUtilizationResponse:
     """Return the next-hour predicted occupancy for every pile.
 
     Loads the 30-day telemetry DataFrame ONCE and predicts the whole
@@ -176,20 +180,29 @@ async def predicted_utilization(hours_ahead: int = Query(default=1, ge=1, le=6))
     try:
         from ai.lstm_demand.batch import predict_all_piles
     except ImportError as exc:  # pragma: no cover
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)
+        ) from exc
     try:
         preds = predict_all_piles()
     except Exception as exc:
         log.exception("batch LSTM failed")
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)
+        ) from exc
     if not preds:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail="no piles with enough history yet")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="no piles with enough history yet",
+        )
 
     avg_occ = sum(p.predicted_occupancy for p in preds) / len(preds)
     half_ci = sum((p.ci_high - p.ci_low) / 2 for p in preds) / len(preds)
-    confidence = max(0.0, min(1.0, 1.0 - half_ci * 4))  # rough mapping; small bands → high confidence
+    confidence = max(
+        0.0, min(1.0, 1.0 - half_ci * 4)
+    )  # rough mapping; small bands → high confidence
     return PredictedUtilizationResponse(
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
         hours_ahead=hours_ahead,
         pile_count=len(preds),
         average_predicted_occupancy=avg_occ,
@@ -257,7 +270,7 @@ def _stable_complaint_count(operator_id: str, window: str) -> int:
 )
 async def operator_compliance(
     session: Annotated[AsyncSession, Depends(get_session)],
-    window: ComplianceWindow = Query(default="24h", description="Window: 24h / 7d / 30d."),
+    window: Annotated[ComplianceWindow, Query(description="Window: 24h / 7d / 30d.")] = "24h",
 ) -> OperatorComplianceResponse:
     """Return compliance metrics for every operator over the chosen window.
 
@@ -269,14 +282,16 @@ async def operator_compliance(
       * composite_score: weighted 0-100 score → A/B/C/D rating
     """
     hours = _WINDOW_HOURS[window]
-    since = datetime.now(timezone.utc) - timedelta(hours=hours)
+    since = datetime.now(UTC) - timedelta(hours=hours)
     since_naive = since.replace(tzinfo=None)
     window_minutes = hours * 60
 
     # Pile counts per operator + colour metadata.
     op_rows = (
-        await session.execute(select(models.Operator).order_by(models.Operator.id))
-    ).scalars().all()
+        (await session.execute(select(models.Operator).order_by(models.Operator.id)))
+        .scalars()
+        .all()
+    )
     pile_count_rows = (
         await session.execute(
             select(models.Pile.operator_id, func.count(models.Pile.id)).group_by(
@@ -365,7 +380,7 @@ async def operator_compliance(
         )
 
     return OperatorComplianceResponse(
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
         window=window,
         rows=rows,
     )
@@ -384,7 +399,8 @@ class SubsidyPileRow(BaseModel):
     post_avg_occupancy: float = Field(..., ge=0, le=1)
     occupancy_lift: float = Field(..., description="post − pre (utilisation, 0..1)")
     roi_per_kyuan: float = Field(
-        ..., description="utilisation-points-lift per 1000 yuan of subsidy",
+        ...,
+        description="utilisation-points-lift per 1000 yuan of subsidy",
     )
 
 
@@ -401,10 +417,14 @@ class DIDAnalysisResponse(BaseModel):
     control_post_avg: float
     control_uplift: float
     did_effect: float = Field(
-        ..., description="treatment_uplift − control_uplift (causal effect)",
+        ...,
+        description="treatment_uplift − control_uplift (causal effect)",
     )
     p_value: float = Field(
-        ..., ge=0, le=1, description="Welch t-test p-value on per-pile uplift",
+        ...,
+        ge=0,
+        le=1,
+        description="Welch t-test p-value on per-pile uplift",
     )
     avg_treatment_subsidy: float
     rows: list[SubsidyPileRow]
@@ -449,7 +469,7 @@ async def subsidy_analysis(
         jitter = (h - 500) / 5000.0  # ±0.10 max
         return max(0.0, 0.08 * (subsidy / 100_000.0) + jitter * 0.4)
 
-    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    now = datetime.now(UTC).replace(tzinfo=None)
     post_start = now - timedelta(days=post_days)
     pre_start = post_start - timedelta(days=pre_days)
 
@@ -552,16 +572,14 @@ async def subsidy_analysis(
     did = t_uplift - c_uplift
 
     if len(treatment_uplifts) >= 2 and len(control_uplifts) >= 2:
-        _, p_val = scstats.ttest_ind(
-            treatment_uplifts, control_uplifts, equal_var=False
-        )
+        _, p_val = scstats.ttest_ind(treatment_uplifts, control_uplifts, equal_var=False)
         if not np.isfinite(p_val):  # pragma: no cover  - degenerate input
             p_val = 1.0
     else:
         p_val = 1.0
 
     return DIDAnalysisResponse(
-        generated_at=datetime.now(timezone.utc),
+        generated_at=datetime.now(UTC),
         pre_window_days=pre_days,
         post_window_days=post_days,
         treatment_n=len(treatment_uplifts),
@@ -605,7 +623,7 @@ class PileSnapshotResponse(BaseModel):
 )
 async def pile_snapshot(
     session: Annotated[AsyncSession, Depends(get_session)],
-    at: datetime = Query(..., description="UTC timestamp to retrieve a snapshot for."),
+    at: Annotated[datetime, Query(description="UTC timestamp to retrieve a snapshot for.")],
 ) -> PileSnapshotResponse:
     """Return the historical state of every pile at the closest hourly bucket.
 

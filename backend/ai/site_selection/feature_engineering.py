@@ -26,8 +26,8 @@ be plausible enough to give SHAP a meaningful story.
 from __future__ import annotations
 
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Sequence
 
 import numpy as np
 from pydantic import BaseModel, Field
@@ -215,7 +215,8 @@ def pile_to_features(
     mall, office, res = _poi_counts(pile.lat, pile.lng, pile.region_id)
 
     nearby = [
-        o for o in others
+        o
+        for o in others
         if o.pile_id != pile.pile_id
         and _haversine_km(pile.lat, pile.lng, o.lat, o.lng) <= radius_km
     ]
@@ -229,10 +230,18 @@ def pile_to_features(
     ohe = _operator_one_hot(pile.operator_id)
     return np.asarray(
         [
-            pile.lat, pile.lng, pop,
-            mall, office, res,
-            pile_count_1km, avg_util_1km, grade,
-            ohe[0], ohe[1], ohe[2],
+            pile.lat,
+            pile.lng,
+            pop,
+            mall,
+            office,
+            res,
+            pile_count_1km,
+            avg_util_1km,
+            grade,
+            ohe[0],
+            ohe[1],
+            ohe[2],
         ],
         dtype=np.float32,
     )
@@ -295,9 +304,7 @@ def build_training_set(noise_replicas: int = 5, seed: int = 42) -> tuple[np.ndar
     rng = np.random.default_rng(seed)
     real = _load_real_piles_with_avg_occupancy()
     if not real:
-        raise RuntimeError(
-            "No piles found in DB.  Run `python -m db.seed` first."
-        )
+        raise RuntimeError("No piles found in DB.  Run `python -m db.seed` first.")
 
     base_X = np.stack([pile_to_features(p, real) for p in real])
     base_y = np.asarray(

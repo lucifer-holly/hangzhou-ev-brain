@@ -15,7 +15,7 @@ import numpy as np
 import torch
 
 from ai.lstm_demand.data_loader import latest_window_for_pile
-from ai.lstm_demand.model import DemandLSTM, INPUT_DIM, SEQ_LEN
+from ai.lstm_demand.model import INPUT_DIM, SEQ_LEN, DemandLSTM
 
 log = logging.getLogger("ai.lstm_demand.inference")
 
@@ -81,9 +81,7 @@ def predict_window(window: np.ndarray, n_samples: int = 30) -> DemandPrediction:
     enough for the dashboard.
     """
     if window.shape != (SEQ_LEN, INPUT_DIM):
-        raise ValueError(
-            f"window shape {window.shape} != expected ({SEQ_LEN}, {INPUT_DIM})"
-        )
+        raise ValueError(f"window shape {window.shape} != expected ({SEQ_LEN}, {INPUT_DIM})")
     model = _load_model()
     with torch.no_grad():
         base = torch.from_numpy(window.astype(np.float32)).unsqueeze(0)
@@ -122,7 +120,7 @@ def predict_pile(pile_id: str, hours_ahead: int = 1) -> DemandPrediction:
         return pred
 
     rolling_window = window.copy()
-    for h in range(2, hours_ahead + 1):
+    for _h in range(2, hours_ahead + 1):
         rolling_window = np.roll(rolling_window, shift=-1, axis=0)
         # New synthetic step: keep all features but bump occupancy + power
         # to the previous prediction.

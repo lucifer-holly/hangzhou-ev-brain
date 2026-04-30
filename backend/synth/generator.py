@@ -14,11 +14,10 @@ import math
 import random
 from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from synth.demand_model import compute_occupancy
 from synth.failure_inject import (
-    FaultEvent,
     inject_faults_for_day,
     sample_comm_losses,
 )
@@ -131,7 +130,7 @@ def generate_history(
     Events for faults and comm-losses are appended separately.
     """
     rng = random.Random(seed)
-    end = (end or datetime.now(timezone.utc)).replace(minute=0, second=0, microsecond=0)
+    end = (end or datetime.now(UTC)).replace(minute=0, second=0, microsecond=0)
     start = end - timedelta(days=history_days)
 
     bundle = HistoryBundle()
@@ -139,7 +138,9 @@ def generate_history(
 
     # Pre-sample faults for each day so we can flag the affected piles in their
     # telemetry as "fault" and write the matching event row.
-    fault_windows: dict[str, list[tuple[datetime, datetime, GeneratedEvent]]] = {p.id: [] for p in piles}
+    fault_windows: dict[str, list[tuple[datetime, datetime, GeneratedEvent]]] = {
+        p.id: [] for p in piles
+    }
     for day_idx in range(history_days):
         day_start = start + timedelta(days=day_idx)
         faults = inject_faults_for_day(pile_ids, rng=rng)
@@ -229,7 +230,7 @@ def generate_tick(
         now: timestamp to stamp on the points (default = utcnow).
         fault_per_minute_prob: per-pile, per-tick chance of starting a fault.
     """
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     is_we = _is_weekend(now)
     points: list[TelemetryPoint] = []
     events: list[GeneratedEvent] = []

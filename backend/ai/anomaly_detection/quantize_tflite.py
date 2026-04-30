@@ -16,7 +16,6 @@ import logging
 import shutil
 from pathlib import Path
 
-import numpy as np
 import torch
 
 from ai.anomaly_detection.inference import _load

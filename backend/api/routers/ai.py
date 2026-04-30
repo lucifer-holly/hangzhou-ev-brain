@@ -18,28 +18,35 @@ import logging
 import shutil
 import tempfile
 from pathlib import Path
+from typing import Annotated
 
 from fastapi import APIRouter, File, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
 
+from ai.anomaly_detection.inference import (
+    ModelNotTrainedError as AeModelMissing,
+)
+from ai.anomaly_detection.inference import (
+    check_pile as ae_check_pile,
+)
 from ai.lstm_demand.inference import (
     ModelNotTrainedError as LstmModelMissing,
+)
+from ai.lstm_demand.inference import (
     predict_pile as lstm_predict_pile,
 )
 from ai.site_selection.feature_engineering import (
     SiteFeatures,
     _haversine_km,
-    _pop_density_1km,
     _poi_counts,
+    _pop_density_1km,
     _road_grade,
 )
 from ai.site_selection.inference import (
     ModelNotTrainedError as XgbModelMissing,
-    predict_site as xgb_predict_site,
 )
-from ai.anomaly_detection.inference import (
-    ModelNotTrainedError as AeModelMissing,
-    check_pile as ae_check_pile,
+from ai.site_selection.inference import (
+    predict_site as xgb_predict_site,
 )
 from ai.yolo_occupancy.inference import detect_image as yolo_detect_image
 
@@ -110,7 +117,9 @@ async def predict_demand(req: DemandRequest) -> DemandResponse:
     try:
         out = lstm_predict_pile(req.pile_id, hours_ahead=req.hours_ahead)
     except LstmModelMissing as exc:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)
+        ) from exc
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     return DemandResponse(
@@ -189,7 +198,9 @@ async def predict_site(features: SiteFeatures) -> SiteResponse:
     try:
         out = xgb_predict_site(features)
     except XgbModelMissing as exc:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)
+        ) from exc
     return SiteResponse(
         predicted_utilization_6m=out.predicted_utilization_6m,
         confidence_interval_95=out.confidence_interval_95,
@@ -214,7 +225,9 @@ async def check_anomaly(pile_id: str) -> AnomalyResponse:
     try:
         out = ae_check_pile(pile_id)
     except AeModelMissing as exc:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)) from exc
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE, detail=str(exc)
+        ) from exc
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     return AnomalyResponse(
@@ -227,9 +240,13 @@ async def check_anomaly(pile_id: str) -> AnomalyResponse:
 
 
 @router.post("/yolo/detect", response_model=YoloResponse, summary="YOLOv8 occupancy detection")
-async def yolo_detect(image: UploadFile = File(..., description="JPEG / PNG image of a parking area.")) -> YoloResponse:
+async def yolo_detect(
+    image: Annotated[UploadFile, File(description="JPEG / PNG image of a parking area.")],
+) -> YoloResponse:
     if image.content_type and not image.content_type.startswith("image/"):
-        raise HTTPException(status_code=400, detail=f"unsupported content_type {image.content_type}")
+        raise HTTPException(
+            status_code=400, detail=f"unsupported content_type {image.content_type}"
+        )
     suffix = Path(image.filename or "upload.jpg").suffix or ".jpg"
     with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
         shutil.copyfileobj(image.file, tmp)

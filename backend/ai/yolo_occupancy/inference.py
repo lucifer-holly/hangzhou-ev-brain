@@ -66,7 +66,7 @@ class DetectionResult:
 class YoloOccupancyDetector:
     """Lazily-loaded YOLOv8 detector. Singleton-style."""
 
-    _instance: "YoloOccupancyDetector | None" = None
+    _instance: YoloOccupancyDetector | None = None
 
     def __init__(self) -> None:
         # Local import keeps the heavy ultralytics import out of module
@@ -86,14 +86,12 @@ class YoloOccupancyDetector:
                 log.info("cached weights → %s", _WEIGHT_PATH)
 
     @classmethod
-    def shared(cls) -> "YoloOccupancyDetector":
+    def shared(cls) -> YoloOccupancyDetector:
         if cls._instance is None:
             cls._instance = cls()
         return cls._instance
 
-    def detect(
-        self, image_path: str | Path, conf: float = 0.25
-    ) -> DetectionResult:
+    def detect(self, image_path: str | Path, conf: float = 0.25) -> DetectionResult:
         import time
 
         path = Path(image_path)
@@ -114,7 +112,7 @@ class YoloOccupancyDetector:
             xyxy = res.boxes.xyxy.cpu().numpy()
             confs = res.boxes.conf.cpu().numpy()
             cls_idx = res.boxes.cls.cpu().numpy().astype(int)
-            for box, c, ci in zip(xyxy, confs, cls_idx):
+            for box, c, ci in zip(xyxy, confs, cls_idx, strict=True):
                 cls_name = names.get(int(ci), str(ci))
                 if cls_name not in _VEHICLE_CLASSES:
                     continue
@@ -152,7 +150,7 @@ def synthesize_sample_image(out_path: Path) -> Path:
     rng = np.random.default_rng(42)
     img = (rng.uniform(40, 120, size=(288, 512, 3))).astype(np.uint8)
     # Paint three darker rectangles (placeholder parked cars).
-    for (x, y) in [(60, 80), (220, 90), (380, 100)]:
+    for x, y in [(60, 80), (220, 90), (380, 100)]:
         img[y : y + 70, x : x + 110, :] = rng.integers(20, 80, size=(70, 110, 3))
     Image.fromarray(img).save(out_path)
     return out_path

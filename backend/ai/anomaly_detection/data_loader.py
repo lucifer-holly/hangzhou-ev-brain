@@ -51,8 +51,16 @@ def _load_telemetry_with_status() -> pd.DataFrame:
         ).all()
     df = pd.DataFrame(
         rows,
-        columns=["pile_id", "ts", "voltage", "current", "power",
-                 "occupancy_rate", "energy_delivered_kwh", "status"],
+        columns=[
+            "pile_id",
+            "ts",
+            "voltage",
+            "current",
+            "power",
+            "occupancy_rate",
+            "energy_delivered_kwh",
+            "status",
+        ],
     )
     df["ts"] = pd.to_datetime(df["ts"])
     df = df.sort_values(["pile_id", "ts"]).reset_index(drop=True)
@@ -155,7 +163,9 @@ def build_dataset(
         else np.empty((0, NUM_CHANNELS, seq_len), dtype=np.float32)
     )
 
-    n_normal_eval = min(len(faults), len(normal) // 4) if len(faults) else min(200, len(normal) // 4)
+    n_normal_eval = (
+        min(len(faults), len(normal) // 4) if len(faults) else min(200, len(normal) // 4)
+    )
     if len(normal) and n_normal_eval > 0:
         idx = rng.choice(len(normal), size=n_normal_eval, replace=False)
         normal_eval = normal[idx]

@@ -70,16 +70,10 @@ def compute_occupancy(
         raise ValueError(f"unknown region_id: {region_id}")
 
     if is_weekend:
-        value = baseline + weekend_amp * _gaussian(
-            hour, _WEEKEND_MIDDAY_MU, _WEEKEND_MIDDAY_SIGMA
-        )
+        value = baseline + weekend_amp * _gaussian(hour, _WEEKEND_MIDDAY_MU, _WEEKEND_MIDDAY_SIGMA)
     else:
-        morning = morning_amp * _gaussian(
-            hour, _WEEKDAY_MORNING_MU, _WEEKDAY_MORNING_SIGMA
-        )
-        evening = evening_amp * _gaussian(
-            hour, _WEEKDAY_EVENING_MU, _WEEKDAY_EVENING_SIGMA
-        )
+        morning = morning_amp * _gaussian(hour, _WEEKDAY_MORNING_MU, _WEEKDAY_MORNING_SIGMA)
+        evening = evening_amp * _gaussian(hour, _WEEKDAY_EVENING_MU, _WEEKDAY_EVENING_SIGMA)
         value = baseline + max(morning, evening)
 
     value += rng_value  # caller-supplied Gaussian noise, σ=0.05 typically

@@ -29,7 +29,6 @@ from ai.lstm_demand.model import INPUT_DIM, SEQ_LEN
 from api import models
 from api.database import SyncSession
 
-
 _FUTURE_TECH_REGION_ID = "future_tech_city"
 _NEIGHBOR_RADIUS_KM = 5.0
 
@@ -189,9 +188,7 @@ def _build_windows(df: pd.DataFrame, seq_len: int) -> tuple[np.ndarray, np.ndarr
     )
 
 
-def _time_split(
-    x: np.ndarray, y: np.ndarray, ts: np.ndarray
-) -> TensorBundle:
+def _time_split(x: np.ndarray, y: np.ndarray, ts: np.ndarray) -> TensorBundle:
     """70/15/15 split sorted by label timestamp (no leakage)."""
     order = np.argsort(ts)
     x = x[order]

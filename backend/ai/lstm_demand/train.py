@@ -96,7 +96,11 @@ def main() -> None:
         val_losses.append(val_loss)
         log.info(
             "epoch %02d/%02d train=%.5f val=%.5f (%.1fs)",
-            epoch, EPOCHS, train_loss, val_loss, time.time() - t0,
+            epoch,
+            EPOCHS,
+            train_loss,
+            val_loss,
+            time.time() - t0,
         )
 
     log.info("saving checkpoint → %s", CHECKPOINT_PATH)

@@ -45,7 +45,9 @@ def evaluate() -> LstmMetrics:
 
 if __name__ == "__main__":
     m = evaluate()
-    log.info("LSTM test metrics: MAE=%.4f RMSE=%.4f MAPE=%.4f n=%d", m.mae, m.rmse, m.mape, m.n_samples)
+    log.info(
+        "LSTM test metrics: MAE=%.4f RMSE=%.4f MAPE=%.4f n=%d", m.mae, m.rmse, m.mape, m.n_samples
+    )
     print(f"MAE: {m.mae:.4f}")
     print(f"RMSE: {m.rmse:.4f}")
     print(f"MAPE: {m.mape:.4f}")

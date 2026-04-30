@@ -11,7 +11,7 @@ These pin down the contract the spec requires:
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -19,7 +19,6 @@ from synth.demand_model import compute_occupancy
 from synth.failure_inject import inject_faults_for_day
 from synth.geography import generate_pile_locations
 from synth.operators import OPERATORS, allocate_piles_to_operators
-
 
 # ---------- Operators ----------
 
@@ -87,7 +86,7 @@ class TestGeography:
 
     def test_install_dates_in_one_to_three_years_back(self):
         piles = generate_pile_locations(seed=42)
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         oldest = now - timedelta(days=365 * 3 + 30)  # +1 month slack
         newest = now - timedelta(days=365 * 1 - 30)  # -1 month slack
         for p in piles:
@@ -131,9 +130,7 @@ class TestDemandModel:
         for h in (8, 9):
             for region in ("future_tech_city", "qiantang_new_area"):
                 peak_values.append(
-                    compute_occupancy(
-                        hour=h, is_weekend=False, region_id=region, rng_value=0.0
-                    )
+                    compute_occupancy(hour=h, is_weekend=False, region_id=region, rng_value=0.0)
                 )
         avg_peak = sum(peak_values) / len(peak_values)
         assert 0.55 <= avg_peak <= 0.85, f"morning peak avg {avg_peak} outside spec band"
@@ -143,9 +140,7 @@ class TestDemandModel:
         for h in (17, 18, 19):
             for region in ("future_tech_city", "qiantang_new_area"):
                 peak_values.append(
-                    compute_occupancy(
-                        hour=h, is_weekend=False, region_id=region, rng_value=0.0
-                    )
+                    compute_occupancy(hour=h, is_weekend=False, region_id=region, rng_value=0.0)
                 )
         avg_peak = sum(peak_values) / len(peak_values)
         assert 0.70 <= avg_peak <= 0.95
@@ -153,15 +148,11 @@ class TestDemandModel:
     def test_weekend_is_flatter_than_weekday(self):
         """Weekend evening should be lower than weekday evening on average."""
         wd = sum(
-            compute_occupancy(
-                hour=h, is_weekend=False, region_id="future_tech_city", rng_value=0.0
-            )
+            compute_occupancy(hour=h, is_weekend=False, region_id="future_tech_city", rng_value=0.0)
             for h in (17, 18, 19)
         )
         we = sum(
-            compute_occupancy(
-                hour=h, is_weekend=True, region_id="future_tech_city", rng_value=0.0
-            )
+            compute_occupancy(hour=h, is_weekend=True, region_id="future_tech_city", rng_value=0.0)
             for h in (17, 18, 19)
         )
         assert we < wd
@@ -202,9 +193,7 @@ class TestFailureInjection:
         rng = random.Random(99)
         seen = set()
         for _ in range(60):
-            faults = inject_faults_for_day(
-                pile_ids=[f"pile-{i}" for i in range(100)], rng=rng
-            )
+            faults = inject_faults_for_day(pile_ids=[f"pile-{i}" for i in range(100)], rng=rng)
             for f in faults:
                 seen.add(f.type)
         expected = {"voltage_anomaly", "thermal_fault", "vibration_event", "cable_fault"}

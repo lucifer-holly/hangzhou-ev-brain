@@ -27,7 +27,7 @@ from torch import nn, optim
 from torch.utils.data import DataLoader, TensorDataset
 
 from ai.anomaly_detection.data_loader import build_dataset
-from ai.anomaly_detection.model import AE_INPUT_DIM, NUM_CHANNELS, PileAutoencoder, SEQ_LEN
+from ai.anomaly_detection.model import AE_INPUT_DIM, NUM_CHANNELS, SEQ_LEN, PileAutoencoder
 
 log = logging.getLogger("ai.anomaly_detection.train")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -46,12 +46,12 @@ def main() -> None:
     ws = build_dataset()
     log.info(
         "dataset: normal=%d fault_eval=%d normal_eval=%d",
-        len(ws.normal), len(ws.fault_eval), len(ws.normal_eval),
+        len(ws.normal),
+        len(ws.fault_eval),
+        len(ws.normal_eval),
     )
     if len(ws.normal) < 200:
-        raise RuntimeError(
-            "Not enough normal windows to train.  Re-seed the DB with more history."
-        )
+        raise RuntimeError("Not enough normal windows to train.  Re-seed the DB with more history.")
 
     # 90/10 split of the *normal* set so we can monitor a proxy val loss.
     rng = np.random.default_rng(42)
@@ -111,7 +111,11 @@ def main() -> None:
         val_losses.append(v_loss)
         log.info(
             "epoch %02d/%02d train=%.5f val=%.5f (%.1fs)",
-            epoch, EPOCHS, tr_loss, v_loss, time.time() - t0,
+            epoch,
+            EPOCHS,
+            tr_loss,
+            v_loss,
+            time.time() - t0,
         )
 
     # Threshold selection — spec calls for the 99-th percentile of training
@@ -126,7 +130,9 @@ def main() -> None:
     threshold_99 = float(np.percentile(scores, 99.0))
     log.info(
         "thresholds: 95-pct=%.5f  99-pct=%.5f  max=%.5f",
-        threshold, threshold_99, float(scores.max()),
+        threshold,
+        threshold_99,
+        float(scores.max()),
     )
 
     log.info("saving checkpoint → %s", CHECKPOINT_PATH)

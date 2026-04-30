@@ -37,7 +37,10 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 
 
 def _operator_count(session: Session) -> int:
-    return session.scalar(select(models.Operator.id).limit(1).with_only_columns(models.Operator.id)) is not None
+    return (
+        session.scalar(select(models.Operator.id).limit(1).with_only_columns(models.Operator.id))
+        is not None
+    )
 
 
 def seed(force: bool = False) -> None:
@@ -127,9 +130,7 @@ def seed(force: bool = False) -> None:
             session.bulk_insert_mappings(models.Event, ev_rows[i : i + chunk])
             session.commit()
 
-    log.info(
-        "seed: bulk-inserted telemetry + events in %.1fs", time.time() - t0
-    )
+    log.info("seed: bulk-inserted telemetry + events in %.1fs", time.time() - t0)
 
 
 def _is_seeded() -> bool:

@@ -19,7 +19,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
@@ -77,7 +77,7 @@ class ConnectionManager:
 def _json_default(obj: Any) -> Any:
     if isinstance(obj, datetime):
         if obj.tzinfo is None:
-            obj = obj.replace(tzinfo=timezone.utc)
+            obj = obj.replace(tzinfo=UTC)
         return obj.isoformat()
     raise TypeError(f"not JSON serialisable: {type(obj).__name__}")
 
@@ -95,7 +95,7 @@ async def websocket_endpoint(ws: WebSocket) -> None:
             json.dumps(
                 {
                     "type": "tick",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                     "data": {"hello": "hz-ev-brain"},
                 }
             )

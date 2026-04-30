@@ -15,7 +15,7 @@ import asyncio
 import logging
 from contextlib import closing
 from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from sqlalchemy import select
 
@@ -75,9 +75,7 @@ def _persist_tick(points: list[TelemetryPoint], events: list[GeneratedEvent]) ->
                     "current_current": p.current,
                     "current_power": p.power,
                     "current_occupancy": p.occupancy_rate,
-                    "last_seen_at": p.ts.replace(tzinfo=None)
-                    if p.ts.tzinfo is not None
-                    else p.ts,
+                    "last_seen_at": p.ts.replace(tzinfo=None) if p.ts.tzinfo is not None else p.ts,
                 }
                 for p in points
             ]
@@ -100,7 +98,7 @@ def _persist_tick(points: list[TelemetryPoint], events: list[GeneratedEvent]) ->
 async def _broadcast_tick(points: list[TelemetryPoint], events: list[GeneratedEvent]) -> None:
     if manager.connection_count == 0:
         return
-    now_iso = datetime.now(timezone.utc).isoformat()
+    now_iso = datetime.now(UTC).isoformat()
     # Send a single aggregated frame so 100 piles don't equal 100 socket writes.
     await manager.broadcast(
         {
@@ -157,7 +155,7 @@ class RealtimeTicker:
         while not self._stop.is_set():
             try:
                 points, events = await asyncio.to_thread(
-                    generate_tick, self._piles, self._state, datetime.now(timezone.utc)
+                    generate_tick, self._piles, self._state, datetime.now(UTC)
                 )
                 await asyncio.to_thread(_persist_tick, points, events)
                 await _broadcast_tick(points, events)
@@ -165,7 +163,7 @@ class RealtimeTicker:
                 log.exception("realtime: tick failed")
             try:
                 await asyncio.wait_for(self._stop.wait(), timeout=interval)
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 pass
 
 
