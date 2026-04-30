@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="1600" height="1000">
+  <defs>
+    <!-- soft drop shadow for cards -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="2"/>
+      <feComponentTransfer><feFuncA type="linear" slope="0.08"/></feComponentTransfer>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1000" fill="#FAFBFC"/>
+
+  <!-- ========== Title ========== -->
+  <text x="80" y="62" font-family="'Inter', system-ui, sans-serif" font-size="28" font-weight="700" fill="#0F172A">
+    HZ-EV Brain · Three-Layer Architecture
+  </text>
+  <text x="80" y="92" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="16" fill="#64748B">
+    智枢三层架构 · Edge → Cloud → User
+  </text>
+
+  <!-- ========================================== -->
+  <!-- ========== USER LAYER (top) ============== -->
+  <!-- ========================================== -->
+  <g>
+    <!-- Layer container -->
+    <rect x="80" y="140" width="1440" height="220" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" filter="url(#shadow)"/>
+    <!-- Top color bar (user = blue) -->
+    <rect x="80" y="140" width="1440" height="4" rx="2" fill="#2563EB"/>
+
+    <!-- Layer label -->
+    <text x="108" y="184" font-family="'Inter', system-ui, sans-serif" font-size="14" font-weight="700" fill="#2563EB" letter-spacing="2">
+      USER LAYER
+    </text>
+    <text x="240" y="184" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="500" fill="#64748B">
+      用户层 · React + TypeScript + Vite + Tailwind + shadcn/ui + ECharts + AMap
+    </text>
+
+    <!-- Card 1 · City Console -->
+    <g transform="translate(108, 210)">
+      <rect width="430" height="130" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="430" height="32" rx="10" fill="#EFF6FF"/>
+      <rect x="0" y="22" width="430" height="10" fill="#EFF6FF"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#2563EB">🏛️  CITY CONSOLE</text>
+      <text x="20" y="62" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="600" fill="#0F172A">城市大脑 · IOC 大屏</text>
+      <text x="20" y="84" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">Dark IOC home + 6 SaaS detail pages</text>
+      <text x="20" y="104" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">KDE heatmap · SHAP · DID · Grid · Compliance</text>
+    </g>
+
+    <!-- Card 2 · Operator Dashboard -->
+    <g transform="translate(564, 210)">
+      <rect width="430" height="130" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="430" height="32" rx="10" fill="#EFF6FF"/>
+      <rect x="0" y="22" width="430" height="10" fill="#EFF6FF"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#2563EB">🏢  OPERATOR</text>
+      <text x="20" y="62" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="600" fill="#0F172A">运营商仪表盘 · SaaS</text>
+      <text x="20" y="84" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">4 operators switchable · revenue · alerts</text>
+      <text x="20" y="104" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">Real-time pile status + compliance reports</text>
+    </g>
+
+    <!-- Card 3 · Driver App -->
+    <g transform="translate(1020, 210)">
+      <rect width="430" height="130" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="430" height="32" rx="10" fill="#EFF6FF"/>
+      <rect x="0" y="22" width="430" height="10" fill="#EFF6FF"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#2563EB">🚗  DRIVER APP</text>
+      <text x="20" y="62" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="600" fill="#0F172A">车主端 · Mobile H5</text>
+      <text x="20" y="84" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">480px centered · find pile · queue · pay</text>
+      <text x="20" y="104" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">YOLO occupancy hint at parking spot</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- ===== Connector: User ↔ Cloud ============= -->
+  <!-- ========================================== -->
+  <g>
+    <line x1="800" y1="360" x2="800" y2="430" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <!-- Pill label centered on the line -->
+    <rect x="700" y="378" width="200" height="34" rx="17" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="800" y="400" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="13" font-weight="600" fill="#475569">
+      REST · WebSocket
+    </text>
+    <!-- Arrowhead -->
+    <polygon points="794,420 806,420 800,432" fill="#94A3B8"/>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- ========== CLOUD LAYER (middle) ========== -->
+  <!-- ========================================== -->
+  <g>
+    <rect x="80" y="450" width="1440" height="240" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="80" y="450" width="1440" height="4" rx="2" fill="#7C3AED"/>
+
+    <text x="108" y="494" font-family="'Inter', system-ui, sans-serif" font-size="14" font-weight="700" fill="#7C3AED" letter-spacing="2">
+      CLOUD LAYER
+    </text>
+    <text x="240" y="494" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="500" fill="#64748B">
+      云端层 · FastAPI + SQLite + Mosquitto MQTT broker
+    </text>
+
+    <!-- Card 1 · FastAPI -->
+    <g transform="translate(108, 520)">
+      <rect width="320" height="150" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="320" height="32" rx="10" fill="#F5F3FF"/>
+      <rect x="0" y="22" width="320" height="10" fill="#F5F3FF"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#7C3AED">⚡  FASTAPI</text>
+      <text x="20" y="62" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="600" fill="#0F172A">API 网关</text>
+      <text x="20" y="84" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">REST + WebSocket fan-out</text>
+      <text x="20" y="104" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">4 operator adapters</text>
+      <text x="20" y="124" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="11" fill="#94A3B8">66/66 pytest passing</text>
+    </g>
+
+    <!-- Card 2 · 4 AI Models -->
+    <g transform="translate(450, 520)">
+      <rect width="320" height="150" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="320" height="32" rx="10" fill="#F5F3FF"/>
+      <rect x="0" y="22" width="320" height="10" fill="#F5F3FF"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#7C3AED">🧠  4 AI MODELS</text>
+      <text x="20" y="62" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="12" fill="#0F172A"><tspan font-weight="600">LSTM</tspan>      <tspan fill="#64748B">MAE 0.0428</tspan></text>
+      <text x="20" y="84" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="12" fill="#0F172A"><tspan font-weight="600">XGBoost</tspan>   <tspan fill="#64748B">R² 0.9424 · SHAP</tspan></text>
+      <text x="20" y="106" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="12" fill="#0F172A"><tspan font-weight="600">Autoencoder</tspan> <tspan fill="#64748B">F1 0.9639</tspan></text>
+      <text x="20" y="128" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="12" fill="#0F172A"><tspan font-weight="600">YOLOv8</tspan>    <tspan fill="#64748B">~58 ms</tspan></text>
+    </g>
+
+    <!-- Card 3 · Mosquitto -->
+    <g transform="translate(792, 520)">
+      <rect width="320" height="150" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="320" height="32" rx="10" fill="#F5F3FF"/>
+      <rect x="0" y="22" width="320" height="10" fill="#F5F3FF"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#7C3AED">📡  MOSQUITTO MQTT</text>
+      <text x="20" y="62" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="600" fill="#0F172A">消息中转</text>
+      <text x="20" y="84" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">Pile telemetry ingress</text>
+      <text x="20" y="104" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">Realtime fault injection</text>
+      <text x="20" y="124" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="11" fill="#94A3B8">MQTT v5 · QoS 1</text>
+    </g>
+
+    <!-- Card 4 · SQLite + Synth -->
+    <g transform="translate(1134, 520)">
+      <rect width="320" height="150" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="320" height="32" rx="10" fill="#F5F3FF"/>
+      <rect x="0" y="22" width="320" height="10" fill="#F5F3FF"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#7C3AED">💾  SQLite + SYNTH</text>
+      <text x="20" y="62" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="600" fill="#0F172A">数据 + 合成器</text>
+      <text x="20" y="84" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">100 piles × 30 days</text>
+      <text x="20" y="104" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="12" fill="#64748B">Realtime rolling generator</text>
+      <text x="20" y="124" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="11" fill="#94A3B8">Comm fault injection</text>
+    </g>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- ===== Connector: Cloud ↔ Edge ============= -->
+  <!-- ========================================== -->
+  <g>
+    <line x1="800" y1="690" x2="800" y2="760" stroke="#94A3B8" stroke-width="1.5" stroke-dasharray="4 4"/>
+    <rect x="700" y="708" width="200" height="34" rx="17" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1"/>
+    <text x="800" y="730" text-anchor="middle" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="13" font-weight="600" fill="#475569">
+      MQTT · JSON
+    </text>
+    <polygon points="794,750 806,750 800,762" fill="#94A3B8"/>
+  </g>
+
+  <!-- ========================================== -->
+  <!-- ========== EDGE LAYER (bottom) =========== -->
+  <!-- ========================================== -->
+  <g>
+    <rect x="80" y="780" width="1440" height="180" rx="12" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1" filter="url(#shadow)"/>
+    <rect x="80" y="780" width="1440" height="4" rx="2" fill="#059669"/>
+
+    <text x="108" y="824" font-family="'Inter', system-ui, sans-serif" font-size="14" font-weight="700" fill="#059669" letter-spacing="2">
+      EDGE LAYER
+    </text>
+    <text x="220" y="824" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="14" font-weight="500" fill="#64748B">
+      边缘层 · ESP32-S3 (Wokwi simulated) · 100 charging piles
+    </text>
+
+    <!-- Card 1 · Sensors -->
+    <g transform="translate(108, 850)">
+      <rect width="430" height="100" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="430" height="32" rx="10" fill="#ECFDF5"/>
+      <rect x="0" y="22" width="430" height="10" fill="#ECFDF5"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#059669">📍  SENSORS</text>
+      <text x="20" y="60" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="13" font-weight="600" fill="#0F172A">五路传感器</text>
+      <text x="20" y="80" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="11" fill="#64748B">PT100 · Strain-gauge · MPU6050 · PIR · Cam</text>
+    </g>
+
+    <!-- Card 2 · Control -->
+    <g transform="translate(564, 850)">
+      <rect width="430" height="100" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="430" height="32" rx="10" fill="#ECFDF5"/>
+      <rect x="0" y="22" width="430" height="10" fill="#ECFDF5"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#059669">⚙️  CONTROL</text>
+      <text x="20" y="60" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="13" font-weight="600" fill="#0F172A">控制算法</text>
+      <text x="20" y="80" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="11" fill="#64748B">PID feedback · Fuzzy logic charging policy</text>
+    </g>
+
+    <!-- Card 3 · TFLite Micro -->
+    <g transform="translate(1020, 850)">
+      <rect width="430" height="100" rx="10" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="1"/>
+      <rect x="0" y="0" width="430" height="32" rx="10" fill="#ECFDF5"/>
+      <rect x="0" y="22" width="430" height="10" fill="#ECFDF5"/>
+      <text x="20" y="22" font-family="'Inter', system-ui, sans-serif" font-size="13" font-weight="600" fill="#059669">🤖  TFLITE MICRO</text>
+      <text x="20" y="60" font-family="'Inter', 'PingFang SC', system-ui, sans-serif" font-size="13" font-weight="600" fill="#0F172A">边缘 AI · Autoencoder</text>
+      <text x="20" y="80" font-family="'JetBrains Mono', 'SF Mono', monospace" font-size="11" fill="#64748B">154 KB INT8 · ~30 ms inference · on-device anomaly</text>
+    </g>
+  </g>
+</svg>

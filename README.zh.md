@@ -135,48 +135,9 @@
 ## 系统架构
 
 
-```mermaid
-flowchart TB
-    subgraph user["🖥️ 用户层"]
-        direction LR
-        U1["城市指挥台<br/><sub>IOC + 6 个 SaaS 页面</sub>"]
-        U2["运营商 SaaS<br/><sub>4 家运营商</sub>"]
-        U3["车主 H5<br/><sub>移动端</sub>"]
-    end
-
-    subgraph cloud["☁️ 云端 · FastAPI"]
-        direction LR
-        API["FastAPI 网关<br/><sub>REST · WebSocket</sub>"]
-        AI["4 个 AI 模型<br/><sub>LSTM · XGBoost+SHAP<br/>Autoencoder · YOLOv8</sub>"]
-        ADP["4 套运营商适配器<br/><sub>OpenAPI · AsyncAPI</sub>"]
-        DB[("SQLite<br/><sub>100 桩 × 30 天</sub>")]
-        MQ(["Mosquitto MQTT"])
-    end
-
-    subgraph edge["🔋 边缘层 · ESP32-S3"]
-        direction LR
-        ESP["桩端固件<br/><sub>PID + 模糊控制 + TFLite Micro</sub>"]
-    end
-
-    U1 --> API
-    U2 --> API
-    U3 --> API
-    API --> AI
-    API --> ADP
-    API <--> DB
-    API <--> MQ
-    MQ <--> ESP
-
-    classDef userStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
-    classDef cloudStyle fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95
-    classDef edgeStyle fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f
-    classDef storeStyle fill:#f1f5f9,stroke:#64748b,stroke-width:1.5px,color:#334155
-
-    class U1,U2,U3 userStyle
-    class API,AI,ADP cloudStyle
-    class DB,MQ storeStyle
-    class ESP edgeStyle
-```
+<p align="center">
+  <img src="docs/images/architecture.png" alt="HZ-EV Brain 三层架构（Edge / Cloud / User）" width="900" />
+</p>
 
 
 > 完整深度版见 [`docs/architecture.md`](./docs/architecture.md)（数据流、

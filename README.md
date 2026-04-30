@@ -139,48 +139,9 @@ Electric Vehicle Charging Infrastructure Promotion Alliance.
 ## Architecture
 
 
-```mermaid
-flowchart TB
-    subgraph user["🖥️ User Layer"]
-        direction LR
-        U1["City Console<br/><sub>IOC + 6 SaaS pages</sub>"]
-        U2["Operator SaaS<br/><sub>4 operators</sub>"]
-        U3["Driver H5<br/><sub>Mobile</sub>"]
-    end
-
-    subgraph cloud["☁️ Cloud Layer · FastAPI"]
-        direction LR
-        API["FastAPI Gateway<br/><sub>REST · WebSocket</sub>"]
-        AI["4 AI Models<br/><sub>LSTM · XGBoost+SHAP<br/>Autoencoder · YOLOv8</sub>"]
-        ADP["4 Operator Adapters<br/><sub>OpenAPI · AsyncAPI</sub>"]
-        DB[("SQLite<br/><sub>100 piles × 30 days</sub>")]
-        MQ(["Mosquitto MQTT"])
-    end
-
-    subgraph edge["🔋 Edge Layer · ESP32-S3"]
-        direction LR
-        ESP["Pile Firmware<br/><sub>PID + Fuzzy + TFLite Micro</sub>"]
-    end
-
-    U1 --> API
-    U2 --> API
-    U3 --> API
-    API --> AI
-    API --> ADP
-    API <--> DB
-    API <--> MQ
-    MQ <--> ESP
-
-    classDef userStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
-    classDef cloudStyle fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95
-    classDef edgeStyle fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f
-    classDef storeStyle fill:#f1f5f9,stroke:#64748b,stroke-width:1.5px,color:#334155
-
-    class U1,U2,U3 userStyle
-    class API,AI,ADP cloudStyle
-    class DB,MQ storeStyle
-    class ESP edgeStyle
-```
+<p align="center">
+  <img src="docs/images/architecture.png" alt="HZ-EV Brain three-layer architecture (Edge / Cloud / User)" width="900" />
+</p>
 
 
 > See [`docs/architecture.md`](./docs/architecture.md) for the full deep-dive
