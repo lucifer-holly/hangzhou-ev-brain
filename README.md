@@ -138,9 +138,43 @@ Electric Vehicle Charging Infrastructure Promotion Alliance.
 
 ## Architecture
 
-<p align="center">
-  <img src="docs/images/architecture.svg" alt="HZ-EV Brain three-layer architecture (Edge / Cloud / User)" width="780" />
-</p>
+
+```mermaid
+flowchart TB
+    subgraph User["🖥️ User Layer"]
+        direction LR
+        CC["🏛️ City Console<br/><sub>IOC dark + 6 SaaS pages</sub>"]
+        OD["🏢 Operator Dashboard<br/><sub>4 operators · SaaS</sub>"]
+        DA["🚗 Driver App<br/><sub>Mobile H5</sub>"]
+    end
+
+    subgraph Cloud["☁️ Cloud Layer · FastAPI + SQLite + Mosquitto"]
+        direction TB
+        API["⚡ FastAPI<br/><sub>REST + WebSocket fan-out</sub>"]
+        AI["🧠 4 AI Models<br/><sub>LSTM · XGBoost+SHAP · Autoencoder · YOLOv8</sub>"]
+        ADP["🔌 4 Operator Adapters<br/><sub>OpenAPI / AsyncAPI / JSON Schema</sub>"]
+        MQTT(["📡 Mosquitto MQTT"])
+        DB[("💾 SQLite<br/><sub>Synth: 100 piles × 30 days</sub>")]
+        SYNTH["🎲 Synth Generator<br/><sub>realtime rolling + fault injection</sub>"]
+    end
+
+    subgraph Edge["🔋 Edge Layer · ESP32-S3 (Wokwi)"]
+        direction LR
+        SENS["📍 Sensors<br/><sub>PT100 · Strain · IMU · PIR · Cam</sub>"]
+        CTRL["⚙️ PID + Fuzzy<br/><sub>charging control</sub>"]
+        TFLM["🤖 TFLite Micro<br/><sub>Autoencoder · 154KB · ~30ms</sub>"]
+    end
+
+    User <-->|"REST · WebSocket"| API
+    API --> AI
+    API --> ADP
+    API <--> DB
+    SYNTH --> DB
+    SYNTH --> MQTT
+    Edge -->|"MQTT JSON"| MQTT
+    MQTT --> API
+```
+
 
 > See [`docs/architecture.md`](./docs/architecture.md) for the full deep-dive
 > (data flow, WebSocket fan-out, adapter pattern for the four operators,
@@ -183,7 +217,7 @@ hangzhou-ev-brain/
 ├── docker-compose.yml          one-command boot
 ├── .env.example
 ├── docs/                       architecture · data-model · ai-models · radio · design
-│   └── images/                 architecture.svg + screenshots/
+│   └── images/                 screenshots/
 ├── contracts/ ★                OpenAPI 3.1 + AsyncAPI 2.6 + 4 operator JSON Schemas
 ├── backend/                    FastAPI + synth + 4 AI models + MQTT + SQLite
 │   ├── api/                    REST routers + WebSocket
