@@ -5,7 +5,7 @@
 ### **Hangzhou EV-Charging City Brain — an AIoT Governance Platform**
 *From Pile to Brain · From Charging to Governing*
 
-[English](./README.md) · [中文](./README.zh.md)
+[中文](./README.md) · [English](./README.en.md)
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -181,7 +181,7 @@ or paste `diagram.json` into [wokwi.com](https://wokwi.com) — see
 
 ```
 hangzhou-ev-brain/
-├── README.md / README.zh.md   ← bilingual hero (you are here)
+├── README.md / README.en.md   ← bilingual hero (you are here)
 ├── docker-compose.yml          one-command boot
 ├── .env.example
 ├── docs/                       architecture · data-model · ai-models · radio · design

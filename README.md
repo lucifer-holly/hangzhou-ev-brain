@@ -5,7 +5,7 @@
 ### **杭州智慧充电城市大脑 — 一个 AIoT 治理平台**
 *From Pile to Brain · From Charging to Governing*
 
-[English](./README.md) · [中文](./README.zh.md)
+[中文](./README.md) · [English](./README.en.md)
 
 [![React](https://img.shields.io/badge/React-18-61DAFB?logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
@@ -176,7 +176,7 @@ http://localhost:8000/docs 直接可点。
 
 ```
 hangzhou-ev-brain/
-├── README.md / README.zh.md   ← 双语 hero（你正在看）
+├── README.md / README.en.md   ← 双语 hero（你正在看）
 ├── docker-compose.yml          一键启动
 ├── .env.example
 ├── docs/                       架构 · 数据 · AI · 无线 · 设计
