@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 540" font-family="Geist Variable, Inter, system-ui, sans-serif">
+  <!--
+    HZ-EV Brain  three-layer architecture diagram (Edge / Cloud / User).
+    Static SVG; embedded in README + docs/architecture.md.
+  -->
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0F1729"/>
+      <stop offset="100%" stop-color="#0A0E1A"/>
+    </linearGradient>
+    <linearGradient id="userGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0E2640"/>
+      <stop offset="100%" stop-color="#102036"/>
+    </linearGradient>
+    <linearGradient id="cloudGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#102E54"/>
+      <stop offset="100%" stop-color="#0E1F38"/>
+    </linearGradient>
+    <linearGradient id="edgeGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B2845"/>
+      <stop offset="100%" stop-color="#101A30"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#00D4FF"/>
+    </marker>
+    <marker id="arrowOrange" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#FF6B35"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#00FF94"/>
+    </marker>
+  </defs>
+
+  <rect width="880" height="540" fill="url(#bgGrad)"/>
+
+  <!-- Title -->
+  <text x="40" y="34" fill="#FFFFFF" font-size="20" font-weight="700" letter-spacing="2">HZ-EV BRAIN  THREE-LAYER ARCHITECTURE</text>
+  <text x="40" y="54" fill="#A0B0CC" font-size="12" letter-spacing="1.5">z¢ · mÞzgE5Î'</text>
+
+  <!-- USER LAYER -->
+  <g>
+    <rect x="40" y="80" width="800" height="118" rx="10" fill="url(#userGrad)" stroke="#4A9EFF" stroke-opacity="0.5"/>
+    <text x="60" y="104" fill="#00D4FF" font-size="13" font-weight="700" letter-spacing="2">USER LAYER · (7B</text>
+    <text x="60" y="122" fill="#A0B0CC" font-size="11">React 18 · TypeScript 5 · Vite · Tailwind · shadcn/ui · ECharts · AMap (Ø· JS API 2.0)</text>
+
+    <!-- 3 console cards -->
+    <g>
+      <rect x="60" y="138" width="240" height="48" rx="6" fill="#0A1428" stroke="#4A9EFF" stroke-opacity="0.4"/>
+      <text x="76" y="160" fill="#00D4FF" font-size="13" font-weight="600"><Û City Console</text>
+      <text x="76" y="176" fill="#A0B0CC" font-size="10">IOC dark big-screen + 6 governance pages</text>
+    </g>
+    <g>
+      <rect x="320" y="138" width="240" height="48" rx="6" fill="#0A1428" stroke="#4A9EFF" stroke-opacity="0.4"/>
+      <text x="336" y="160" fill="#4A9EFF" font-size="13" font-weight="600"><â Operator Dashboard</text>
+      <text x="336" y="176" fill="#A0B0CC" font-size="10">SaaS light · audit · revenue · alarms</text>
+    </g>
+    <g>
+      <rect x="580" y="138" width="240" height="48" rx="6" fill="#0A1428" stroke="#4A9EFF" stroke-opacity="0.4"/>
+      <text x="596" y="160" fill="#4A9EFF" font-size="13" font-weight="600">=— Driver App (H5)</text>
+      <text x="596" y="176" fill="#A0B0CC" font-size="10">map · navigate · price · realtime status</text>
+    </g>
+  </g>
+
+  <!-- arrows User <-> Cloud -->
+  <line x1="180" y1="198" x2="180" y2="240" stroke="#00D4FF" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="220" y1="240" x2="220" y2="198" stroke="#00FF94" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="195" y="220" fill="#A0B0CC" font-size="10">REST</text>
+  <text x="225" y="222" fill="#00FF94" font-size="10">WS</text>
+
+  <line x1="700" y1="198" x2="700" y2="240" stroke="#00D4FF" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="710" y="222" fill="#A0B0CC" font-size="10">REST · WebSocket</text>
+
+  <!-- CLOUD LAYER -->
+  <g>
+    <rect x="40" y="240" width="800" height="172" rx="10" fill="url(#cloudGrad)" stroke="#00D4FF" stroke-opacity="0.5"/>
+    <text x="60" y="264" fill="#00D4FF" font-size="13" font-weight="700" letter-spacing="2">CLOUD LAYER · ‘ï</text>
+    <text x="60" y="282" fill="#A0B0CC" font-size="11">FastAPI 0.115 · SQLAlchemy 2 (async) · APScheduler · paho-mqtt · Pydantic v2</text>
+
+    <!-- 4 pillars -->
+    <g>
+      <rect x="60" y="298" width="180" height="100" rx="6" fill="#0A1428" stroke="#00D4FF" stroke-opacity="0.4"/>
+      <text x="76" y="320" fill="#00D4FF" font-size="12" font-weight="700">™ FastAPI + WS</text>
+      <text x="76" y="338" fill="#A0B0CC" font-size="10">REST: piles / events</text>
+      <text x="76" y="354" fill="#A0B0CC" font-size="10">/ stats / grid / ai</text>
+      <text x="76" y="370" fill="#A0B0CC" font-size="10">WS: 1 Hz aggregated</text>
+      <text x="76" y="386" fill="#A0B0CC" font-size="10">telemetry + events</text>
+    </g>
+    <g>
+      <rect x="252" y="298" width="180" height="100" rx="6" fill="#0A1428" stroke="#FFB800" stroke-opacity="0.4"/>
+      <text x="268" y="320" fill="#FFB800" font-size="12" font-weight="700">> AI Inference</text>
+      <text x="268" y="338" fill="#A0B0CC" font-size="10">LSTM (PyTorch)</text>
+      <text x="268" y="354" fill="#A0B0CC" font-size="10">XGBoost + SHAP P</text>
+      <text x="268" y="370" fill="#A0B0CC" font-size="10">Autoencoder</text>
+      <text x="268" y="386" fill="#A0B0CC" font-size="10">YOLOv8 (Ultralytics)</text>
+    </g>
+    <g>
+      <rect x="444" y="298" width="180" height="100" rx="6" fill="#0A1428" stroke="#FF6B35" stroke-opacity="0.4"/>
+      <text x="460" y="320" fill="#FF6B35" font-size="12" font-weight="700">>ì Synth Generator</text>
+      <text x="460" y="338" fill="#A0B0CC" font-size="10">100 piles · 30 d history</text>
+      <text x="460" y="354" fill="#A0B0CC" font-size="10">2 regions · 4 operators</text>
+      <text x="460" y="370" fill="#A0B0CC" font-size="10">demand · faults · comm</text>
+      <text x="460" y="386" fill="#A0B0CC" font-size="10">loss injection</text>
+    </g>
+    <g>
+      <rect x="636" y="298" width="184" height="100" rx="6" fill="#0A1428" stroke="#00FF94" stroke-opacity="0.4"/>
+      <text x="652" y="320" fill="#00FF94" font-size="12" font-weight="700">= Operator Adapters</text>
+      <text x="652" y="338" fill="#A0B0CC" font-size="10">ý¶5Q · ye5</text>
+      <text x="652" y="354" fill="#A0B0CC" font-size="10">E5 · e</text>
+      <text x="652" y="370" fill="#A0B0CC" font-size="10">spec-driven via</text>
+      <text x="652" y="386" fill="#A0B0CC" font-size="10">contracts/operators/*</text>
+    </g>
+  </g>
+
+  <!-- Storage strip -->
+  <g>
+    <rect x="60" y="408" width="380" height="20" rx="4" fill="#0A1428" stroke="#A0B0CC" stroke-opacity="0.3"/>
+    <text x="80" y="423" fill="#A0B0CC" font-size="11">=¾ SQLite (aiosqlite) · single embedded file</text>
+    <rect x="450" y="408" width="370" height="20" rx="4" fill="#0A1428" stroke="#A0B0CC" stroke-opacity="0.3"/>
+    <text x="470" y="423" fill="#A0B0CC" font-size="11">=á Mosquitto MQTT broker · pile/* + system/* topics</text>
+  </g>
+
+  <!-- arrows Cloud <-> Edge -->
+  <line x1="440" y1="430" x2="440" y2="468" stroke="#00D4FF" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="470" y1="468" x2="470" y2="430" stroke="#FF6B35" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <text x="370" y="450" fill="#A0B0CC" font-size="10">MQTT (telemetry · events)</text>
+  <text x="488" y="450" fill="#FF6B35" font-size="10">commands · alerts</text>
+
+  <!-- EDGE LAYER -->
+  <g>
+    <rect x="40" y="468" width="800" height="60" rx="10" fill="url(#edgeGrad)" stroke="#FFB800" stroke-opacity="0.5"/>
+    <text x="60" y="492" fill="#FFB800" font-size="13" font-weight="700" letter-spacing="2">EDGE LAYER · ¹ìËU:	</text>
+    <text x="60" y="510" fill="#A0B0CC" font-size="11">ESP32-S3 (Wokwi) · 10 sensors · anti-windup PID + 27-rule fuzzy governor · TFLite Micro Autoencoder (154 KB · ~30 ms)</text>
+  </g>
+</svg>
