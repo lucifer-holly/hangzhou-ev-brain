@@ -293,7 +293,7 @@ python -m ai.eval.benchmark        # 打印上表 + PASS/FAIL gates
    需要 HTTPS 配 Caddy / Traefik。
 
 认证、HTTPS、可观测性、数据库迁移**都不在范围内**（决策见
-[`docs/spec.md` §13](./docs/spec.md)）。
+[`docs/spec.md` §12](./docs/spec.md)）。
 
 ---
 
@@ -305,9 +305,9 @@ python -m ai.eval.benchmark        # 打印上表 + PASS/FAIL gates
 | Frontend（3 控制台 + 6 详情页）| ✅ 完成 |
 | ESP32-S3 固件（Wokwi）| ✅ 完成（端侧 autoencoder 已上）|
 | Spec-driven 合约 | ✅ 完成 |
-| 文档包（本目录）| ✅ 完成（Spawn 9）|
-| Demo 视频 | ⏳ Spawn 10 |
-| 演示 PPT（12 页 + 演讲稿 + Q&A 预案） | ✅ 已完成（Spawn 11） — 见 [`ppt/`](./ppt/) |
+| 文档包（本目录）| ✅ 完成 |
+| Demo 视频 | ⏳ 制作中 |
+| VPS 公开部署 + demo 站点 | ⏳ 规划中 |
 
 ---
 

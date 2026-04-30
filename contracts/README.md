@@ -128,7 +128,7 @@ backend's adapter layer reads through this contract.
   `firmware/pile-simulator/diagram.json` (Spawn 8).
 - ❌ A runtime validator middleware — this is a demo; prod-grade contract
   enforcement at request time is out of scope (decision logged in
-  `docs/spec.md` §13).
+  `docs/spec.md` §12).
 
 ## AI-model endpoints (Spawn 4)
 

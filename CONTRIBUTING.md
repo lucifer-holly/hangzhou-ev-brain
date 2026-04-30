@@ -149,7 +149,7 @@ a design discussion that needs to happen first.
 ## Out of scope
 
 To keep the project focused, the following are explicitly **not**
-accepted as PRs (see [`docs/spec.md` §13](./docs/spec.md)):
+accepted as PRs (see [`docs/spec.md` §12](./docs/spec.md)):
 
 - Authentication / RBAC / HTTPS
 - Production-grade logging / observability / monitoring

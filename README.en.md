@@ -302,7 +302,7 @@ This project is designed to run **locally as a portfolio demo**. Three paths:
 
 Authentication, HTTPS, observability, and database migrations are
 **deliberately out of scope** for this portfolio (see
-[`docs/spec.md` §13](./docs/spec.md)).
+[`docs/spec.md` §12](./docs/spec.md)).
 
 ---
 
@@ -314,9 +314,9 @@ Authentication, HTTPS, observability, and database migrations are
 | Frontend (3 consoles + 6 detail pages) | ✅ complete |
 | ESP32-S3 firmware (Wokwi) | ✅ complete with on-device autoencoder |
 | Spec-driven contracts | ✅ complete |
-| Documentation pack (this folder) | ✅ complete (Spawn 9) |
-| Demo video | ⏳ Spawn 10 |
-| Demo deck (12 pages + speaker notes + Q&A prep) | ✅ complete (Spawn 11) — see [`ppt/`](./ppt/) |
+| Documentation pack (this folder) | ✅ complete |
+| Demo video | ⏳ in progress |
+| Public VPS deployment + demo site | ⏳ planned |
 
 ---
 

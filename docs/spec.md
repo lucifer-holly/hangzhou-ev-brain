@@ -13,14 +13,14 @@ Version 1.0 · 2026-04-30
 
 **项目定位**：端到端 AIoT 开源演示平台。作者参与香港智慧充电桩政府项目期间负责相关模块，基于这段工程经验独立设计构建。
 
-**优先级排序**：demo 工程完成度 > 配套演示材料（PPT/视频）。前者追求工程完成度与视觉冲击；后者作为附带产出（最后做）。
+**优先级排序**：demo 工程完成度 > 配套演示材料（视频与公开部署站点）。前者追求工程完成度与视觉冲击；后者作为附带产出（最后做）。
 
 **一句话定位**：以杭州为锚点，构建一个**演示驱动、可交互**的城市级 AIoT 充电治理平台，展示研究 / 算法 / 全栈工程能力。
 
 **核心交付**：
 - GitHub repo（双语 README + 一键 docker-compose 启动）
+- VPS 公开部署 + 可访问的 demo 站点
 - 3-5 分钟 Demo 视频
-- 12 页 PPT（最后做）
 
 ---
 
@@ -159,7 +159,7 @@ PT100 慢通道用 Callendar–Van Dusen 方程 + 4 线连接消除引线电阻�
 
 CC 阶段整定参数（Z-N 法）：Kp = 0.5, Ki = 2.0, Kd = 0.01。
 
-**数学示例**（PPT/文档展示）：
+**数学示例**（文档展示用）：
 - I_target = 200A，t=0.50s 时 e(t) = 2A，∫e = 12 A·s，Δt = 0.05s
 - u(0.50) = 0.5×2 + 2.0×12 + 0.01×(2−5)/0.05 = **24.4**
 
@@ -463,13 +463,10 @@ hangzhou-ev-brain/
 ├── infra/
 │   └── mosquitto/
 │
-├── scripts/
-│   ├── demo.sh
-│   ├── seed_data.sh
-│   └── train_all_models.sh
-│
-└── ppt/
-    └── HZ-EV-Brain.pptx (deferred)
+└── scripts/
+    ├── demo.sh
+    ├── seed_data.sh
+    └── train_all_models.sh
 ```
 
 **关键工程信号**（HR / 面试官扫一眼能注意到）：
@@ -497,24 +494,7 @@ hangzhou-ev-brain/
 
 ---
 
-## 10. PPT 12-page Outline (deferred)
-
-1. Cover
-2. Background & Problem（三层痛点）
-3. Literature Survey（现有 App 对比 + 学术引用）
-4. Idea of Solution（"城市大脑·充电模块"）
-5. System Architecture（三层架构图）
-6. Sensor & Actuator（单桩 BOM）
-7. Data Processing + Communication（信号流水线 + 100m 协议表）
-8. Control Method（PID + Fuzzy + LP）
-9. AI / Mobile / Cloud（4 模型 + 3 端 + 自建云方案）
-10. Results & Demo（截图 + 模型评估 + 视频 QR）
-11. Conclusion + Future Work（GitHub 链接 + 高速联动等）
-12. Thanks
-
----
-
-## 11. Implementation Roadmap (11 Spawned Sub-conversations)
+## 10. Implementation Roadmap (11 Spawned Sub-conversations)
 
 **Phase 1（串行）**
 - Spawn 1: Backend Foundation（FastAPI + 合成数据生成器 + SQLite + docker-compose）
@@ -534,14 +514,14 @@ hangzhou-ev-brain/
 - Spawn 9: Documentation（README + 5 篇 docs）
 
 **Phase 5**
-- Spawn 10: Demo Video storyboard + 旁白稿
-- Spawn 11: PPT 12 页生成
+- Spawn 10: Demo Video 录制 + 旁白稿
+- Spawn 11: VPS 公开部署 + demo 站点上线
 
 **预估总时长**：8-12 个工作日（看每天投入）
 
 ---
 
-## 12. Constraints and Decisions Log
+## 11. Constraints and Decisions Log
 
 | 决定 | 原因 |
 |---|---|
@@ -556,7 +536,7 @@ hangzhou-ev-brain/
 
 ---
 
-## 13. Out of Scope（明确不做）
+## 12. Out of Scope（明确不做）
 
 - 真实运营商 API 接入
 - 用户认证 / 权限管理 / HTTPS
@@ -569,7 +549,7 @@ hangzhou-ev-brain/
 
 ---
 
-## 14. Acceptance Criteria
+## 13. Acceptance Criteria
 
 每个 Spawn 完成后必须满足：
 
@@ -586,4 +566,4 @@ hangzhou-ev-brain/
 - [ ] 4 个 AI 模型推理能跑（结果合理）
 - [ ] 双语 README + 5 篇 docs 完整
 - [ ] Demo 视频上传（链接放 README 顶部）
-- [ ] PPT 12 页（最后做）
+- [ ] VPS 公开部署上线（站点链接放 README 顶部）
