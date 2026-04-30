@@ -26,8 +26,12 @@
 > 6 governance functions, an ESP32-S3 edge reference implementation — runnable
 > end-to-end with one `docker-compose up`.
 
-<!-- VIDEO_PLACEHOLDER -->
-<!-- LIVE_DEMO_PLACEHOLDER -->
+<div align="center">
+
+🎬 **Demo Video** &nbsp;·&nbsp; <em>3-4 min product walkthrough — link will be embedded here once published</em><br/>
+🌐 **Live Demo** &nbsp;·&nbsp; <em>Public VPS site — link will be added here once deployed</em>
+
+</div>
 
 ---
 

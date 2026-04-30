@@ -25,8 +25,12 @@
 > mock 数据合并、4 个 AI 模型、6 个治理功能、ESP32-S3 边缘参考实现 ——
 > `docker-compose up` 一行端到端跑通。
 
-<!-- VIDEO_PLACEHOLDER -->
-<!-- LIVE_DEMO_PLACEHOLDER -->
+<div align="center">
+
+🎬 **Demo Video** &nbsp;·&nbsp; <em>3-4 分钟产品讲解（即将发布，链接将在此处嵌入）</em><br/>
+🌐 **Live Demo** &nbsp;·&nbsp; <em>VPS 公开站点（部署中，上线后链接放在这里）</em>
+
+</div>
 
 ---
 

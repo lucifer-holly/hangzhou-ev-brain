@@ -76,7 +76,7 @@ the GitHub Contributors panel.
 ### What's gitignored (do not stage these)
 - `.env` (contains `VITE_AMAP_KEY` — secret, must never reach GitHub)
 - `.DS_Store` (macOS junk)
-- `ppt/`, `output/`, `video/`, `.playwright-cli/` (work-in-progress / artifacts)
+- `output/`, `video/`, `.playwright-cli/` (local work-in-progress / artifacts)
 - `node_modules/`, `__pycache__/`, `.venv/`
 - `*.db`, `*.sqlite`, `*.log`
 - `AGENTS.md` (symlink to this file)
@@ -109,8 +109,8 @@ If any check unexpected: **HALT and report**. Don't auto-fix.
 - `black` + `ruff` (config in `pyproject.toml` — don't change)
 - Type hints required on all public functions
 - Docstrings on all public functions
-- Cite textbook chapter when implementing a textbook algorithm
-  (e.g. `# Ch7.3 PID`)
+- Comments should explain non-obvious intent / trade-offs only — do not narrate
+  what the code does
 
 ### TypeScript (frontend)
 - `strict: true` mode, ESLint + Prettier
