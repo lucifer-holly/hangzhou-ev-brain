@@ -19,8 +19,7 @@ For project mission, architecture, and design system, see `README.md` (CN) or
 ## Repository identity
 
 - **GitHub remote**: `git@github.com:lucifer-holly/hangzhou-ev-brain.git`
-- **Local checkout path**: `/Users/holly/Desktop/EEE 532/hz-ev-brain` (note
-  the SPACE in `EEE 532`; always quote paths in shell commands)
+- **Local checkout path**: `/Users/holly/Projects/hz-ev-brain`
 - **Default branch**: `main`
 - **Status**: Public, v1.0.0 released, CI green, ~68 commits on main
 
@@ -63,7 +62,7 @@ the GitHub Contributors panel.
   `feat:`, `fix:`, `chore:`, `docs:`, `style:`, `refactor:`, `test:`, `ci:`
 - Commit message: 1 short title line + blank line + body if needed
 - Always quote the working directory in commands:
-  `cd "/Users/holly/Desktop/EEE 532/hz-ev-brain"`
+  `cd "/Users/holly/Projects/hz-ev-brain"`
 
 ### Force pushes
 - Only when rewriting history is necessary (e.g., stripping accidentally-leaked
@@ -89,7 +88,7 @@ Stop and report.
 ## Pre-flight pattern (run before every multi-step task)
 
 ```bash
-cd "/Users/holly/Desktop/EEE 532/hz-ev-brain"
+cd "/Users/holly/Projects/hz-ev-brain"
 
 pwd
 git rev-parse --is-inside-work-tree
