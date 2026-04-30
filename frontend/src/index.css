@@ -211,24 +211,56 @@
   padding: 1px 6px !important;
 }
 
-/* Invert the rasterised "高德地图" PNG so the dark glyph reads on dark
-   surfaces; full opacity for crispness, brightness slightly above 1 to
-   match the surrounding text weight. */
-.amap-logo img,
-.amap-copyright img {
-  filter: invert(1) brightness(1.05) !important;
-  opacity: 0.9 !important;
+/* AMap brand-blue credit — replace the rasterised logo PNG with a CSS
+   re-rendering so we can hit a clean AMap-brand blue.
+   Approach:
+     - Hide the original 86×24 PNG (origami arrow + pure-black "高德
+       地图" text), which renders muddy/black on a dark surface no
+       matter what CSS filter we apply.
+     - Render a small unicode origami arrow + "高德地图" wordmark via
+       :before / :after pseudo-elements on the .amap-logo anchor.
+       Solid IOC-blue colour for crisp legibility on the dark chip.
+   Trade-off: this trades pixel-accurate brand fidelity for
+   legibility, and is acceptable for a portfolio demo where the AMap
+   attribution stays present and clickable, just visually re-drawn. */
+.amap-logo {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  height: 18px !important;
+  padding: 0 6px !important;
+  text-decoration: none !important;
+}
+.amap-logo img {
+  display: none !important;
+}
+.amap-logo::before {
+  content: '➤';
+  display: inline-block;
+  font-size: 11px;
+  line-height: 1;
+  color: #4A9EFF;
+  transform: translateY(-1px);
+  text-shadow: 0 0 6px rgba(74, 158, 255, 0.55);
+}
+.amap-logo::after {
+  content: '高德地图';
+  font-family: 'Geist Variable', 'Noto Sans SC', 'PingFang SC',
+    'Hiragino Sans GB', system-ui, sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: #4A9EFF;
+  text-shadow: 0 0 6px rgba(74, 158, 255, 0.4);
 }
 
-/* Hover state — lift the whole credit to full IOC cyan. */
+/* Hover state — saturate to full IOC cyan. */
 .amap-copyright a:hover,
-.amap-logo a:hover,
-.amap-copyright:hover,
-.amap-logo:hover {
+.amap-copyright:hover {
   color: rgba(0, 212, 255, 1) !important;
 }
-.amap-logo:hover img,
-.amap-copyright:hover img {
-  filter: invert(1) brightness(1.25) !important;
-  opacity: 1 !important;
+.amap-logo:hover::before,
+.amap-logo:hover::after {
+  color: #00D4FF !important;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.7);
 }
