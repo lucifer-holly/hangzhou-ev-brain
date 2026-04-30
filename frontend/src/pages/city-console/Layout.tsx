@@ -6,7 +6,6 @@ import { LiveClock } from '@/components/ioc/LiveClock'
 import { RoleSwitcher } from '@/components/ioc/RoleSwitcher'
 import { WeatherBadge } from '@/components/ioc/WeatherBadge'
 import { StatusBadges } from '@/components/StatusBadges'
-import { SystemStatusPanel } from '@/components/sidebar/SystemStatusPanel'
 import { TodayPanel } from '@/components/sidebar/TodayPanel'
 import { TechStackPanel } from '@/components/sidebar/TechStackPanel'
 import { env } from '@/lib/env'
@@ -107,9 +106,10 @@ export function CityConsoleLayout() {
             ))}
           </div>
 
-          {/* Bottom panels — fill the empty space below the nav. */}
-          <div className="mt-auto flex flex-col gap-2 pt-4">
-            <SystemStatusPanel />
+          {/* Bottom panels — System status was removed (it duplicated the
+              topbar StatusBadges); the remaining two panels stay anchored
+              at the bottom and the freed vertical space breathes. */}
+          <div className="mt-auto flex flex-col gap-2.5 pt-4">
             <TodayPanel />
             <TechStackPanel />
           </div>

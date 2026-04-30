@@ -176,36 +176,59 @@
 /* ────────────────────────────────────────────────────────────────────
  * AMap attribution / logo contrast fix.
  *
- * AMap injects a dark-on-white "高德地图" credit + logo into the bottom
- * corners of every map. On our dark IOC surface the black text and PNG
- * logo become near-invisible. We can't restyle their innards directly
- * (different AMap minor versions ship different class names), so we use
- * a layered selector + a logo filter as a belt-and-braces fix.
+ * AMap injects a dark-on-white "高德地图" PNG logo + a "© 2026 AutoNavi"
+ * text credit into the bottom corner of every map. On our dark IOC
+ * surface the default black text and dark PNG glyph are near-invisible.
+ *
+ * Strategy: wrap the logo + copyright in a subtle dark glass-chip so the
+ * cluster reads as one intentional credit, then invert the rasterised
+ * logo (with crisp opacity, not ghosted) and use the IOC text-secondary
+ * tone for the copyright. Hover lifts everything to full IOC cyan.
  *
  * Kept OUTSIDE @layer so Tailwind doesn't purge the selectors — the
  * .amap-copyright / .amap-logo classes are injected by the AMap SDK at
  * runtime and never appear in the source files Tailwind scans.
  * ──────────────────────────────────────────────────────────────────── */
+
+/* Glass-chip backdrop wraps logo + copyright so the cluster reads as one
+   intentional credit, not a faded smear on top of the map tiles. */
+.amap-logo,
+.amap-copyright {
+  background: rgba(10, 14, 26, 0.7) !important;
+  border-radius: 3px !important;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* Copyright text — light slate that matches the IOC text-secondary tone. */
 .amap-copyright,
 .amap-copyright a,
-.amap-copyright span,
-.amap-logo,
-.amap-logo a {
-  color: rgba(255, 255, 255, 0.55) !important;
-  opacity: 0.6 !important;
-  text-shadow: 0 0 4px rgba(10, 14, 26, 0.6);
-}
-.amap-copyright a:hover,
-.amap-logo a:hover {
-  color: rgba(0, 212, 255, 0.95) !important;
+.amap-copyright span {
+  color: rgba(160, 176, 204, 0.92) !important;
   opacity: 1 !important;
+  text-shadow: none !important;
+  font-size: 10px !important;
+  padding: 1px 6px !important;
 }
-/* Invert the rasterised logo so the dark glyph reads on dark surfaces. */
+
+/* Invert the rasterised "高德地图" PNG so the dark glyph reads on dark
+   surfaces; full opacity for crispness, brightness slightly above 1 to
+   match the surrounding text weight. */
 .amap-logo img,
 .amap-copyright img {
-  filter: invert(1) brightness(1.4) opacity(0.55);
+  filter: invert(1) brightness(1.05) !important;
+  opacity: 0.9 !important;
 }
-.amap-logo img:hover,
-.amap-copyright img:hover {
-  filter: invert(1) brightness(1.6) opacity(0.95);
+
+/* Hover state — lift the whole credit to full IOC cyan. */
+.amap-copyright a:hover,
+.amap-logo a:hover,
+.amap-copyright:hover,
+.amap-logo:hover {
+  color: rgba(0, 212, 255, 1) !important;
+}
+.amap-logo:hover img,
+.amap-copyright:hover img {
+  filter: invert(1) brightness(1.25) !important;
+  opacity: 1 !important;
 }
