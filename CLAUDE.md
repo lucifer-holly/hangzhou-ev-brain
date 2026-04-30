@@ -1,158 +1,217 @@
-# HZ-EV Brain — Claude Code Project Memory
+<!--
+CLAUDE.md — Operating manual for code-running agents (Cursor / Claude Code)
+working in this repo. Web Claude has its own Project Instructions — this file
+is specifically for terminal-side agents.
+-->
 
-> 本文件被 Claude Code 自动加载为项目级 context。新对话开始时不需要重述项目背景。
+# HZ-EV Brain · 智枢 ZHISHU — Agent Operating Manual
 
-## 项目身份
+You are a code-running agent (Cursor / Claude Code) operating inside this
+repo's local checkout. You can run shell commands, edit files, run tests, and
+push to GitHub. This file tells you the **operational constraints** that
+ambient context can't infer.
 
-**项目**：HZ-EV Brain（杭州智慧充电城市大脑）
-**性质**：端到端 AIoT 开源演示平台。作者参与香港智慧充电桩政府项目期间负责相关模块，基于这段工程经验独立设计构建。
-**优先级**：demo 工程完成度 > 配套演示材料（PPT/视频）
-**核心目标**：以 Hangzhou 为锚点，构建一个**演示驱动、可交互**的城市级 AIoT 充电治理平台。
+For project mission, architecture, and design system, see `README.md` (CN) or
+`README.en.md` (EN). This file covers HOW to work, not WHAT to build.
 
-**完整设计在** `docs/spec.md` —— 任何具体功能/接口/算法疑问优先查这份。
+---
 
-## 关键约束（不要重新讨论）
+## Repository identity
 
-1. **数据**：100% 合成数据，无真实 API。但 `contracts/` 目录保留 OpenAPI / AsyncAPI / 4 份运营商 JSON Schema，展示 spec-driven design 能力。
-2. **部署**：本地 `docker-compose up` 一行启动，不上线生产。
-3. **完成度分配**：前端 70% / 后端 20% / 边缘 10%——前端 dashboard 是 portfolio 的脸。
-4. **不用**：ThingsBoard、TimescaleDB、Redis、Nginx、Auth、HTTPS。
-5. **必须用**：FastAPI + SQLite + Mosquitto + PyTorch + xgboost + shap + Ultralytics YOLO + React + TS + Vite + Tailwind + shadcn/ui + ECharts + AMap (高德 JS API 2.0) + ESP32 (Wokwi)。
+- **GitHub remote**: `git@github.com:lucifer-holly/hangzhou-ev-brain.git`
+- **Local checkout path**: `/Users/holly/Desktop/EEE 532/hz-ev-brain` (note
+  the SPACE in `EEE 532`; always quote paths in shell commands)
+- **Default branch**: `main`
+- **Status**: Public, v1.0.0 released, CI green, ~68 commits on main
 
-## 系统架构
+---
 
-三层：
-- **Edge**：ESP32-S3 (Wokwi) + 传感器 + PID + Fuzzy + TFLite Micro 异常检测。**独立展示，不入主数据流**。
-- **Cloud**：FastAPI + 合成数据生成器（100 桩 × 30 天 + 实时滚动 + 通信故障注入）+ 4 AI 模型 + Mosquitto + SQLite。
-- **User**：3 套 React 前端（City Console 主、Operator、Driver）。
+## Identity & attribution (critical)
 
-## 6 个治理功能（City Console 核心）
-
-1. 全城供需热力图（KDE + LSTM）
-2. **选址决策支持**（XGBoost + SHAP）⭐ 旗舰
-3. 电网协同削峰（线性规划）
-4. 运营商合规仪表盘（z-score 异常）
-5. 应急响应（规则引擎 + LSTM 复用）
-6. 补贴效果评估（DID 因果推断）
-
-## 4 个 AI 模型
-
-| 模型 | 用途 | 框架 | 部署 |
-|---|---|---|---|
-| LSTM | 需求预测 | PyTorch | FastAPI |
-| XGBoost + SHAP | 选址决策 | xgboost + shap | FastAPI |
-| Autoencoder | 异常检测 | PyTorch → TFLite | Edge + Cloud |
-| YOLOv8 | 占位识别 | Ultralytics 预训练 | FastAPI 按需 |
-
-## Design System
-
-### IOC 深色（City Console 首页）
-```
---bg-deep:        #0A0E1A
---bg-panel:       rgba(20,30,60,0.7)
---accent-cyan:    #00D4FF
---accent-blue:    #4A9EFF
---warning:        #FFB800
---danger:         #FF6B35
---success:        #00FF94
---text-primary:   #FFFFFF
---text-secondary: #A0B0CC
-
-font-title: 'Orbitron', 'Manrope'
-font-body:  'Inter', 'PingFang SC'
-font-mono:  'JetBrains Mono'
-```
-
-### SaaS 浅色（详情页）
-```
---bg-light:       #FFFFFF / #F8FAFC
---accent-primary: #2563EB
---text-dark:      #0F172A
-```
-
-### 视觉装饰
-切角科技边框 / 数字脉冲发光 / 滚动事件流 / 数字滚动动画 / 地图桩点脉冲 / 扫描线动效。
-
-参考：阿里 ET 城市大脑 / 海康 iVMS / 华为 IOC / 阿里 DataV-React。
-
-## Repo 路径约定
+Every commit you create MUST be authored by:
 
 ```
-hz-ev-brain/
-├── CLAUDE.md         # 本文件
-├── README.md         # 中文 hero
-├── README.en.md      # 英文 hero
-├── docker-compose.yml
-├── .env.example
-├── docs/             # spec.md + 4 篇 docs
-├── contracts/        # OpenAPI + AsyncAPI + 4 运营商 schema
-├── backend/          # FastAPI + 合成器 + AI 模型 + MQTT
-├── frontend/         # React + TS + AMap
-├── firmware/         # Wokwi ESP32（独立展示）
-├── infra/            # Mosquitto 配置
-└── scripts/          # 一键脚本
+Holly <63133305+lucifer-holly@users.noreply.github.com>
 ```
 
-## 11 个 Spawn 路线图
+This is already set in `--global` git config. Verify before any commit:
 
-**Phase 1（串行）**：1 Backend Foundation → 2 API Contracts
-**Phase 2（并行）**：3 Frontend Foundation || 4 AI Models
-**Phase 3（串行）**：5 City IOC Homepage → 6 6 Detail Pages
-**Phase 4（并行）**：7 Operator+Driver || 8 Wokwi || 9 Docs
-**Phase 5**：10 Demo Video → 11 PPT
-
-每个 spawn 是一个独立的 Claude Code session，启动方式：
 ```bash
-cd /Users/holly/Desktop/EEE\ 532/hz-ev-brain
-claude
-# 然后粘贴该 spawn 的 prompt
+git config user.name   # Expected: Holly
+git config user.email  # Expected: 63133305+lucifer-holly@users.noreply.github.com
 ```
 
-## 对话约定
+If either is wrong: **STOP and report**. Do not proceed.
 
-### 语言
-- 回复用**中文**
-- 代码、文件名、API 路由、变量名用**英文**
-- 注释可以中英混用
+### Forbidden in commit messages
 
-### 代码规范
-- Python：black + ruff，强制 type hints，公共函数有 docstring
-- TypeScript：strict 模式，ESLint + Prettier
-- 每个目录有 README.md 解释职责 + 用法
+- ❌ `Co-Authored-By: Claude <anything>`
+- ❌ `Co-Authored-By: Cursor <anything>`
+- ❌ `🤖 Generated with Claude Code`
+- ❌ Any agent signature, trailer, or "Made with X" line
 
-### 严格遵守
-- 所有 API schema 改动必须先改 `contracts/openapi.yaml` 再改代码
-- 前端不能引入新的 UI 组件库（已锁定 shadcn/ui + Tailwind）
-- 后端不能引入新的 AI 框架（已锁定 PyTorch + xgboost + Ultralytics）
-- Design token 不能临时改（必须在 `frontend/src/design-tokens/` 集中维护）
+If your tooling auto-adds these (Cursor IDE Composer often does), you must
+strip them before committing. The user has been burned by this; it pollutes
+the GitHub Contributors panel.
 
-### 不要做
-- 不要建议用 ThingsBoard / Kafka / Redis / 复杂数据库
-- 不要做 Auth、HTTPS、生产级日志
-- 不要在 main repo 之外写代码
-- 不要重启已经定下的架构讨论
+---
 
-## 验收标准（每个 spawn 完成后必检）
+## Git workflow rules
 
-- [ ] 代码能跑通（`docker-compose up` 不报错；前端 `npm run dev` 不报错）
-- [ ] 与已有模块兼容（API schema 不冲突）
-- [ ] 关键产物落到正确路径
-- [ ] 该模块自己的 README 已写
+### Normal commits
+- One coherent commit per task. Use Conventional Commits prefix:
+  `feat:`, `fix:`, `chore:`, `docs:`, `style:`, `refactor:`, `test:`, `ci:`
+- Commit message: 1 short title line + blank line + body if needed
+- Always quote the working directory in commands:
+  `cd "/Users/holly/Desktop/EEE 532/hz-ev-brain"`
 
-## 关键参考
+### Force pushes
+- Only when rewriting history is necessary (e.g., stripping accidentally-leaked
+  secrets or trailers)
+- Always create a local backup tag first:
+  `git tag local-backup-pre-<reason>`
+- Use `--force-with-lease`, not `--force`
+- Tell the user explicitly when you've force-pushed
 
-- 设计参考：阿里 ET 城市大脑 / 海康 iVMS / 华为 IOC / 阿里 DataV-React
-- 杭州地理：未来科技城（西溪/阿里巴巴）+ 钱塘新区
-- 高德 JS API 2.0：key 配在 `.env` 的 `VITE_AMAP_KEY`
+### What's gitignored (do not stage these)
+- `.env` (contains `VITE_AMAP_KEY` — secret, must never reach GitHub)
+- `.DS_Store` (macOS junk)
+- `ppt/`, `output/`, `video/`, `.playwright-cli/` (work-in-progress / artifacts)
+- `node_modules/`, `__pycache__/`, `.venv/`
+- `*.db`, `*.sqlite`, `*.log`
+- `AGENTS.md` (symlink to this file)
 
-## 如果要查具体设计细节
+If you see these in `git status` after running a task, something is wrong.
+Stop and report.
 
-读 `docs/spec.md`，14 章包含：
-- Background + Solution
-- 三层架构 + 数据流
-- 单桩硬件 BOM + PID + Fuzzy + Edge AI
-- 6 功能详情页规格
-- 100m 协议对比 + Shannon 推导
-- 4 AI 模型详细设计
-- Repo 结构 + Demo 脚本 + Spawn 路线图
-- 决策日志 + Out of Scope + 验收标准
+---
+
+## Pre-flight pattern (run before every multi-step task)
+
+```bash
+cd "/Users/holly/Desktop/EEE 532/hz-ev-brain"
+
+pwd
+git rev-parse --is-inside-work-tree
+git branch --show-current   # Expected: main
+git status --short          # Expected: clean (or only files relevant to the task)
+git remote -v               # Expected: origin → ...hangzhou-ev-brain.git
+git config user.email       # Expected: 63133305+lucifer-holly@users.noreply.github.com
+```
+
+If any check unexpected: **HALT and report**. Don't auto-fix.
+
+---
+
+## Code conventions
+
+### Python (backend, AI, firmware)
+- `black` + `ruff` (config in `pyproject.toml` — don't change)
+- Type hints required on all public functions
+- Docstrings on all public functions
+- Cite textbook chapter when implementing a textbook algorithm
+  (e.g. `# Ch7.3 PID`)
+
+### TypeScript (frontend)
+- `strict: true` mode, ESLint + Prettier
+- Design tokens centralized in `frontend/src/design-tokens/` —
+  don't inline CSS variables anywhere else
+
+### YAML (contracts)
+- API schema changes go in `contracts/openapi.yaml` FIRST,
+  then ripple to backend code, then frontend consumers
+
+---
+
+## Tech stack lock (don't suggest replacements)
+
+| Layer | Locked to |
+|---|---|
+| Backend | FastAPI + SQLite + Mosquitto |
+| AI | PyTorch + xgboost + shap + Ultralytics YOLO |
+| Edge | ESP32-S3 (Wokwi) + TFLite Micro |
+| Frontend | React + TypeScript + Vite + Tailwind + shadcn/ui + ECharts + AMap |
+| Contracts | OpenAPI + AsyncAPI + JSON Schema |
+
+Forbidden: ThingsBoard, TimescaleDB, Redis, Nginx, complex auth, HTTPS proxies,
+Kafka, alternative UI libraries, alternative AI frameworks.
+
+---
+
+## Repository structure (high-level — see README for details)
+
+```
+hangzhou-ev-brain/
+├── README.md          # default-rendered Chinese version
+├── README.en.md       # English version
+├── docs/              # 5 markdown design docs + images/screenshots/
+├── contracts/         # OpenAPI / AsyncAPI / 4 operator JSON schemas
+├── backend/
+│   ├── api/           # FastAPI app
+│   ├── synth/         # 100-pile × 30-day data generator
+│   ├── adapters/      # 4 mocked operator integrations
+│   ├── ai/            # LSTM, XGBoost+SHAP, Autoencoder, YOLOv8
+│   └── mqtt/
+├── frontend/
+│   └── src/
+│       ├── design-tokens/
+│       ├── components/{ui,ioc,map,charts}
+│       └── pages/{city-console,operator,driver}
+├── firmware/pile-simulator/  # ESP32 Wokwi project + TFLite Micro
+└── scripts/                  # one-shot shell scripts
+```
+
+---
+
+## Done already (don't redo)
+
+- v1.0.0 released with annotated tag and GitHub Release page
+- 6 production screenshots in `docs/images/screenshots/01..06-*.png`
+- Architecture diagram: `docs/images/architecture.png` (light SaaS theme,
+  rasterized from `architecture.svg`)
+- README in both languages with cross-link header
+- 16 GitHub topics + bilingual Description configured
+- Pinned to user's GitHub profile
+- All git authors normalized to noreply email
+- All `Co-Authored-By: Claude` trailers stripped from history
+- All local backup tags cleaned and reflog gc'd
+- CI green: `Backend · ruff + pytest`, `Frontend · pnpm lint + build`,
+  `Contracts · YAML + JSON schema sanity`
+
+---
+
+## Active work (where help is welcome)
+
+- **Spawn 10**: demo video script + screen-recording shot list
+  (output to `video/` — gitignored)
+- **Spawn 11**: 12-slide demo deck (output to `ppt/` — gitignored)
+
+## Deferred (don't start without user approval)
+
+- Vercel deployment with mock data fallback (issue exists, user chose to defer)
+- VPS full-stack deployment
+- GitHub Actions Node 24 upgrade (issue exists, deadline 2026-09)
+
+---
+
+## When you're unsure
+
+Halt and ask. The user prefers explicit confirmation over silent assumptions,
+especially for:
+- Anything that touches git history (rewrite / force-push / amend)
+- Anything that adds dependencies (npm install, pip install)
+- Anything that mutates `.env` or other secret-bearing files
+- Anything that creates new top-level directories or renames files
+
+---
+
+## When you make a mistake
+
+Be transparent. The user values disclosure of deviations from the prompt over
+silent "I figured it out" results. Pattern that worked before:
+
+> "I deviated from your prompt at step X because Y. The deviation is Z.
+> This does/doesn't violate any hard prohibition. Confirm proceed?"
+
+This is exactly how the previous successful rewrites were handled. Stick to
+this pattern.
