@@ -141,38 +141,45 @@ Electric Vehicle Charging Infrastructure Promotion Alliance.
 
 ```mermaid
 flowchart TB
-    subgraph User["🖥️ User Layer"]
+    subgraph user["🖥️ User Layer"]
         direction LR
-        CC["🏛️ City Console<br/><sub>IOC dark + 6 SaaS pages</sub>"]
-        OD["🏢 Operator Dashboard<br/><sub>4 operators · SaaS</sub>"]
-        DA["🚗 Driver App<br/><sub>Mobile H5</sub>"]
+        U1["City Console<br/><sub>IOC + 6 SaaS pages</sub>"]
+        U2["Operator SaaS<br/><sub>4 operators</sub>"]
+        U3["Driver H5<br/><sub>Mobile</sub>"]
     end
 
-    subgraph Cloud["☁️ Cloud Layer · FastAPI + SQLite + Mosquitto"]
-        direction TB
-        API["⚡ FastAPI<br/><sub>REST + WebSocket fan-out</sub>"]
-        AI["🧠 4 AI Models<br/><sub>LSTM · XGBoost+SHAP · Autoencoder · YOLOv8</sub>"]
-        ADP["🔌 4 Operator Adapters<br/><sub>OpenAPI / AsyncAPI / JSON Schema</sub>"]
-        MQTT(["📡 Mosquitto MQTT"])
-        DB[("💾 SQLite<br/><sub>Synth: 100 piles × 30 days</sub>")]
-        SYNTH["🎲 Synth Generator<br/><sub>realtime rolling + fault injection</sub>"]
-    end
-
-    subgraph Edge["🔋 Edge Layer · ESP32-S3 (Wokwi)"]
+    subgraph cloud["☁️ Cloud Layer · FastAPI"]
         direction LR
-        SENS["📍 Sensors<br/><sub>PT100 · Strain · IMU · PIR · Cam</sub>"]
-        CTRL["⚙️ PID + Fuzzy<br/><sub>charging control</sub>"]
-        TFLM["🤖 TFLite Micro<br/><sub>Autoencoder · 154KB · ~30ms</sub>"]
+        API["FastAPI Gateway<br/><sub>REST · WebSocket</sub>"]
+        AI["4 AI Models<br/><sub>LSTM · XGBoost+SHAP<br/>Autoencoder · YOLOv8</sub>"]
+        ADP["4 Operator Adapters<br/><sub>OpenAPI · AsyncAPI</sub>"]
+        DB[("SQLite<br/><sub>100 piles × 30 days</sub>")]
+        MQ(["Mosquitto MQTT"])
     end
 
-    User <-->|"REST · WebSocket"| API
+    subgraph edge["🔋 Edge Layer · ESP32-S3"]
+        direction LR
+        ESP["Pile Firmware<br/><sub>PID + Fuzzy + TFLite Micro</sub>"]
+    end
+
+    U1 --> API
+    U2 --> API
+    U3 --> API
     API --> AI
     API --> ADP
     API <--> DB
-    SYNTH --> DB
-    SYNTH --> MQTT
-    Edge -->|"MQTT JSON"| MQTT
-    MQTT --> API
+    API <--> MQ
+    MQ <--> ESP
+
+    classDef userStyle fill:#dbeafe,stroke:#3b82f6,stroke-width:2px,color:#1e3a8a
+    classDef cloudStyle fill:#ede9fe,stroke:#8b5cf6,stroke-width:2px,color:#4c1d95
+    classDef edgeStyle fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#78350f
+    classDef storeStyle fill:#f1f5f9,stroke:#64748b,stroke-width:1.5px,color:#334155
+
+    class U1,U2,U3 userStyle
+    class API,AI,ADP cloudStyle
+    class DB,MQ storeStyle
+    class ESP edgeStyle
 ```
 
 
